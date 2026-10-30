@@ -1,0 +1,59 @@
+/* v9f · edit/delete lists, smart attendance, homework targets */
+$M .v9f-box{margin-top:14px;padding:12px 14px;border-radius:14px;border:1px solid var(--d-line);background:var(--d-sheen),var(--d-surface-2)}
+$M .v9f-box h4{margin:0 0 8px;font-size:14px;font-weight:800;color:var(--ink)}
+$M .v9f-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-top:1px solid var(--d-line);flex-wrap:wrap}
+$M .v9f-row:first-of-type{border-top:0}
+$M .v9f-row .grow{flex:1;min-width:160px}$M .v9f-row b{display:block;color:var(--ink)}$M .v9f-row small{font-size:12.5px;color:var(--muted)}
+$M .v9f-t{font-size:12px;font-weight:700;padding:2px 8px;border-radius:7px;background:var(--d-surface);border:1px solid var(--d-line);color:var(--ink-2,var(--muted));white-space:nowrap}
+$M .v9f-t.ok{color:var(--emerald);border-color:color-mix(in srgb,var(--emerald) 40%,transparent)}$M .v9f-t.bad{color:var(--ruby);border-color:color-mix(in srgb,var(--ruby) 40%,transparent)}
+$M .v9f-none{margin:0;font-size:13px;color:var(--muted)}
+/* attendance */
+$M .v9f-held{display:flex;flex-direction:column;gap:8px;margin:0 0 12px;padding:12px 14px;border-radius:14px;border:1px solid color-mix(in srgb,var(--d-accent) 30%,var(--d-line));background:color-mix(in srgb,var(--d-accent) 5%,transparent)}
+$M .v9f-held>b{font-size:14px;color:var(--ink)}
+$M .v9f-held .seg{display:inline-flex;flex-wrap:wrap;gap:4px;align-self:flex-start}
+$M .v9f-held .seg button.on,$M .v9f-hwfor .seg button.on{background:var(--d-foil)!important;color:var(--d-accent-ink)!important}
+$M .v9f-hw{display:grid;grid-template-columns:2fr 1fr;gap:10px}$M .v9f-hw[hidden]{display:none}
+$M .v9f-late .fld label,$M .v9f-late label{color:var(--amber)}
+$M .v9f-note{display:flex;align-items:center;gap:6px;margin:0;font-size:13px;color:var(--amber)}$M .v9f-note svg.i{width:15px;height:15px}
+$M .v9f-off{opacity:.35;pointer-events:none;filter:grayscale(.6)}
+$M #view .sc-list .sc-li{flex-wrap:wrap}
+$M .v9f-why{flex-basis:100%;padding-left:52px}$M .v9f-why[hidden]{display:none}
+$M .v9f-why input{width:100%;min-height:38px}
+$M .sc-li.v9f-need .v9f-why input{border-color:color-mix(in srgb,var(--amber) 55%,var(--d-line))!important}
+$M .v9f-cal{display:inline-flex;align-items:center;gap:4px;margin-top:4px;font:700 12px var(--f-ui);padding:3px 8px;border-radius:8px;border:1px solid var(--d-line);background:var(--d-surface-2);color:var(--d-accent);cursor:pointer}
+$M .v9f-cal svg.i{width:13px;height:13px}$M .v9f-cal:hover{border-color:var(--d-accent)}
+$M .v9f-ch{display:flex;align-items:center;justify-content:center;gap:16px;margin-bottom:10px}$M .v9f-ch b{font-size:17px;color:var(--ink);min-width:150px;text-align:center}
+$M .v9f-sum{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:12px}
+$M .v9f-sum>div{text-align:center;padding:8px 4px;border-radius:12px;--c:var(--muted);background:color-mix(in srgb,var(--c) 10%,transparent);border:1px solid color-mix(in srgb,var(--c) 28%,transparent)}
+$M .v9f-sum .ok{--c:var(--emerald)}$M .v9f-sum .warn{--c:var(--amber)}$M .v9f-sum .info{--c:var(--sapphire)}$M .v9f-sum .bad{--c:var(--ruby)}
+$M .v9f-sum b{display:block;font-size:20px;font-weight:800;color:var(--c)}$M .v9f-sum small{font-size:12px;color:var(--ink-2,var(--muted))}
+$M .v9f-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+$M .v9f-grid .h{text-align:center;font-size:12px;font-weight:700;color:var(--muted);padding:4px 0}
+$M .v9f-d{min-height:64px;padding:6px;border-radius:10px;border:1px solid var(--d-line);background:var(--d-surface-2);display:flex;flex-direction:column;gap:4px}
+$M .v9f-d.e{background:transparent;border-style:dashed;opacity:.4}
+$M .v9f-d.today{border-color:var(--d-accent)}
+$M .v9f-d span{font-size:12px;font-weight:700;color:var(--muted)}$M .v9f-d.has span{color:var(--ink)}
+$M .v9f-d div{display:flex;flex-wrap:wrap;gap:3px}
+$M .v9f-d i{font-style:normal;font-size:12px;font-weight:800;padding:1px 6px;border-radius:6px;--c:var(--muted);color:var(--c);background:color-mix(in srgb,var(--c) 15%,transparent)}
+$M .v9f-d i.k-P{--c:var(--emerald)}$M .v9f-d i.k-A{--c:var(--ruby)}$M .v9f-d i.k-L{--c:var(--amber)}$M .v9f-d i.k-E{--c:var(--sapphire)}
+$M .v9f-ul{margin:0;padding-left:18px;font-size:13px;color:var(--ink-2,var(--muted));display:grid;gap:4px}$M .v9f-ul b{color:var(--ink)}
+@media (max-width:640px){$M .v9f-sum{grid-template-columns:repeat(3,1fr)}$M .v9f-d{min-height:52px;padding:4px}$M .v9f-why{padding-left:0}$M .v9f-hw{grid-template-columns:1fr}}
+/* homework */
+$M .v9f-hwfor,$M .v9f-att{margin-top:14px;display:flex;flex-direction:column;gap:8px}
+$M .v9f-hwfor>b,$M .v9f-att>b{font-size:14px;color:var(--ink)}
+$M .v9f-hwfor .seg{display:inline-flex;gap:4px;align-self:flex-start}
+$M .v9f-picks{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px}
+$M .v9f-pick{display:flex!important;align-items:center;gap:10px;padding:8px 10px;border-radius:10px;border:1px solid var(--d-line);background:var(--d-surface-2);cursor:pointer}
+$M .v9f-pick input{width:18px!important;height:18px!important;min-height:0!important;flex:none;accent-color:var(--d-accent)}
+$M .v9f-pick:has(input:checked){border-color:var(--d-accent);background:color-mix(in srgb,var(--d-accent) 9%,var(--d-surface-2))}
+$M .v9f-pick span{display:flex;flex-direction:column;font-size:13.5px;color:var(--ink)}$M .v9f-pick small{font-size:12px;color:var(--muted)}
+$M .v9f-up{align-self:flex-start;cursor:pointer}$M .v9f-att>small{font-size:12.5px;color:var(--muted)}
+$M #v9f-fl{display:grid;gap:6px}
+$M .v9f-file{display:flex;align-items:center;gap:10px;padding:6px 8px;border-radius:10px;border:1px solid var(--d-line);background:var(--d-surface-2)}
+$M .v9f-file img,$M .v9f-fi{width:44px;height:44px;border-radius:8px;object-fit:cover;flex:none}
+$M .v9f-fi{display:grid;place-items:center;font-size:12px;font-weight:800;color:var(--d-accent);background:color-mix(in srgb,var(--d-accent) 12%,transparent)}
+$M .v9f-file b{display:block;font-size:13px;color:var(--ink);word-break:break-all}$M .v9f-file small{font-size:12px;color:var(--muted)}
+$M .v9f-x{border:0;background:transparent;color:var(--muted);cursor:pointer;padding:4px}$M .v9f-x svg.i{width:16px;height:16px}
+$M .v9f-tags{display:inline-flex;flex-wrap:wrap;gap:4px;margin-left:6px;vertical-align:middle}
+$M .v9f-for{font-size:12px;font-weight:700;padding:1px 7px;border-radius:6px;color:var(--sapphire);background:color-mix(in srgb,var(--sapphire) 13%,transparent)}
+$M .v9f-fa{font-size:12px;font-weight:600;padding:1px 7px;border-radius:6px;border:1px solid var(--d-line);color:var(--d-accent);text-decoration:none}

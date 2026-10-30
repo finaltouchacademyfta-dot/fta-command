@@ -1,0 +1,19 @@
+$M .v9l-top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:6px}
+$M .v9l-who b{display:block;font-size:16px;color:var(--ink)}$M .v9l-who small{font-size:13px;color:var(--muted)}
+$M .v9l-ss{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:var(--muted)}
+$M .v9l-ss select,$M .v9l-ssw select{width:auto!important;min-height:34px!important;padding:0 34px 0 10px!important;font-size:13px!important}
+$M .v9l-ssw{display:inline-flex;align-items:center;gap:6px;margin-left:auto;font-size:12.5px;color:var(--muted)}
+$M .qc-h .v9l-ssw select{min-height:30px!important}
+$M .v9l-sum{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:6px 0 12px}
+$M .v9l-sum>div{padding:10px 12px;border-radius:12px;border:1px solid var(--d-line);background:var(--d-surface-2)}$M .v9l-sum small{display:block;font-size:12px;color:var(--muted)}$M .v9l-sum b{font-size:18px;color:var(--ink)}
+$M .v9l-sum .ok b{color:var(--emerald)}$M .v9l-sum .bad b{color:var(--ruby)}
+$M .v9l-t td{vertical-align:middle}$M .v9l-t tr.off td:not(:nth-child(2)){opacity:.55}
+$M .v9l-t select{min-width:150px}
+$M .v9l-p{display:flex;align-items:center;gap:4px;font-size:12.5px;color:var(--ink-2,var(--muted));white-space:nowrap}$M .v9l-p i{color:var(--amber);font-style:normal}
+$M .v9l-i{border:0;background:transparent;color:var(--d-accent);cursor:pointer;padding:3px;border-radius:6px}$M .v9l-i.d{color:var(--ruby)}$M .v9l-i svg.i{width:14px;height:14px}$M .v9l-i:hover{background:color-mix(in srgb,currentColor 12%,transparent)}
+$M .v9l-stl{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:12px;font-size:13px}$M .v9l-stl>b{color:var(--ink);margin-right:4px}
+$M .v9l-chip{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:8px;font-size:12.5px;font-weight:700;--c:var(--muted);color:var(--c);background:color-mix(in srgb,var(--c) 12%,transparent)}
+$M .v9l-chip.ok{--c:var(--emerald)}$M .v9l-chip.info{--c:var(--sapphire)}$M .v9l-chip.gold{--c:var(--d-accent)}$M .v9l-chip.warn{--c:var(--amber)}
+$M .v9l-chip button{border:0;background:transparent;color:inherit;cursor:pointer;padding:0;display:inline-grid}$M .v9l-chip svg.i{width:12px;height:12px}
+$M .v9l-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:8px 0 12px}
+@media (max-width:700px){$M .v9l-sum{grid-template-columns:1fr 1fr}$M .v9l-sum>div:first-child{grid-column:1/-1}$M .v9l-t thead{display:none}$M .v9l-t tr{display:grid;grid-template-columns:1fr 1fr;gap:6px 10px;padding:10px 0;border-bottom:1px solid var(--d-line)}$M .v9l-t td{border:0!important;padding:0!important}$M .v9l-t td[data-l]:not([data-l=""])::before{content:attr(data-l);display:block;font-size:12px;color:var(--muted)}$M .v9l-t td.m,$M .v9l-t td[data-l="Payments"]{grid-column:1/-1}}

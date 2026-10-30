@@ -1,0 +1,49 @@
+/* ===== v9 fix layer (worker X) — layout repairs, new skins only ===== */
+/* 1. Checkboxes and radios: the base rule `input,select,textarea{width:100%;min-height:42px;padding…}` also
+      hit tick boxes, so a checkbox grew to the full row width (Assign students, circle pickers, etc.). */
+$M input[type=checkbox],$M input[type=radio]{width:18px;height:18px;min-width:18px;min-height:0;padding:0;flex:none;border:0;background:none;box-shadow:none;vertical-align:middle;accent-color:var(--d-accent);cursor:pointer}
+$M label.sc-li:has(> input[type=checkbox]),$M label.sc-li:has(> input[type=radio]){align-items:center;gap:12px}
+$M label.sc-li:has(> input[type=checkbox]),$M label.sc-li:has(> input[type=radio]){display:flex;flex-wrap:nowrap}
+$M label.sc-li > .grow{flex:1;min-width:0}
+/* 2. Name / amount rows (.li) inside narrow cards: the amount kept its width and squeezed the name to ~30px */
+$M .li{flex-wrap:wrap;row-gap:4px}
+$M .li > .m{flex:1 1 130px;min-width:0}
+$M .li > .v{margin-left:auto;white-space:nowrap}
+@media (min-width:641px) and (max-width:1100px){$M .grid.g3{grid-template-columns:repeat(2,minmax(0,1fr))}}
+/* 3. Choice tiles (question type, notice type…): five narrow columns made each word its own line */
+$M .v8-types{grid-template-columns:repeat(auto-fill,minmax(160px,1fr))!important}
+/* 4. Week routine: 7 × 150px columns were 32px wider than the card at 1440 with the menu open → needless scrollbar */
+@media (min-width:1101px){$M .rt-wk{grid-template-columns:repeat(7,minmax(128px,1fr))}}
+/* 5. Dates and money in table cells stay on one line ("7 / Sep / 2026" stacked before) */
+$M td.v9x-nw,$M th.v9x-nw{white-space:nowrap}
+/* 6. List rows (.sc-li: time · text · button) in half-width cards: the time and button kept their width and the
+      text column shrank to ~20px, one word per line, with the button drawn over it (Teacher home "Today's classes"). */
+$M .sc-li{flex-wrap:wrap;row-gap:8px}
+$M .sc-li > .grow{flex:1 1 170px;min-width:0}
+$M .sc-li > .btn,$M .sc-li > button.btn{margin-left:auto}
+$M label.sc-li:has(> input[type=checkbox]) > .grow,$M label.sc-li:has(> input[type=radio]) > .grow{flex:1 1 0}
+/* 7. Tick rows show their state: plain edge until ticked, then a gold edge and tint */
+$M label.sc-li:has(> input[type=checkbox]),$M label.sc-li:has(> input[type=radio]){cursor:pointer;transition:border-color .15s ease,background-color .15s ease}
+$M label.sc-li:has(> input:checked){border-color:color-mix(in srgb,var(--d-accent) 55%,var(--d-line))!important;background:color-mix(in srgb,var(--d-accent) 8%,var(--d-surface))!important}
+$M label.sc-li:has(> input[type=checkbox])::before,$M label.sc-li:has(> input[type=radio])::before{opacity:0;transition:opacity .15s}
+$M label.sc-li:has(> input:checked)::before{opacity:1}
+/* 8. Minimum readable size (12px) for small labels the type layer missed */
+$M :is(body,#_v9x) .bn-eye,$M :is(body,#_v9x) .cc-eye,$M :is(body,#_v9x) .cc-fig small,$M :is(body,#_v9x) .cc-quote cite,$M :is(body,#_v9x) .rs-q cite,$M :is(body,#_v9x) .pm-tag,$M :is(body,#_v9x) .cck .tg,$M :is(body,#_v9x) .top > .tg,$M :is(body,#_v9x) .mn-hist h4,$M :is(body,#_v9x) .mn-impact h4,$M :is(body,#_v9x) .qbx small,$M :is(body,#_v9x) .sc-eyebrow,$M :is(body,#_v9x) .v8-ans small,$M :is(body,#_v9x) .v8-cm-h span,$M :is(body,#_v9x) .cal-h span,$M :is(body,#_v9x) .v8-mp-t small,$M :is(body,#_v9x) .v8-kind,$M :is(body,#_v9x) .v8-new,$M :is(body,#_v9x) #sheet .sh small,$M :is(body,#_v9x) #sheet .sh > div > small{font-size:12px!important}
+/* 9. Filter chips never break a two-word label ("Waiting for approval") — the chip row scrolls instead */
+$M .chips > button{white-space:nowrap}
+/* 10. Narrow first columns in scrollable tables: permission matrix and list titles keep a readable width */
+$M .sc-mat td:first-child,$M .sc-mat th:first-child{min-width:170px}
+$M table.t td.ttl{min-width:150px}
+/* 11. Monthly payment table (scrolls sideways like QIT): money boxes keep room for 5–6 digits */
+$M .pu-t .v9-in{min-width:112px}
+/* 12. Marks / permission grids on phone: no column narrower than a short label */
+$M .sc-mat td{min-width:96px}
+/* 13. More small labels to 12px: programme chips, circle member counts, teacher share caption, calendar event chips, pinned badge */
+$M :is(body,#_v9x) .v8-chips > span,$M :is(body,#_v9x) .v8-cpick small,$M :is(body,#_v9x) .v8-myp small,$M :is(body,#_v9x) .v8-ev,$M :is(body,#_v9x) .v8-ev *,$M :is(body,#_v9x) .v8-pin{font-size:12px!important}
+/* calendar month cells: an event chip stays inside its day (it is shortened with … and the full title shows on hover) */
+$M .v8-cd{min-width:0;overflow:hidden}
+$M .v8-ev{max-width:100%;min-width:0;overflow:hidden;text-overflow:ellipsis}
+/* 14. Amount boxes on phone: the caption under a figure wraps instead of running out of its box */
+$M .qbx small{white-space:normal!important;overflow-wrap:anywhere;text-overflow:clip!important}
+/* 15. Notice letterhead on screen: its small print reads at 12px (print keeps the A4 sizes) */
+@media screen{$M :is(body,#_v9x) .v8-paper small,$M :is(body,#_v9x) .v8-paper .v8-paper-kind,$M :is(body,#_v9x) .v8-paper span{font-size:12px!important}}

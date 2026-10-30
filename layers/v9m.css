@@ -1,0 +1,5 @@
+$M .v9m-del.ic{padding:0 9px!important;min-width:34px}
+$M .v9m-del svg.i{width:15px;height:15px}
+$M tr .v9m-del.ic{min-height:30px!important;vertical-align:middle}
+$M .qc-a{flex-wrap:wrap!important;min-width:0}
+@media (max-width:700px){$M .qc-a{display:flex!important;gap:6px!important;width:100%}$M .qc-a .btn{flex:1 1 auto;min-width:0}$M .qc-a .btn.ic{flex:0 0 auto}}

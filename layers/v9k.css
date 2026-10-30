@@ -1,0 +1,15 @@
+/* v9k · menu rail and logo (owner 29 Oct) */
+$M #side .brand{display:flex!important;align-items:center!important;gap:12px!important;min-height:76px;padding:14px 14px 14px 14px!important}
+$M #side .brand .logo{width:48px!important;height:48px!important;flex:none!important;border-radius:14px!important;display:grid!important;place-items:center;padding:5px!important;overflow:hidden;
+  background:radial-gradient(circle at 50% 35%,color-mix(in srgb,var(--d-accent) 18%,transparent),transparent 70%),var(--d-surface-2)!important;border:1px solid color-mix(in srgb,var(--d-accent) 45%,var(--d-line))!important;box-shadow:inset 0 1px 0 var(--d-hl),0 6px 14px -8px rgba(var(--d-shadow-rgb),var(--d-shadow-a))!important}
+$M #side .brand .logo img{width:100%!important;height:100%!important;object-fit:contain!important;display:block}
+$M #side .brand>div:not(.logo){min-width:0;overflow:hidden}
+$M #side .brand b,$M #side .brand span{white-space:nowrap}
+@media (min-width:641px){
+  $M body:not(.side-pin) #side:not(:hover) .brand{justify-content:center!important;padding:14px 0!important}
+  $M body:not(.side-pin) #side:not(:hover) .brand>:not(.logo){display:none!important}
+  $M body:not(.side-pin) #side:not(:hover) .nav{justify-content:flex-start!important;padding:6px 0 6px 8px!important;gap:14px!important;overflow:hidden!important;white-space:nowrap}
+  $M body:not(.side-pin) #side:not(:hover) .nav .cnt{position:absolute!important;left:34px;top:0;min-width:18px;height:18px;line-height:18px;padding:0 4px!important;font-size:11px!important;transform:none!important}
+  $M body:not(.side-pin) #side:not(:hover) .navg h6{opacity:0!important;height:10px;margin:6px 0!important;overflow:hidden}
+  $M body:not(.side-pin) #side:not(:hover) .side-foot,$M body:not(.side-pin) #side:not(:hover) #sidefoot{opacity:0;pointer-events:none}
+}

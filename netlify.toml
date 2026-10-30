@@ -1,0 +1,81 @@
+# =====================================================================
+# FTA Command Centre · Netlify settings (read automatically on every deploy)
+# The site is already built and committed in site/. Netlify only writes
+# site/config.js + site/_headers from your environment variables.
+# =====================================================================
+[build]
+  publish   = "site"
+  command   = "node tools/make-config.mjs"
+  functions = "netlify/functions"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+[functions]
+  node_bundler = "esbuild"
+  # the API function imports the shared access policy from public/vendor
+  included_files = ["public/vendor/fta-api-core.js", "public/vendor/fta-policy.js", "public/vendor/fta-notify.js", "server/*.mjs"]
+
+# ---------- security headers (every response) ----------
+# The Content-Security-Policy is written to site/_headers by tools/make-config.mjs,
+# so it can name your exact Supabase project instead of every *.supabase.co.
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Strict-Transport-Security    = "max-age=63072000; includeSubDomains; preload"
+    X-Frame-Options              = "DENY"
+    X-Content-Type-Options       = "nosniff"
+    Referrer-Policy              = "strict-origin-when-cross-origin"
+    Permissions-Policy           = "camera=(), microphone=(), geolocation=(), payment=(), usb=(), serial=(), bluetooth=(), magnetometer=(), gyroscope=(), accelerometer=(), interest-cohort=(), browsing-topics=()"
+    Cross-Origin-Opener-Policy   = "same-origin-allow-popups"
+    Cross-Origin-Resource-Policy = "same-origin"
+    X-Permitted-Cross-Domain-Policies = "none"
+    X-DNS-Prefetch-Control       = "off"
+
+# ---------- caching ----------
+# the app page and its config always revalidate, so an update shows at once
+[[headers]]
+  for = "/"
+  [headers.values]
+    Cache-Control = "no-cache"
+[[headers]]
+  for = "/index.html"
+  [headers.values]
+    Cache-Control = "no-cache"
+[[headers]]
+  for = "/config.js"
+  [headers.values]
+    Cache-Control = "no-cache, no-store, must-revalidate"
+# the app's background worker and install file: always fresh, so updates and new icons arrive at once
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+    Cache-Control = "no-cache, no-store, must-revalidate"
+    Service-Worker-Allowed = "/"
+[[headers]]
+  for = "/manifest.webmanifest"
+  [headers.values]
+    Content-Type  = "application/manifest+json"
+    Cache-Control = "public, max-age=3600, must-revalidate"
+[[headers]]
+  for = "/icons/*"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"
+# vendor libraries change name/version only with a new deploy: cache for a day, revalidate after
+[[headers]]
+  for = "/vendor/*"
+  [headers.values]
+    Cache-Control = "public, max-age=86400, must-revalidate"
+# the API (netlify/functions/api.mjs, served at /api) is never cached
+[[headers]]
+  for = "/api"
+  [headers.values]
+    Cache-Control = "no-store"
+
+# ---------- single-page app ----------
+# any unknown path (e.g. a refreshed deep link) opens the app; real files and the
+# /api function (it declares its own path, which Netlify serves before redirects) still win
+[[redirects]]
+  from   = "/*"
+  to     = "/index.html"
+  status = 200

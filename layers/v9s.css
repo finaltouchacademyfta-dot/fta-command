@@ -1,0 +1,16 @@
+/* windows open in the middle of the screen (owner 29 Oct) — desktop and tablet; phones keep the bottom sheet */
+@media (min-width:641px){
+  $M #ov:has(#sheet.drawer){justify-content:center!important;align-items:center!important;padding:24px!important}
+  $M #sheet.drawer{width:min(760px,100%)!important;height:auto!important;max-height:calc(100vh - 48px)!important;border-radius:20px!important;border:1px solid var(--d-line)!important;overflow:auto!important;animation:v9s-in .22s cubic-bezier(.2,.8,.2,1) both!important;box-shadow:0 30px 80px -24px rgba(var(--d-shadow-rgb),calc(var(--d-shadow-a)*1.8))!important}
+  $M #sheet.drawer.wide{width:min(980px,100%)!important}
+  $M #sheet.drawer.wide.xwide{width:min(1160px,100%)!important}
+}
+@keyframes v9s-in{from{opacity:0;transform:translateY(10px) scale(.98)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){$M #sheet.drawer{animation:none!important}}
+/* teacher share editing */
+$M .v9s-c{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:4px;margin-top:4px}
+$M .v9s-tag{font-size:12px;font-weight:700;padding:1px 7px;border-radius:6px;color:var(--d-accent);background:color-mix(in srgb,var(--d-accent) 13%,transparent);white-space:nowrap}
+$M .v9s-e{display:inline-flex;align-items:center;gap:4px;font:700 12px var(--f-ui);padding:4px 8px;border-radius:8px;border:1px solid var(--d-line);background:var(--d-surface-2);color:var(--d-accent);cursor:pointer;white-space:nowrap;transition:border-color .15s,background .15s}
+$M .v9s-e svg.i{width:13px;height:13px}
+$M .v9s-e:hover{border-color:var(--d-accent);background:color-mix(in srgb,var(--d-accent) 10%,var(--d-surface-2))}
+$M .v9s-hint{display:flex;align-items:center;gap:8px;margin:0 0 10px;font-size:13px;color:var(--muted)}$M .v9s-hint svg.i{width:16px;height:16px;flex:none;color:var(--d-accent)}$M .v9s-hint b{color:var(--ink)}

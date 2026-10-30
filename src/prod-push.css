@@ -1,0 +1,29 @@
+/* FTA · notifications sheet, invitation bar and switches (all themes; FTA Premium first) */
+.fp-sheet{--fp-a:var(--d-accent,var(--gold,#C9A44C));display:grid;gap:14px}
+.fp-head{display:flex;align-items:center;gap:12px}
+.fp-head>svg.i,.fp-app>svg.i{width:26px;height:26px;flex:none;color:var(--fp-a);fill:none;stroke:currentColor;stroke-width:1.7}
+.fp-head .grow,.fp-app .grow,.fp-cat .grow{flex:1;min-width:0}
+.fp-head .grow>b,.fp-app .grow>b,.fp-cat .grow>b{display:block;color:var(--ink)}
+.fp-sheet strong,.fp-ban strong{display:inline;font-weight:700;color:var(--ink)}
+.fp-head small,.fp-app small,.fp-cat small{display:block;font-size:12.5px;color:var(--muted);line-height:1.45}
+.fp-why,.fp-help{margin:0;font-size:13.5px;line-height:1.55;color:var(--ink-2,var(--muted))}
+.fp-acts{display:flex;flex-wrap:wrap;gap:8px}
+.fp-acts .btn svg.i,.fp-bb .btn svg.i{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.8}
+.fp-h3{margin:4px 0 0;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.fp-cats{display:grid;gap:2px;border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.fp-cat{display:flex;align-items:center;gap:12px;padding:11px 14px;cursor:pointer;position:relative;background:color-mix(in srgb,var(--fp-a) 3%,transparent)}
+.fp-cat+.fp-cat{border-top:1px solid var(--line)}
+.fp-cat input{position:absolute;opacity:0;width:1px;height:1px}
+.fp-cat i{flex:none;width:42px;height:24px;border-radius:99px;background:color-mix(in srgb,var(--muted) 35%,transparent);position:relative;transition:background .18s}
+.fp-cat i::after{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.35);transition:transform .18s}
+.fp-cat input:checked+i{background:var(--fp-a)}
+.fp-cat input:checked+i::after{transform:translateX(18px)}
+.fp-cat input:focus-visible+i{outline:2px solid var(--fp-a);outline-offset:2px}
+.fp-app{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:12px 14px;border:1px dashed color-mix(in srgb,var(--fp-a) 45%,var(--line));border-radius:14px}
+.fp-ban>svg.i{fill:none;stroke:currentColor;stroke-width:1.7}
+.fp-bb{display:flex;gap:8px;flex-wrap:wrap}
+.fp-foot{margin-top:10px;width:100%;text-align:left}
+.fp-foot .ic svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8}
+@media (max-width:560px){.fp-bb{width:100%}.fp-bb .btn{flex:1 1 auto;justify-content:center}}
+/* installed app: room for the phone's status bar */
+@media (display-mode:standalone){html{background:var(--bg,#08090B)}}

@@ -1,0 +1,27 @@
+{
+  "id": "/",
+  "name": "Final Touch Academy",
+  "short_name": "FTA",
+  "description": "Final Touch Academy · Command Centre — students, teachers, classes, notices and accounts in one place.",
+  "lang": "en",
+  "dir": "ltr",
+  "start_url": "/?source=app",
+  "scope": "/",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "any",
+  "background_color": "#08090B",
+  "theme_color": "#08090B",
+  "categories": ["education", "productivity", "business"],
+  "prefer_related_applications": false,
+  "icons": [
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/maskable-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "/icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "screenshots": [
+    { "src": "/icons/screen-wide.png", "sizes": "1280x800", "type": "image/png", "form_factor": "wide", "label": "Dashboard in FTA Premium" },
+    { "src": "/icons/screen-phone.png", "sizes": "780x1688", "type": "image/png", "form_factor": "narrow", "label": "FTA on a phone" }
+  ]
+}

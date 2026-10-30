@@ -1,0 +1,106 @@
+/* money1 · QIT-style student payment update */
+$M .pu{display:flex;flex-direction:column;gap:14px}
+$M .pu-who{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:14px;background:var(--d-sheen),var(--d-surface-2);border:1px solid var(--d-line)}
+$M .pu-who>div{flex:1;min-width:0}$M .pu-who b{display:block;color:var(--ink);font-size:15px}$M .pu-who small{font-size:12.5px;color:var(--muted)}
+$M .pu-mono{width:42px;height:42px;flex:none;border-radius:12px;display:grid;place-items:center;font-weight:800;background:var(--d-foil);color:var(--d-accent-ink);box-shadow:var(--d-foil-sh)}
+$M .pu input[readonly]{opacity:.75;cursor:not-allowed}
+$M .pu-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+$M .pu-full{display:inline-flex;align-items:center;gap:8px;min-height:40px;padding:0 14px;border-radius:10px;cursor:pointer;font:700 14px var(--f-ui);color:var(--ink);background:var(--d-sheen),var(--d-surface-2);border:1px solid var(--d-line);transition:border-color .15s,box-shadow .15s,background .15s}
+$M .pu-full svg.i{width:16px;height:16px;color:var(--emerald)}
+$M .pu-full:hover{border-color:color-mix(in srgb,var(--emerald) 55%,var(--d-line))}
+$M .pu-full.on{border-color:var(--emerald);background:color-mix(in srgb,var(--emerald) 14%,var(--d-surface-2));box-shadow:0 0 0 3px color-mix(in srgb,var(--emerald) 18%,transparent)}
+$M .pu-hint{font-size:13px;color:var(--muted)}
+$M .pu-pp{margin:0}
+$M .pu-after{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:8px;font-size:13px;color:var(--muted)}
+$M .pu-st{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:700;padding:3px 9px;border-radius:7px;white-space:nowrap;color:var(--c);background:color-mix(in srgb,var(--c) 13%,transparent)}
+$M .pu-st svg.i{width:13px;height:13px}
+$M .pu-st.ok{--c:var(--emerald)}$M .pu-st.warn{--c:var(--amber)}$M .pu-st.bad{--c:var(--ruby)}$M .pu-st.n{--c:var(--muted)}
+/* monthly table */
+$M .pu-tw{overflow-x:auto;border:1px solid var(--d-line);border-radius:14px;background:var(--d-sheen),var(--d-surface)}
+$M .pu-t{width:100%;border-collapse:collapse;font-size:13.5px;min-width:820px}
+$M .pu-t th{text-align:left;padding:10px 12px;font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);background:color-mix(in srgb,var(--d-accent) 7%,transparent);border-bottom:1px solid var(--d-line);white-space:nowrap}
+$M .pu-t td{padding:10px 12px;border-top:1px solid var(--d-line);color:var(--ink-2,var(--ink));vertical-align:middle}
+$M .pu-t tbody tr:first-child td{border-top:0}
+$M .pu-t tr.run td{background:color-mix(in srgb,var(--d-accent) 5%,transparent)}
+$M .pu-t td.m b{color:var(--ink);white-space:nowrap}
+$M .pu-run{display:inline-block;margin-left:8px;font-size:12px;font-weight:700;padding:1px 8px;border-radius:999px;color:var(--emerald);background:color-mix(in srgb,var(--emerald) 14%,transparent)}
+$M .pu-t .num{font-variant-numeric:tabular-nums;white-space:nowrap;color:var(--ink);font-weight:600}
+$M .pu-t .num.ok{color:var(--emerald)}$M .pu-t .num.bad{color:var(--ruby)}
+$M .pu-t .nt{max-width:220px;font-size:12.5px;color:var(--muted)}
+$M .pu-t td.a{text-align:right;white-space:nowrap}
+$M .pu-t tfoot td{border-top:2px solid var(--d-line);font-weight:800;background:color-mix(in srgb,var(--d-accent) 5%,transparent)}
+$M .pu-wait{display:block;margin-top:3px;font-size:12px;color:var(--amber)}
+$M .pu-empty{text-align:center;color:var(--muted);padding:18px!important}
+$M .pu-fut{margin-top:10px}$M .pu-fut summary{cursor:pointer;font-weight:700;color:var(--ink);padding:6px 0}
+$M .pu-sec{margin-top:16px}$M .pu-sec h3{font-size:16px;margin:0 0 10px;color:var(--ink)}
+/* payments: by student */
+$M .pu-sw{display:inline-flex;margin:4px 0 12px;padding:4px;gap:4px}
+$M .pu-sw button{display:inline-flex;align-items:center;gap:8px;min-height:38px;padding:0 14px}
+$M .pu-sw button svg.i{width:17px;height:17px}
+$M .pu-bar{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;padding:12px 14px;margin-bottom:12px}
+$M .pu-bl{display:flex;align-items:center;gap:10px;flex-wrap:wrap;flex:1;min-width:260px}
+$M .pu-bl .v8-mp{min-width:180px}
+$M .pu-q{display:flex;align-items:center;gap:8px;flex:1;min-width:200px;min-height:42px;padding:0 12px;border-radius:12px;background:var(--d-surface-2);border:1px solid var(--d-line)}
+$M .pu-q:focus-within{border-color:var(--d-accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--d-accent) 22%,transparent)}
+$M .pu-q svg.i{width:18px;height:18px;color:var(--muted);fill:none;stroke:currentColor;stroke-width:2}
+$M .pu-q input{flex:1;min-width:0;border:0!important;background:transparent!important;box-shadow:none!important;padding:0!important;min-height:38px;color:var(--ink);font-size:14px;outline:none}
+$M .pu-tot{display:flex;gap:16px;flex-wrap:wrap;font-size:13px;color:var(--muted)}
+$M .pu-tot b{margin-left:4px;color:var(--ink);white-space:nowrap}$M .pu-tot b.ok{color:var(--emerald)}$M .pu-tot b.bad{color:var(--ruby)}
+$M .pu-chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+$M .pu-chips button{display:inline-flex;align-items:center;gap:8px;min-height:38px;padding:0 14px;border-radius:10px;cursor:pointer;font:600 13.5px var(--f-ui);color:var(--ink-2,var(--ink));background:var(--d-sheen),var(--d-surface-2);border:1px solid var(--d-line)}
+$M .pu-chips button b{font-size:12px;padding:1px 7px;border-radius:999px;background:color-mix(in srgb,var(--d-accent) 16%,transparent);color:var(--ink)}
+$M .pu-chips button.on{border-color:var(--d-accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--d-accent) 18%,transparent);color:var(--ink)}
+$M .pu-hide-st{display:none!important}
+/* new student form */
+$M .pu-new{margin-top:14px;padding:12px 14px;border-radius:12px;border:1px dashed color-mix(in srgb,var(--d-accent) 40%,var(--d-line));font-size:13px;color:var(--muted);line-height:1.55}
+$M .pu-new>b{display:block;color:var(--ink);font-size:14px;margin-bottom:2px}$M .pu-new span b{color:var(--ink)}
+$M .pu-np{display:flex;flex-wrap:wrap;gap:8px 16px;margin-top:8px}$M .pu-np span{white-space:nowrap}$M .pu-np b{color:var(--ink);margin-left:4px}
+@media (max-width:640px){$M .pu-bar{flex-direction:column;align-items:stretch}$M .pu-tot{gap:8px 14px}}
+$M .pu-ivb{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:0 0 12px;font-size:13px;color:var(--muted)}
+@media (max-width:640px){
+  $M .pu-tw{overflow:visible;border:0;background:none}
+  $M .pu-t{min-width:0;display:block}
+  $M .pu-t thead{display:none}
+  $M .pu-t tbody,$M .pu-t tfoot{display:grid;gap:10px}
+  $M .pu-t tr{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px 10px;padding:12px;border:1px solid var(--d-line);border-radius:14px;background:var(--d-sheen),var(--d-surface)}
+  $M .pu-t td{display:block;padding:0;border:0!important;background:none!important}
+  $M .pu-t td.m{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;gap:8px}
+  $M .pu-t td[data-l]::before{content:attr(data-l);display:block;font-size:12px;font-weight:600;color:var(--muted);margin-bottom:2px}
+  $M .pu-t td[data-l="Status"]{grid-column:1/-1}
+  $M .pu-t td.nt{grid-column:1/-1;max-width:none}
+  $M .pu-t td.a{grid-column:1/-1;text-align:left}
+  $M .pu-t td.a:empty{display:none}
+  $M .pu-t tfoot td:empty{display:none}
+}
+$M .pu-off{display:none!important}
+/* money1 part 2 */
+$M .pu-tr{margin-left:6px;vertical-align:middle}
+$M .pu-mt{margin-top:16px;padding:14px;border-radius:16px;border:1px solid var(--d-line);background:var(--d-sheen),var(--d-surface)}
+$M .pu-mh{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:10px}
+$M .pu-mh b{display:block;font-size:16px;color:var(--ink)}$M .pu-mh small{font-size:12.5px;color:var(--muted)}
+$M .pu-ft td{vertical-align:middle}
+$M .pu-ft .v9-in{min-height:38px;min-width:110px}
+$M .pu-ft select,$M .pu-ft input[type=date],$M .pu-ft input:not([type]){min-height:38px!important;font-size:13.5px!important;min-width:0;width:100%}
+$M .pu-ft select{min-width:120px}$M .pu-ft input[type=date]{min-width:140px}$M .pu-ft td[data-l="Note"] input{min-width:130px}
+$M .pu-ft tr.off td:not(:first-child):not(:nth-child(2)){opacity:.4}
+$M .pu-fu{margin-left:6px;font-size:11.5px;font-weight:700;padding:1px 7px;border-radius:6px;color:var(--sapphire);background:color-mix(in srgb,var(--sapphire) 13%,transparent)}
+$M .pu-ftot{display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:10px;font-size:13.5px;color:var(--muted)}$M .pu-ftot b{color:var(--ink);margin-left:4px}$M .pu-ftot b.ok{color:var(--emerald)}$M .pu-ftot b.bad{color:var(--ruby)}
+$M .pu-ft b.bad{color:var(--ruby)}
+$M .mn-prof .pu-ed{align-self:flex-start}
+@media (max-width:760px){
+  $M .pu-ft thead{display:none}
+  $M .pu-ft,$M .pu-ft tbody,$M .pu-ft tr,$M .pu-ft td{display:block;width:100%}
+  $M .pu-ft tr{display:grid;grid-template-columns:1fr 1fr;gap:8px 10px;padding:12px;border-top:1px solid var(--d-line)}
+  $M .pu-ft td{padding:0!important;border:0!important}
+  $M .pu-ft td.m{grid-column:1/-1}
+  $M .pu-ft td[data-l]::before{content:attr(data-l);display:block;font-size:12px;font-weight:600;color:var(--muted);margin-bottom:3px}
+  $M .pu-ft td[data-l="Note"]{grid-column:1/-1}
+  $M .pu-ft .v9-in,$M .pu-ft select,$M .pu-ft input[type=date]{min-width:0}
+}
+@media (min-width:761px){
+  $M .pu-ft th,$M .pu-ft td{padding:8px 6px!important}
+  $M .pu-ft .v9-in{min-width:92px}
+  $M .pu-ft select{min-width:96px}$M .pu-ft input[type=date]{min-width:128px}$M .pu-ft td[data-l="Note"] input{min-width:96px}
+  $M .pu-ft td.m{white-space:nowrap}$M .pu-ft td.m .pu-run,$M .pu-ft td.m .pu-fu{display:table;margin:3px 0 0}
+  $M #sheet.wide:has(.pu-ft){width:min(1180px,calc(100vw - 32px))!important;max-width:none!important}
+}

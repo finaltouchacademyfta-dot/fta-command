@@ -1,0 +1,324 @@
+DO
+CREATE SCHEMA
+CREATE FUNCTION
+GRANT
+GRANT
+CREATE SCHEMA
+CREATE TABLE
+GRANT
+DROP SCHEMA
+CREATE SCHEMA
+GRANT
+--- schema.sql (1st run)
+CREATE EXTENSION
+CREATE TABLE
+INSERT 0 1
+CREATE TABLE
+CREATE INDEX
+CREATE INDEX
+CREATE TABLE
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE TABLE
+CREATE FUNCTION
+psql:/home/claude/prod/supabase/schema.sql:75: NOTICE:  trigger "records_touch" for relation "public.records" does not exist, skipping
+DROP TRIGGER
+CREATE TRIGGER
+psql:/home/claude/prod/supabase/schema.sql:77: NOTICE:  trigger "members_touch" for relation "public.members" does not exist, skipping
+DROP TRIGGER
+CREATE TRIGGER
+psql:/home/claude/prod/supabase/schema.sql:79: NOTICE:  trigger "settings_touch" for relation "public.app_settings" does not exist, skipping
+DROP TRIGGER
+CREATE TRIGGER
+CREATE FUNCTION
+psql:/home/claude/prod/supabase/schema.sql:87: NOTICE:  trigger "audit_no_update" for relation "public.audit_log" does not exist, skipping
+DROP TRIGGER
+CREATE TRIGGER
+CREATE FUNCTION
+psql:/home/claude/prod/supabase/schema.sql:100: NOTICE:  trigger "members_keep_owner" for relation "public.members" does not exist, skipping
+DROP TRIGGER
+CREATE TRIGGER
+CREATE FUNCTION
+CREATE FUNCTION
+CREATE FUNCTION
+CREATE FUNCTION
+REVOKE
+GRANT
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+REVOKE
+REVOKE
+psql:/home/claude/prod/supabase/schema.sql:126: NOTICE:  policy "owner_reads_records" for relation "public.records" does not exist, skipping
+DROP POLICY
+CREATE POLICY
+psql:/home/claude/prod/supabase/schema.sql:128: NOTICE:  policy "owner_reads_members" for relation "public.members" does not exist, skipping
+DROP POLICY
+CREATE POLICY
+psql:/home/claude/prod/supabase/schema.sql:130: NOTICE:  policy "owner_reads_audit" for relation "public.audit_log" does not exist, skipping
+DROP POLICY
+CREATE POLICY
+GRANT
+INSERT 0 1
+CREATE VIEW
+CREATE TABLE
+CREATE INDEX
+psql:/home/claude/prod/supabase/schema.sql:168: NOTICE:  trigger "push_subs_touch" for relation "public.push_subs" does not exist, skipping
+DROP TRIGGER
+CREATE TRIGGER
+CREATE TABLE
+CREATE INDEX
+CREATE TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+REVOKE
+REVOKE
+REVOKE
+--- schema.sql (2nd run: must be idempotent)
+psql:/home/claude/prod/supabase/schema.sql:12: NOTICE:  extension "pgcrypto" already exists, skipping
+CREATE EXTENSION
+psql:/home/claude/prod/supabase/schema.sql:19: NOTICE:  relation "app_settings" already exists, skipping
+CREATE TABLE
+INSERT 0 0
+psql:/home/claude/prod/supabase/schema.sql:38: NOTICE:  relation "members" already exists, skipping
+CREATE TABLE
+psql:/home/claude/prod/supabase/schema.sql:39: NOTICE:  relation "members_one_mentor" already exists, skipping
+CREATE INDEX
+psql:/home/claude/prod/supabase/schema.sql:40: NOTICE:  relation "members_one_student" already exists, skipping
+CREATE INDEX
+psql:/home/claude/prod/supabase/schema.sql:53: NOTICE:  relation "records" already exists, skipping
+CREATE TABLE
+psql:/home/claude/prod/supabase/schema.sql:54: NOTICE:  relation "records_updated_at" already exists, skipping
+CREATE INDEX
+psql:/home/claude/prod/supabase/schema.sql:55: NOTICE:  relation "records_mentors" already exists, skipping
+CREATE INDEX
+psql:/home/claude/prod/supabase/schema.sql:56: NOTICE:  relation "records_students" already exists, skipping
+CREATE INDEX
+psql:/home/claude/prod/supabase/schema.sql:67: NOTICE:  relation "audit_log" already exists, skipping
+CREATE TABLE
+CREATE FUNCTION
+DROP TRIGGER
+CREATE TRIGGER
+DROP TRIGGER
+CREATE TRIGGER
+DROP TRIGGER
+CREATE TRIGGER
+CREATE FUNCTION
+DROP TRIGGER
+CREATE TRIGGER
+CREATE FUNCTION
+DROP TRIGGER
+CREATE TRIGGER
+CREATE FUNCTION
+CREATE FUNCTION
+CREATE FUNCTION
+CREATE FUNCTION
+REVOKE
+GRANT
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+REVOKE
+REVOKE
+DROP POLICY
+CREATE POLICY
+DROP POLICY
+CREATE POLICY
+DROP POLICY
+CREATE POLICY
+GRANT
+INSERT 0 1
+CREATE VIEW
+psql:/home/claude/prod/supabase/schema.sql:166: NOTICE:  relation "push_subs" already exists, skipping
+CREATE TABLE
+psql:/home/claude/prod/supabase/schema.sql:167: NOTICE:  relation "push_subs_email" already exists, skipping
+CREATE INDEX
+DROP TRIGGER
+CREATE TRIGGER
+psql:/home/claude/prod/supabase/schema.sql:179: NOTICE:  relation "push_queue" already exists, skipping
+CREATE TABLE
+psql:/home/claude/prod/supabase/schema.sql:180: NOTICE:  relation "push_queue_open" already exists, skipping
+CREATE INDEX
+psql:/home/claude/prod/supabase/schema.sql:185: NOTICE:  relation "push_sent" already exists, skipping
+CREATE TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+REVOKE
+REVOKE
+REVOKE
+GRANT
+GRANT
+--- data as the server (service role)
+UPDATE 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 1
+INSERT 0 2
+INSERT 0 1
+EXPECT ERROR: Mentor without mentor_id
+psql:tests/b-pg-check.sql:32: ERROR:  new row for relation "members" violates check constraint "members_mentor_has_id"
+DETAIL:  Failing row contains (t9@gmail.com, Mentor, null, null, null, t, 2026-10-30 10:09:21.079262+06, null, 2026-10-30 10:09:21.079325+06).
+EXPECT ERROR: upper-case email
+psql:tests/b-pg-check.sql:34: ERROR:  new row for relation "members" violates check constraint "members_email_check"
+DETAIL:  Failing row contains (Bad@Gmail.com, Admin, null, null, null, t, 2026-10-30 10:09:21.079665+06, null, 2026-10-30 10:09:21.079715+06).
+EXPECT ERROR: unknown role
+psql:tests/b-pg-check.sql:36: ERROR:  new row for relation "members" violates check constraint "members_role_check"
+DETAIL:  Failing row contains (x@gmail.com, God, null, null, null, t, 2026-10-30 10:09:21.079901+06, null, 2026-10-30 10:09:21.079946+06).
+EXPECT ERROR: bad collection name
+psql:tests/b-pg-check.sql:38: ERROR:  new row for relation "records" violates check constraint "records_collection_check"
+DETAIL:  Failing row contains (DROP TABLE, x, {}, {}, {}, f, 2026-10-30 10:09:21.080138+06, null).
+EXPECT ERROR: audit_log append-only (update)
+psql:tests/b-pg-check.sql:40: ERROR:  audit_log is append-only
+CONTEXT:  PL/pgSQL function fta_no_change() line 3 at RAISE
+EXPECT ERROR: audit_log append-only (delete)
+psql:tests/b-pg-check.sql:42: ERROR:  audit_log is append-only
+CONTEXT:  PL/pgSQL function fta_no_change() line 3 at RAISE
+EXPECT ERROR: the only Owner cannot be deleted
+psql:tests/b-pg-check.sql:44: ERROR:  The academy must keep at least one active Owner
+CONTEXT:  PL/pgSQL function fta_keep_owner() line 5 at RAISE
+EXPECT ERROR: the only Owner cannot be demoted
+psql:tests/b-pg-check.sql:46: ERROR:  The academy must keep at least one active Owner
+CONTEXT:  PL/pgSQL function fta_keep_owner() line 5 at RAISE
+EXPECT ERROR: the only Owner cannot be switched off
+psql:tests/b-pg-check.sql:48: ERROR:  The academy must keep at least one active Owner
+CONTEXT:  PL/pgSQL function fta_keep_owner() line 5 at RAISE
+--- a second Owner may leave; then the last one is protected again
+INSERT 0 1
+UPDATE 1
+                     ?column?                     
+--------------------------------------------------
+ owner2 demoted while another Owner exists: Admin
+(1 row)
+
+    ?column?    
+----------------
+ owners left: 1
+(1 row)
+
+--- anon (public key, no sign-in)
+SET
+EXPECT ERROR: permission denied
+psql:tests/b-pg-check.sql:57: ERROR:  permission denied for table records
+EXPECT ERROR: permission denied
+psql:tests/b-pg-check.sql:59: ERROR:  permission denied for table records
+EXPECT ERROR: permission denied
+psql:tests/b-pg-check.sql:61: ERROR:  permission denied for table members
+RESET
+--- authenticated teacher (signed in, but not Owner)
+SET
+SET
+        ?column?         
+-------------------------
+ teacher sees records: 0
+(1 row)
+
+        ?column?         
+-------------------------
+ teacher sees members: 0
+(1 row)
+
+EXPECT ERROR: permission denied (no direct writes)
+psql:tests/b-pg-check.sql:68: ERROR:  permission denied for table records
+EXPECT ERROR: permission denied
+psql:tests/b-pg-check.sql:70: ERROR:  permission denied for table records
+EXPECT ERROR: permission denied
+psql:tests/b-pg-check.sql:72: ERROR:  permission denied for table records
+RESET
+--- authenticated Owner: read-only view of the raw tables
+SET
+SET
+        ?column?        
+------------------------
+ owner my_role(): Owner
+(1 row)
+
+       ?column?        
+-----------------------
+ owner sees records: 2
+(1 row)
+
+      ?column?       
+---------------------
+ owner sees audit: 1
+(1 row)
+
+EXPECT ERROR: permission denied (Owner writes go through the function too)
+psql:tests/b-pg-check.sql:80: ERROR:  permission denied for table records
+RESET
+--- helpers
+SET
+                      ?column?                       
+-----------------------------------------------------
+ my_role/my_mentor for T1@gmail.com: Mentor / MEN-01
+(1 row)
+
+SET
+          ?column?           
+-----------------------------
+ my_student for s1: STU-1001
+(1 row)
+
+                 ?column?                  
+-------------------------------------------
+ bucket: files public=false limit=26214400
+(1 row)
+
+                  ?column?                  
+--------------------------------------------
+ rls: app_settings enabled=true forced=true
+ rls: audit_log enabled=true forced=true
+ rls: members enabled=true forced=true
+ rls: records enabled=true forced=true
+(4 rows)
+
+  ?column?   
+-------------
+ touch: true
+(1 row)
+
+--- push tables: shape, guards, RLS
+INSERT 0 1
+DO
+INSERT 0 1
+INSERT 0 1
+INSERT 0 0
+ reminder key once 
+-------------------
+ t
+(1 row)
+
+ subs stamped 
+--------------
+ t
+(1 row)
+
+SET
+DO
+RESET
+SET
+DO
+RESET
+     result      
+-----------------
+ push tables: ok
+(1 row)
+

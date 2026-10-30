@@ -1,0 +1,18 @@
+{
+  "name": "fta-command-centre",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Final Touch Academy · Command Centre (static app + Netlify Function + Supabase)",
+  "license": "UNLICENSED",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "build": "python3 build.py",
+    "build:demo": "MODE=demo python3 build.py",
+    "build:mock": "MODE=mock python3 build.py",
+    "config": "node tools/make-config.mjs",
+    "test:csp": "node tests/c-csp.js",
+    "test:requirements": "node tests/c-requirements.js",
+    "test:push": "node tests/e-push.js",
+    "icons": "python3 tools/make-icons.py && node tools/make-screens.js"
+  }
+}

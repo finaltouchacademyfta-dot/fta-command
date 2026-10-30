@@ -1,0 +1,38 @@
+/* v9h · student form: year table, extra numbers, subject + board pickers, add-account */
+$M .v9h-yb{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:8px 0 10px}
+$M .v9h-yb select{width:auto!important;min-width:110px}
+$M .v9h-yb small{font-size:12.5px;color:var(--muted);flex-basis:100%}
+$M .v9h-add{display:inline-flex;align-items:center;gap:5px;margin-top:6px;font:700 12.5px var(--f-ui);padding:5px 10px;border-radius:9px;border:1px dashed color-mix(in srgb,var(--d-accent) 50%,var(--d-line));background:transparent;color:var(--d-accent);cursor:pointer}
+$M .v9h-add svg.i{width:14px;height:14px}$M .v9h-add:hover{background:color-mix(in srgb,var(--d-accent) 8%,transparent)}
+$M #v9h-ph{display:grid;gap:6px;margin-top:6px}$M #v9h-ph:empty{display:none}
+$M .v9h-phr{display:flex;gap:6px;align-items:center}$M .v9h-phr input{flex:1}
+$M .v9h-x{border:0;background:transparent;color:var(--muted);cursor:pointer;padding:6px;border-radius:8px;flex:none}$M .v9h-x:hover{color:var(--ruby);background:color-mix(in srgb,var(--ruby) 10%,transparent)}$M .v9h-x svg.i{width:16px;height:16px}
+$M .fld.v9h-gone{display:none!important}
+$M .fld.v9h-wide{grid-column:1/-1}
+$M .v9h-in{display:flex;align-items:center;gap:8px;min-height:44px;padding:6px 12px;border-radius:12px;cursor:pointer;background:var(--d-sheen),var(--d-surface-2);border:1px solid var(--d-line);box-shadow:inset 0 1px 0 var(--d-hl);transition:border-color .15s,box-shadow .15s}
+$M .v9h-in:hover,$M .v9h-in:focus-visible{outline:none;border-color:color-mix(in srgb,var(--d-accent) 55%,var(--d-line));box-shadow:0 0 0 3px color-mix(in srgb,var(--d-accent) 14%,transparent)}
+$M .v9h-in .v8-chev{width:16px;height:16px;flex:none;fill:none;stroke:var(--d-accent);stroke-width:2.4;margin-left:auto}
+$M .v9h-chips{display:flex;flex-wrap:wrap;gap:6px;flex:1}
+$M .v9h-chip{font-size:13px;font-weight:700;padding:3px 9px;border-radius:8px;color:var(--ink);background:color-mix(in srgb,var(--d-accent) 14%,transparent);border:1px solid color-mix(in srgb,var(--d-accent) 35%,transparent)}
+$M .v9h-ph{font-size:14px;color:var(--muted)}
+$M #v9h-sl{display:grid;gap:8px;margin-top:8px}$M #v9h-sl:empty{display:none}
+$M .v9h-sr{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:12px;border:1px solid var(--d-line);background:var(--d-surface-2);flex-wrap:wrap}
+$M .v9h-sr .grow{flex:1;min-width:160px}$M .v9h-sr b{display:block;color:var(--ink);font-size:14px}$M .v9h-sr small{font-size:12.5px;color:var(--muted)}
+$M .v9h-sr select{width:auto!important;min-width:180px}
+/* small pop-up above the form */
+#v9h-pop{position:fixed;inset:0;z-index:10050;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(5,8,18,.55);backdrop-filter:blur(3px)}
+$M #v9h-pop .v9h-card{width:min(520px,100%);max-height:calc(100vh - 40px);overflow:auto;padding:18px 20px;border-radius:18px;background:var(--d-sheen),var(--d-surface);border:1px solid var(--d-line);box-shadow:0 30px 80px -20px rgba(var(--d-shadow-rgb),calc(var(--d-shadow-a)*2));animation:v9s-in .2s ease both}
+$M .v9h-h{position:relative;display:flex;flex-direction:column;gap:2px;margin-bottom:12px;padding-right:36px}
+$M .v9h-h b{font-size:17px;color:var(--ink)}$M .v9h-h small{font-size:13px;color:var(--muted)}$M .v9h-h .v9h-x{position:absolute;right:-6px;top:-4px}
+$M #v9h-pop input#v9h-bq,$M #v9h-pop input#v9h-sq{width:100%;margin-bottom:10px}
+$M .v9h-list{display:grid;gap:6px;max-height:46vh;overflow:auto;padding:2px}
+$M .v9h-list .v9f-pick[hidden]{display:none!important}
+/* "+" next to account lists */
+$M .v9h-accw{display:flex;gap:6px;align-items:stretch;width:100%}
+$M .v9h-accw select{flex:1;min-width:0}
+$M .v9h-plus{flex:none;width:42px;min-height:42px;display:grid;place-items:center;border-radius:12px;border:1px solid var(--d-line);background:var(--d-surface-2);color:var(--d-accent);cursor:pointer;transition:border-color .15s,box-shadow .15s}
+$M .v9h-plus svg.i{width:18px;height:18px}
+$M .v9h-plus:hover{border-color:var(--d-accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--d-accent) 14%,transparent)}
+$M td .v9h-accw .v9h-plus{width:34px;min-height:34px;border-radius:9px}
+$M #pu-mt select.pu-fs{min-width:128px}
+$M #pu-mt td[data-l="Method"]{min-width:170px}

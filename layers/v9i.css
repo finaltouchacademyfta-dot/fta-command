@@ -1,0 +1,18 @@
+$M button.v9f-d{font:inherit;text-align:left;cursor:pointer;transition:border-color .15s,box-shadow .15s,transform .15s}
+$M button.v9f-d:hover{border-color:var(--d-accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--d-accent) 14%,transparent)}
+$M .v9f-d.sch{border-color:color-mix(in srgb,var(--d-accent) 35%,var(--d-line))}
+$M .v9f-d.todo{background:color-mix(in srgb,var(--amber) 8%,var(--d-surface-2))}
+$M .v9f-d.fut{opacity:.8}
+$M .v9f-d i.k-N{--c:var(--muted)}$M .v9f-d i.k-S{--c:var(--d-accent)}
+$M .v9i-how i.k-S{font-style:normal;font-size:12px;font-weight:800;padding:0 6px;border-radius:6px;color:var(--d-accent);background:color-mix(in srgb,var(--d-accent) 15%,transparent)}
+$M .v9i-how{display:block;margin:0 0 10px;font-size:13px;line-height:1.7;color:var(--muted)}$M .v9i-how svg.i{width:16px;height:16px;vertical-align:-3px;margin-right:4px;color:var(--d-accent)}
+$M .v9i-sm{margin:6px 0;font-size:13px;color:var(--muted)}
+$M .v9f-sum{grid-template-columns:repeat(6,1fr)}$M .v9f-sum .gold{--c:var(--d-accent)}
+$M .v9i-gs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+$M .v9i-gs button{font:600 13px var(--f-ui);padding:6px 10px;border-radius:9px;border:1px solid var(--d-line);background:var(--d-surface-2);color:var(--ink);cursor:pointer}
+$M .v9i-gs button.on{border-color:var(--d-accent);background:color-mix(in srgb,var(--d-accent) 12%,var(--d-surface-2))}
+$M .v9i-opts{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:12px}
+$M .v9i-opts button{--c:var(--muted);min-height:48px;font:700 13px var(--f-ui);border-radius:11px;border:1px solid color-mix(in srgb,var(--c) 40%,var(--d-line));background:color-mix(in srgb,var(--c) 8%,var(--d-surface-2));color:var(--c);cursor:pointer;transition:background .15s,box-shadow .15s}
+$M .v9i-opts .ok{--c:var(--emerald)}$M .v9i-opts .bad{--c:var(--ruby)}$M .v9i-opts .warn{--c:var(--amber)}$M .v9i-opts .info{--c:var(--sapphire)}$M .v9i-opts .n{--c:var(--ink-2,var(--muted))}
+$M .v9i-opts button.on{background:var(--c);color:var(--d-surface,#fff);box-shadow:0 0 0 3px color-mix(in srgb,var(--c) 25%,transparent)}
+@media (max-width:640px){$M .v9i-opts{grid-template-columns:repeat(2,1fr)}$M .v9i-opts button:last-child{grid-column:1/-1}$M .v9f-sum{grid-template-columns:repeat(3,1fr)}}
