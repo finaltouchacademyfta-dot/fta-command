@@ -3736,7 +3736,7 @@ const stuRows = () => STUDENTS.filter(s => {
 PAGES.students = () => {
   const act = STUDENTS.filter(s => s.status === 'Active'), enr = ENROL.filter(e => e.status === 'Active');
   $('#view').innerHTML = `<div class="page">${head('t', 'প্রতিটা student এর আলাদা ID। একাধিক subject নিলেও Active students এ একবার গোনা হয়।', R_().edit ? `<button class="btn p" onclick="studentForm()">${ic('plus')}নতুন student</button>` : '')}
-  <div class="kpis">${kpi({ sm: 1, label: 'Active students', icon: 'students', value: dg(act.length), sub: dg(STUDENTS.length) + ' জনের মধ্যে' })}${kpi({ sm: 1, label: 'Subject enrolments', icon: 'programmes', value: dg(enr.length), sub: 'Active student প্রতি গড়ে ' + dg((enr.length / act.length).toFixed(1)) })}${kpi({ sm: 1, label: 'Total outstanding', icon: 'alert', value: money(sum(STUDENTS, s => studentDue(s.id))), color: 'var(--bad)', sub: dg(STUDENTS.filter(s => studentDue(s.id) > 0).length) + ' জনের কাছে' })}${kpi({ sm: 1, label: 'Available advance', icon: 'payments', value: money(sum(STUDENTS, s => Math.max(0, studentAdvance(s.id)))), sub: dg(STUDENTS.filter(s => studentAdvance(s.id) > 0).length) + ' জনের' })}</div>
+  <div class="kpis">${kpi({ sm: 1, label: 'Active students', icon: 'students', value: dg(act.length), sub: dg(STUDENTS.length) + ' জনের মধ্যে' })}${kpi({ sm: 1, label: 'Subject enrolments', icon: 'programmes', value: dg(enr.length), sub: 'Active student প্রতি গড়ে ' + dg((act.length ? enr.length / act.length : 0).toFixed(1)) })}${kpi({ sm: 1, label: 'Total outstanding', icon: 'alert', value: money(sum(STUDENTS, s => studentDue(s.id))), color: 'var(--bad)', sub: dg(STUDENTS.filter(s => studentDue(s.id) > 0).length) + ' জনের কাছে' })}${kpi({ sm: 1, label: 'Available advance', icon: 'payments', value: money(sum(STUDENTS, s => Math.max(0, studentAdvance(s.id)))), sub: dg(STUDENTS.filter(s => studentAdvance(s.id) > 0).length) + ' জনের' })}</div>
   <div class="card flat"><div class="fbar">
     ${fld('খুঁজুন', `<input id="s-q" type="search" placeholder="নাম, ID বা phone" value="${esc(ST.sq)}" oninput="ST.sq=this.value;stuList(1)">`).replace('class="fld"', 'class="fld w"')}
     ${fld('মাস (billed / paid)', `<select id="s-m" onchange="ST.sm=this.value;stuList(1)">${opts(MONTHS.slice().reverse().map(m => [m, mlab(m)]), ST.sm)}</select>`)}
@@ -3807,7 +3807,7 @@ function saveStudent() {
   const n = $('#nf-n').value.trim(); if (!n) { toast('নাম লিখুন'); return; }
   const id = 'STU-' + String(1001 + FTA.n(STUDENTS, 'STU-', 1001)), prog = $('#nf-pr').value;
   STUDENTS.push({ id, name: n, guardian: $('#nf-g').value.trim() || '—', phone: $('#nf-p').value.trim() || '—', cls: $('#nf-c').value.trim() || '—', board: $('#nf-b').value, beh: 'good', joined: $('#nf-s').value, status: 'Active', notes: [] });
-  ENROL.push({ id: 'ENR-' + String(2001 + FTA.n(ENROL, 'ENR-', 2001)), stu: id, prog, mentor: $('#nf-m').value, type: PROGS.find(p => p.id === prog).type, batch: '', start: $('#nf-s').value, end: '', disc: +$('#nf-d').value || 0, discEnd: '', discBy: +$('#nf-d').value ? 'Approval pending' : '', classes: 8, freq: 'Monthly', status: 'Active', fees: [{ from: $('#nf-s').value.slice(0, 7), fee: PROGS.find(p => p.id === prog).fee, by: ME().name, note: 'Standard fee' }] });
+  if (PROGS.find(p => p.id === prog)) ENROL.push({ id: 'ENR-' + String(2001 + FTA.n(ENROL, 'ENR-', 2001)), stu: id, prog, mentor: $('#nf-m').value, type: PROGS.find(p => p.id === prog).type, batch: '', start: $('#nf-s').value, end: '', disc: +$('#nf-d').value || 0, discEnd: '', discBy: +$('#nf-d').value ? 'Approval pending' : '', classes: 8, freq: 'Monthly', status: 'Active', fees: [{ from: $('#nf-s').value.slice(0, 7), fee: PROGS.find(p => p.id === prog).fee, by: ME().name, note: 'Standard fee' }] });
   log('Student added', n + ' · ' + id, progName(prog)); closeSheet(); render(); toast(n + ' যোগ হয়েছে · ' + id);
 }
 
@@ -7492,7 +7492,7 @@ PAGES['ac-teachers'] = () => {
 SCH.menForm = id => {
   const m = id ? MENTORS.find(x => x.id === id) : null;
   sheet(m ? 'EDIT TEACHER' : 'NEW TEACHER OR MENTOR', m ? esc(m.name) : 'Add a teacher or mentor', `<div class="grid g2">${fld('Full name', `<input id="mf-n" value="${m ? esc(m.name) : ''}" maxlength="60">`)}${fld('Gmail (used to sign in)', `<input id="mf-e" type="email" value="${m ? esc(m.gmail || '') : ''}" placeholder="name@gmail.com">`)}${fld('WhatsApp', `<input id="mf-p" inputmode="tel" value="${m ? esc(m.phone) : ''}" placeholder="01XXXXXXXXX">`)}${fld('Subjects', `<input id="mf-s" value="${m ? esc(m.subjects) : ''}" maxlength="80">`)}${fld('Status', `<select id="mf-st">${opts([['Active', 'Active'], ['Inactive', 'Inactive (signs out, keeps all records)']], m ? (m.status === 'Inactive' ? 'Inactive' : 'Active') : 'Active')}</select>`)}</div>
-  <p class="sub" style="margin-top:10px">The teacher signs in with this Gmail and a one-time code. No separate mentor code is needed. Pay rules stay under Teachers and are set by the Owner.</p>
+  <p class="sub" style="margin-top:10px">The teacher signs in with Google using this Gmail and sees the students you link to them. No separate mentor code is needed. Pay rules stay under Teachers and are set by the Owner.</p>
   <div class="row" style="justify-content:flex-end;gap:8px;margin-top:16px"><button class="btn" type="button" onclick="closeSheet()">Cancel</button><button class="btn p" type="button" onclick="SCH.menSave('${id || ''}')">${m ? 'Save changes' : 'Add'}</button></div>`);
 };
 SCH.menSave = id => {
@@ -13896,6 +13896,23 @@ html:root[data-palette="premium"]:is([data-skin="midnight"],[data-skin="emerald"
 /* Inter runs a little wider than the engine's figure font: keep phone KPI figures whole */
 @media (max-width:480px){html:root[data-palette="premium"]:is([data-skin="midnight"],[data-skin="emerald"]) .cck .fg{font-size:19px!important;letter-spacing:-.015em}}
 
+/* ---------- student cards: compact action buttons, money boxes centred (wide screens; phones unchanged) ---------- */
+html .qc .qc-b .qbx{display:flex!important;flex-direction:column;justify-content:center;min-height:0}
+@media (min-width:1100px){
+  html .qc .qc-b{grid-template-columns:repeat(3,minmax(0,1fr)) 272px!important;align-items:stretch}
+  html .qc .qc-b .qc-a{display:grid!important;grid-template-columns:1fr 1fr;grid-auto-rows:min-content;gap:6px!important;align-content:center;width:auto}
+  html .qc .qc-b .qc-a .btn{width:100%;min-width:0;justify-content:center;margin:0!important}
+  html .qc .qc-b .qc-a .btn{order:2}
+  html .qc .qc-b .qc-a .pu-up{order:1}
+  html .qc .qc-b .qc-a .btn.p{order:3}
+  html .qc .qc-b .qc-a .v9m-del{order:4}
+  html .qc .qc-b .qc-a .v9l-mp{grid-column:1/-1;order:5}
+}
+
+/* student form: the mentor for each subject is labelled */
+.fx-ml{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-right:6px;white-space:nowrap}
+.fx-nom{font-size:12.5px;color:var(--warn,#C98A1E);white-space:nowrap}
+
 </style>
 <script>
 /* =====================================================================
@@ -14181,6 +14198,52 @@ html:root[data-palette="premium"]:is([data-skin="midnight"],[data-skin="emerald"
   }
   /* a student added from any skin also gets the next months' draft invoices (as an enrolment does) */
   wrap(W, 'saveStudent', function (o, a) { const before = new Set(STUDENTS.map(x => x.id)); const r = o.apply(this, a); const add = STUDENTS.filter(x => !before.has(x.id)).map(x => x.id); if (add.length && window.V8 && V8.sync) { try { V8.sync(add); } catch (e) { console.warn('[FTA] sync', e); } } return r; });
+  /* a monthly fee belongs to a subject: with no subject chosen (or none made yet) say so, instead of dropping the fee */
+  const feeTyped = () => { try { return SCH.NEW() && window.V9H && V9H.F && document.getElementById('v9h-sb') && !Object.keys(V9H.F.subs || {}).length && window.PU && PU.F && Object.values(PU.F.rows || {}).some(r => r.st !== 'Off' && (+r.pay > 0 || +r.paid > 0)); } catch (e) { return false; } };
+  wrap(W, 'saveStudent', function (o, a) {
+    if (feeTyped()) { toast(PROGS.length ? 'Choose the student’s subject first — the monthly fee belongs to a subject' : 'No subjects yet: add one in Programmes & Enrolments → Add programme, then add the student (or clear the fee and save the student now)'); const sb = document.getElementById('v9h-sb'); if (sb) sb.scrollIntoView({ block: 'center', behavior: 'smooth' }); return; }
+    return o.apply(this, a);
+  });
+  wrap(W, 'studentForm', function (o, a) {
+    const r = o.apply(this, a);
+    try { if (!PROGS.length) { const sb = document.getElementById('v9h-sb'), f = sb && (sb.closest('.fld') || sb.parentElement); if (f && !document.getElementById('fx-noprog')) f.insertAdjacentHTML('afterend', `<div id="fx-noprog" class="v9j-bar" style="grid-column:1/-1;margin:4px 0 10px"><div class="grow"><b>No subjects yet</b><small>Add your subjects and their monthly fee first in Programmes & Enrolments. You can still save the student now (without a fee) and add the subject later.</small></div><button type="button" class="btn p" onclick="closeSheet();go('programmes')">Add a subject</button></div>`); } } catch (e) { }
+    return r;
+  });
+  /* one Save = one student: a second click while saving is ignored, and the same name + phone asks before adding again */
+  let dupOk = null;
+  const digits = v => String(v || '').replace(/\D/g, '');
+  wrap(W, 'saveStudent', function (o, a) {
+    const nEl = document.getElementById('nf-n'), pEl = document.getElementById('nf-p');
+    if (nEl && nEl.__saved) return;                                  /* this form already saved its student (double click) */
+    const n = ((nEl && nEl.value) || '').trim().toLowerCase(), ph = digits(pEl && pEl.value);
+    const dup = n && STUDENTS.find(s => String(s.name || '').trim().toLowerCase() === n && (!ph || digits(s.phone) === ph || (s.phones || []).some(x => digits(x) === ph)));
+    if (dup && dupOk !== dup.id) { dupOk = dup.id; toast(dup.name + ' (' + dup.id + ') is already a student' + (ph ? ' with this phone' : '') + '. Press Save again only if this is a different person.'); return; }
+    dupOk = null; const n0 = STUDENTS.length, r = o.apply(this, a); if (nEl && STUDENTS.length > n0) nEl.__saved = true; return r;
+  });
+  /* each chosen subject shows "Mentor ▾"; with no mentors yet it says where to add them */
+  if (window.V9H && typeof V9H.sbDraw === 'function') wrap(V9H, 'sbDraw', function (o, a) {
+    const r = o.apply(this, a);
+    try {
+      const act = MENTORS.filter(m => m.status === 'Active');
+      document.querySelectorAll('#v9h-sl .v9h-sr select[data-v9h]').forEach(sel => {
+        if (!act.length) { if (!sel.parentElement.querySelector('.fx-nom')) sel.insertAdjacentHTML('beforebegin', '<span class="fx-nom">No mentor yet — add one in Mentors → New mentor</span>'); sel.hidden = true; return; }
+        if (!sel.previousElementSibling || !sel.previousElementSibling.classList.contains('fx-ml')) sel.insertAdjacentHTML('beforebegin', '<span class="fx-ml">Mentor</span>');
+      });
+    } catch (e) { }
+    return r;
+  });
+  /* the Mentors page gets its own "New mentor" button (like "New student") */
+  if (typeof PAGES !== 'undefined' && PAGES.mentors) wrap(PAGES, 'mentors', function (o, a) {
+    const r = o.apply(this, a);
+    try {
+      if (SCH.NEW() && typeof SCH.menForm === 'function' && R_().edit !== false && ['Owner', 'Admin', 'Junior Admin', 'Finance Manager'].includes(ST.role) && !document.getElementById('fx-newmen')) {
+        const rep = [...document.querySelectorAll('#view button')].find(b => /^\s*Report\s*$/.test(b.innerText));
+        const html = '<button type="button" class="btn p" id="fx-newmen" onclick="SCH.menForm()">' + ic('plus') + 'New mentor</button>';
+        if (rep) rep.insertAdjacentHTML('afterend', html); else { const v = document.querySelector('#view'); if (v) v.insertAdjacentHTML('afterbegin', '<div style="display:flex;justify-content:flex-end;margin-bottom:10px">' + html + '</div>'); }
+      }
+    } catch (e) { }
+    return r;
+  });
   /* teacher pay rule: teachers made in the app start as "fixed · ৳0"; the Owner / Admin sets the rule on the teacher form */
   if (SCH.menForm && SCH.menSave) {
     const canRule = () => ['Owner', 'Admin'].includes(ST.role) && !SCH.preview;
