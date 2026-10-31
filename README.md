@@ -35,10 +35,10 @@ git push -u origin main
 3. এই ফোল্ডারের `supabase/schema.sql` ফাইল খুলে পুরো লেখা কপি করে পেস্ট করুন।
    - ফাইলের ভেতরে `owner@example.com` লেখাটা বদলে **আপনার নিজের Gmail** দিন।
 4. **Run** চাপুন। নিচে "Success" দেখাবে। (আবার চালালেও ক্ষতি নেই।)
-5. **Project Settings → API** থেকে তিনটা জিনিস কপি করে রাখুন:
-   - **Project URL** (যেমন `https://abcd.supabase.co`)
-   - **anon public** key
-   - **service_role** key — ⚠️ এটা গোপন। শুধু Netlify-র Environment variable-এ বসাবেন, আর কোথাও না।
+5. **Project Settings → API Keys** (আর **Data API**) থেকে তিনটা জিনিস কপি করে রাখুন:
+   - **Project URL** — শুধু `https://abcd.supabase.co` (শেষে `/rest/v1` থাকলে বাদ দিন)
+   - **Publishable key** (`sb_publishable_…`) — পুরনো প্রজেক্টে এর নাম **anon public**
+   - **Secret key** (`sb_secret_…`) — পুরনো প্রজেক্টে এর নাম **service_role**। ⚠️ এটা গোপন। শুধু Netlify-র Environment variable-এ বসাবেন, আর কোথাও না।
 
 ## ধাপ ৩ — Google (Gmail) দিয়ে লগইন চালু করা
 
@@ -65,12 +65,13 @@ git push -u origin main
 | নাম | মান |
 |---|---|
 | `SUPABASE_URL` | Supabase Project URL |
-| `SUPABASE_ANON_KEY` | anon public key |
-| `SUPABASE_SERVICE_ROLE_KEY` | service_role key (গোপন — "Contains secret values" টিক দিন) |
+| `SUPABASE_ANON_KEY` | **Publishable** key (`sb_publishable_…`) বা পুরনো anon key |
+| `SUPABASE_SERVICE_ROLE_KEY` | **Secret** key (`sb_secret_…`) বা পুরনো service_role key (গোপন — "Contains secret values" টিক দিন)। **দুটো key উল্টো বসাবেন না।** |
 | `OWNER_EMAIL` | আপনার Gmail (ধাপ ২-এ যেটা দিয়েছেন) |
 
 4. **Deploys → Trigger deploy → Deploy site**। ১–২ মিনিটে শেষ হবে।
 5. পাওয়া ঠিকানাটা (যেমন `https://xxxx.netlify.app`) Supabase-এর **URL Configuration**-এ বসান (ধাপ ৩খ)।
+6. **যাচাই:** ব্রাউজারে `https://<আপনার-সাইট>.netlify.app/api` খুলুন। সব লাইনে ✔ থাকলে সার্ভার ঠিক আছে। কোনো লাইনে ✖ থাকলে সেখানেই লেখা থাকে কী ঠিক করতে হবে। এই পাতায় কোনো key বা Gmail দেখায় না।
 
 ## ধাপ ৫ — প্রথমবার ঢোকা (Owner)
 
@@ -173,7 +174,10 @@ ECE=<http_ece ফোল্ডার> node tests/d-notify.mjs   # কে কো�
 
 | দেখাচ্ছে | কী করবেন |
 |---|---|
+| **যেকোনো লগইন সমস্যা** | প্রথমে `https://<আপনার-সাইট>.netlify.app/api` খুলুন — ✖ লাইনগুলো ঠিক করে **Trigger deploy** |
+| Google থেকে ফিরে "Please sign in again" বা "Supabase did not accept the server key" | `SUPABASE_SERVICE_ROLE_KEY`-এ **Secret key** (`sb_secret_…`) আছে কিনা দেখুন — publishable / anon key নয়, অন্য প্রজেক্টের নয়, আগে-পরে ফাঁকা জায়গা নেই। ঠিক করে Trigger deploy |
 | "The server is not set up yet" | Netlify-তে `SUPABASE_URL` আর `SUPABASE_SERVICE_ROLE_KEY` আছে কিনা দেখুন → Trigger deploy |
+| Deploy ব্যর্থ, log-এ "make-config: …KEY is the PUBLISHABLE / ANON key" | দুটো key উল্টো বসেছে — ঠিক জায়গায় বসান |
 | Google লগইনের পর আবার লগইন পেজ | Supabase **URL Configuration**-এ Site URL আর Redirect URL ঠিক আছে কিনা |
 | "redirect_uri_mismatch" | Google Cloud-এ redirect URI ঠিক `https://<প্রজেক্ট>.supabase.co/auth/v1/callback` কিনা |
 | "This Gmail is not on the academy list" | Owner তার Gmail যোগ করেননি, বা Inactive করা |

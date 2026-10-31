@@ -9,7 +9,8 @@
 //   SUPABASE_URL        https://xxxx.supabase.co           (public)
 //   SUPABASE_ANON_KEY   the "anon public" key               (public, safe in the browser)
 //   OWNER_EMAIL         the Owner's Gmail                   (public)
-//   SUPABASE_SERVICE_ROLE_KEY  secret · used ONLY by netlify/functions/api.mjs, never written here
+//   SUPABASE_SERVICE_ROLE_KEY  secret · used ONLY by the Netlify functions, never written here
+//                              (the new "Secret key" sb_secret_… or the older service_role key)
 // Local check:  SUPABASE_URL=https://abc.supabase.co SUPABASE_ANON_KEY=x OWNER_EMAIL=me@gmail.com node tools/make-config.mjs
 // =====================================================================
 import { writeFileSync, existsSync, mkdirSync } from 'node:fs';
@@ -21,7 +22,9 @@ const OUT = join(ROOT, process.env.FTA_OUT || 'site');
 const env = k => (process.env[k] || '').trim();
 const fail = m => { console.error('\n✖ make-config: ' + m + '\n'); process.exit(1); };
 
-const url = env('SUPABASE_URL').replace(/\/+$/, '');
+const rawUrl = env('SUPABASE_URL');
+let url = rawUrl.replace(/\/+$/, '');
+try { const u0 = new URL(rawUrl); if (u0.protocol === 'https:' && u0.origin !== url) { console.warn('⚠ make-config: SUPABASE_URL had extra text after the address; using ' + u0.origin); url = u0.origin; } } catch (e) { }
 const anon = env('SUPABASE_ANON_KEY');
 const owner = env('OWNER_EMAIL').toLowerCase();
 const api = env('FTA_API_URL') || '/api';
@@ -37,6 +40,21 @@ try { // a Supabase key is a JWT: refuse a service_role key in the browser confi
   if (p.role === 'service_role') fail('SUPABASE_ANON_KEY is a service_role key. Use the "anon public" key.');
 } catch (e) { /* new-style publishable keys (sb_publishable_…) are not JWTs; that is fine */ }
 if (/^sb_secret_/.test(anon)) fail('SUPABASE_ANON_KEY is a secret key. Use the publishable / anon key.');
+// the server key: catch the usual copy mistakes at deploy time, with the fix in plain words
+{
+  const sk = env('SUPABASE_SERVICE_ROLE_KEY');
+  if (!sk) fail('SUPABASE_SERVICE_ROLE_KEY is missing. Supabase → Project Settings → API Keys → Secret key (sb_secret_…) → add it in Netlify (mark it secret), then "Trigger deploy".');
+  if (/^sb_publishable_/.test(sk)) fail('SUPABASE_SERVICE_ROLE_KEY is the PUBLISHABLE key. Put the SECRET key (sb_secret_…) there instead.');
+  if (!/^sb_secret_/.test(sk)) {
+    let role = '', ref = '';
+    try { const p = JSON.parse(Buffer.from(sk.split('.')[1] || '', 'base64url').toString('utf8')); role = p.role || ''; ref = p.ref || ''; } catch (e) { }
+    if (role === 'anon') fail('SUPABASE_SERVICE_ROLE_KEY is the ANON key. Put the service_role key or the new Secret key (sb_secret_…) there instead.');
+    if (role && role !== 'service_role') fail('SUPABASE_SERVICE_ROLE_KEY is not a service key (role "' + role + '").');
+    if (!role) fail('SUPABASE_SERVICE_ROLE_KEY does not look like a Supabase key. Copy the Secret key (sb_secret_…) again, without spaces.');
+    const pr = /^https:\/\/([a-z0-9]+)\.supabase\.co$/.exec(url);
+    if (pr && ref && pr[1] !== ref) fail('SUPABASE_SERVICE_ROLE_KEY belongs to another Supabase project (' + ref + '), but SUPABASE_URL is ' + pr[1] + '. Take both from the same project.');
+  }
+}
 if (!existsSync(join(OUT, 'index.html'))) fail(OUT + '/index.html not found. Commit the built site/ folder (python3 build.py) before deploying.');
 
 const cfg = { supabaseUrl: url, supabaseAnonKey: anon, ownerEmail: owner, apiUrl: api };

@@ -5,10 +5,24 @@
 // =====================================================================
 import { makeVapidKeys, sendPush } from './webpush.mjs';
 
+/* the project address, even if pasted with a path or spaces (…supabase.co/rest/v1/ → …supabase.co) */
+export function cleanUrl(u) { u = String(u || '').trim(); try { const x = new URL(u); return x.protocol === 'https:' ? x.origin : u.replace(/\/+$/, ''); } catch (e) { return u.replace(/\/+$/, ''); } }
+/* what kind of Supabase key this is (never returns the key itself) */
+export function keyInfo(k) {
+  k = String(k || '').trim();
+  if (!k) return { kind: 'missing' };
+  if (/^sb_secret_/.test(k)) return { kind: 'secret' };
+  if (/^sb_publishable_/.test(k)) return { kind: 'publishable' };
+  try { const p = JSON.parse(Buffer.from(k.split('.')[1] || '', 'base64url').toString('utf8')); return { kind: p.role === 'service_role' ? 'legacy-service' : p.role === 'anon' ? 'legacy-anon' : 'unknown', ref: p.ref || '' }; } catch (e) { return { kind: 'unknown' }; }
+}
+/* headers for the server key: new secret keys (sb_secret_…) go ONLY in `apikey` (Supabase rule);
+   the older service_role JWT also goes in Authorization, as before */
+export function keyHeaders(k) { k = String(k || '').trim(); return /^sb_/.test(k) ? { apikey: k } : { apikey: k, Authorization: 'Bearer ' + k }; }
+
 export function makeStore(env = process.env) {
-  const URL0 = (env.SUPABASE_URL || '').replace(/\/+$/, '');
-  const KEY = env.SUPABASE_SERVICE_ROLE_KEY || '';
-  const H = { apikey: KEY, Authorization: 'Bearer ' + KEY, 'Content-Type': 'application/json' };
+  const URL0 = cleanUrl(env.SUPABASE_URL);
+  const KEY = String(env.SUPABASE_SERVICE_ROLE_KEY || '').trim();
+  const H = { ...keyHeaders(KEY), 'Content-Type': 'application/json' };
   const enc = encodeURIComponent;
   const inList = a => '(' + a.map(x => '"' + String(x).replace(/["\\]/g, '') + '"').join(',') + ')';
 

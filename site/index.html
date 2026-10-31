@@ -12,6 +12,7 @@
 <meta name="application-name" content="Final Touch Academy">
 <meta name="description" content="Final Touch Academy · Command Centre">
 <meta name="format-detection" content="telephone=no">
+<style id="fta-pre">html:not(.fta-on){background:#08090B}html:not(.fta-on) body>*:not(#fta-gate):not(script):not(style){visibility:hidden!important}</style>
 <script src="config.js"></script>
 <script src="vendor/supabase.js"></script>
 <meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
@@ -14630,12 +14631,13 @@ window.__ftaRun = function (code, v) {
   function gate(html) {
     let g = $id('fta-gate');
     if (!g) { const st = document.createElement('style'); st.id = 'fta-gate-css'; st.textContent = CSS; document.head.appendChild(st); g = document.createElement('div'); g.id = 'fta-gate'; g.setAttribute('role', 'dialog'); g.setAttribute('aria-modal', 'true'); g.setAttribute('aria-labelledby', 'fg-h'); document.body.appendChild(g); }
+    document.documentElement.classList.add('fta-on');        /* the (opaque) gate now covers the app; nothing showed before it */
     g.innerHTML = `<div class="fg-card">${LOGO ? `<img class="fg-logo" src="${LOGO}" alt="Final Touch Academy">` : ''}<span class="fg-ey">FINAL TOUCH ACADEMY</span>${html}</div>`;
     g.hidden = false; const lg = $id('sc-login'); if (lg) lg.hidden = true;
     const f = g.querySelector('button,input'); if (f) setTimeout(() => f.focus(), 30);
     return g;
   }
-  const ungate = () => { const g = $id('fta-gate'); if (g) g.hidden = true; };
+  const ungate = () => { const g = $id('fta-gate'); if (g) g.hidden = true; document.documentElement.classList.add('fta-on'); };
   function loadingScreen(t) { gate(`<h1 id="fg-h">FTA Command Centre</h1><div class="fg-spin" role="status" aria-label="Loading"></div><p>${h(t || 'Opening your academy…')}</p>`); }
   function setupScreen() {
     gate(`<h1 id="fg-h">Almost ready</h1><p>This copy of the Command Centre is not connected to its database yet. The site owner adds these in <b>Netlify → Site configuration → Environment variables</b>, then redeploys:</p>
@@ -14698,7 +14700,7 @@ window.__ftaRun = function (code, v) {
     EMAIL = email;
     let r;
     try { r = await api({ action: 'me' }); } catch (e) { return errorScreen('No connection to the server. Check the internet and try again.'); }
-    if (r.status === 401) return signInScreen('Please sign in again.');
+    if (r.status === 401) return signInScreen('Please sign in again. If this keeps happening, open ' + location.origin + '/api to check the server setup.');
     if (r.status !== 200) return errorScreen(r.body.error || 'The server did not answer (' + r.status + ').');
     const m = r.body.member;
     if (!m) return blockedScreen(email);
