@@ -42,6 +42,9 @@
   const L = (c, v, get, o) => Object.assign({ c, v, kind: 'arr', key: 'id', get }, o || {});
   const M = (c, v, get, o) => Object.assign({ c, v, kind: 'map', get }, o || {});
   const O = (c, v, get, set, o) => Object.assign({ c, v, kind: 'one', get, set }, o || {});
+  if (!Array.isArray(FTA.AGENTMEM)) FTA.AGENTMEM = [];
+  /* Receipt Maker (src/ui/receipt-maker.js) and mentor slot requests (src/ui/profile-tree.js) */
+  ['RCPT', 'RCSAL', 'RCSET', 'SLOTREQ', 'MSG', 'CLSLIVE'].forEach(k => { if (!Array.isArray(FTA[k])) FTA[k] = []; });
   const TABLE = [
     /* people */
     L('students', 'STUDENTS', () => STUDENTS), L('enrol', 'ENROL', () => ENROL), L('mentors', 'MENTORS', () => MENTORS), L('progs', 'PROGS', () => PROGS), L('batches', 'BATCHES', () => BATCHES),
@@ -72,6 +75,14 @@
     L('statuses', 'V8.STATUSES', () => V8.STATUSES, { key: 'k', config: true }),
     /* office */
     L('notes', 'NOTES', () => NOTES),
+    /* the FTA Assistant's long-term memory (Owner only; see src/prod-agent.js) */
+    L('agentmem', 'FTA.AGENTMEM', () => FTA.AGENTMEM, { newest: true }),
+    /* Receipt Maker: issued receipts, salary slips (id = the printed number) and the shared settings record 'main' */
+    L('rcpt', 'FTA.RCPT', () => FTA.RCPT), L('rcsal', 'FTA.RCSAL', () => FTA.RCSAL), L('rcset', 'FTA.RCSET', () => FTA.RCSET),
+    /* a mentor's own request for a new mentorship slot (the office approves it on the Profile Tree) */
+    L('slotreq', 'FTA.SLOTREQ', () => FTA.SLOTREQ),
+    /* Messages (class groups and private chats inside the academy) and Class status (Start / End of each class): src/ui/classroom.js */
+    L('msg', 'FTA.MSG', () => FTA.MSG), L('clslive', 'FTA.CLSLIVE', () => FTA.CLSLIVE),
     L('bin', 'SCH.BIN', () => SCH.BIN, { newest: true, encode: b => { const o = Object.assign({}, b); delete o.list; delete o.restoreTo; delete o.listName; o._list = listName(b.list); return o; }, decode: b => { b.list = listByName(b._list || b.listName) || []; delete b._list; delete b.listName; return b; } }),
     L('log', 'SCH.LOG', () => SCH.LOG, { newest: true, append: true }), L('audit', 'AUDIT', () => AUDIT, { newest: true, append: true })
   ];
@@ -189,6 +200,7 @@
     return { status: r.status, body: j || {} };
   }
   FTA.api = api;
+  FTA.token = token;   /* the FTA Assistant (src/prod-agent.js) signs its own /api/agent calls with it */
 
   /* =========================================================
      3. THE MOCK BACKEND (tests): the same server code, on localStorage
@@ -280,14 +292,16 @@
 @media print{#fta-sync,#fta-gate{display:none!important}}
 @media (max-width:640px){#fta-sync{bottom:calc(74px + env(safe-area-inset-bottom,0px));right:10px}}`;
   function gate(html) {
+    const boot0 = $id('fta-boot'); if (boot0) boot0.remove();   /* the instant splash from the page itself */
     let g = $id('fta-gate');
     if (!g) { const st = document.createElement('style'); st.id = 'fta-gate-css'; st.textContent = CSS; document.head.appendChild(st); g = document.createElement('div'); g.id = 'fta-gate'; g.setAttribute('role', 'dialog'); g.setAttribute('aria-modal', 'true'); g.setAttribute('aria-labelledby', 'fg-h'); document.body.appendChild(g); }
+    document.documentElement.classList.add('fta-on');        /* the (opaque) gate now covers the app; nothing showed before it */
     g.innerHTML = `<div class="fg-card">${LOGO ? `<img class="fg-logo" src="${LOGO}" alt="Final Touch Academy">` : ''}<span class="fg-ey">FINAL TOUCH ACADEMY</span>${html}</div>`;
     g.hidden = false; const lg = $id('sc-login'); if (lg) lg.hidden = true;
     const f = g.querySelector('button,input'); if (f) setTimeout(() => f.focus(), 30);
     return g;
   }
-  const ungate = () => { const g = $id('fta-gate'); if (g) g.hidden = true; };
+  const ungate = () => { const b0 = $id('fta-boot'); if (b0) b0.remove(); const g = $id('fta-gate'); if (g) g.hidden = true; document.documentElement.classList.add('fta-on'); };
   function loadingScreen(t) { gate(`<h1 id="fg-h">FTA Command Centre</h1><div class="fg-spin" role="status" aria-label="Loading"></div><p>${h(t || 'Opening your academy…')}</p>`); }
   function setupScreen() {
     gate(`<h1 id="fg-h">Almost ready</h1><p>This copy of the Command Centre is not connected to its database yet. The site owner adds these in <b>Netlify → Site configuration → Environment variables</b>, then redeploys:</p>
@@ -312,6 +326,7 @@
     gate(`<h1 id="fg-h">This Gmail can't open the app</h1><span class="fg-mail">${h(email)}</span><p>${h(why || 'It is not on the academy list, or its access is switched off. Ask the Owner or an Admin to add this Gmail, then sign in again.')}</p>
       <button type="button" class="fg-btn" id="fg-other">${MOCK ? '' : GLOGO}<span>Use another Gmail</span></button>`);
     $id('fg-other').onclick = () => signOutNow();
+    cacheDrop(email);
   }
   function errorScreen(t) {
     gate(`<h1 id="fg-h">Could not open the app</h1><p>${h(t)}</p><button type="button" class="fg-btn fg-gold" id="fg-retry">Try again</button><button type="button" class="fg-link" id="fg-out">Sign out</button>`);
@@ -326,7 +341,7 @@
   async function boot() {
     try { sessionStorage.removeItem('sc-in'); } catch (e) { }
     if (!MOCK && (!CFG.supabaseUrl || !CFG.supabaseAnonKey)) return setupScreen();
-    loadingScreen();
+    if (!$id('fta-boot')) loadingScreen();   /* the page's own splash is already showing on the first open */
     try {
       await loadScript('vendor/fta-policy.js');
       if (MOCK) { await loadScript('vendor/fta-notify.js'); await loadScript('vendor/fta-api-core.js'); }
@@ -348,27 +363,113 @@
     }
     if (!email) return signInScreen();
     EMAIL = email;
+    /* instant open: the last synced copy on this device, then a quiet check with the server */
+    const cached = await cacheGet(email);
+    if (cached && cached.v === SNAPV && cached.member && String(cached.member.email || '').toLowerCase() === email && Date.now() - (cached.at || 0) < CACHE_DAYS * 864e5 && G(() => ROLES[cached.member.role])) {
+      MEMBER = cached.member; FTA.member = MEMBER; FTA.openedFromCache = true;
+      try { await start(MEMBER, { records: cached.records || [], files: cached.files || {}, cursor: cached.cursor || '' }); }
+      catch (e) { console.error(e); await cacheDrop(email); STARTED = false; return hardReload(); }
+      verifyLater();
+      return;
+    }
+    /* first open on this device: ask "who am I" and fetch the records at the same time */
+    const pullP = api({ action: 'pull' }).catch(e => ({ status: 0, body: { error: String(e && e.message || e) } }));
     let r;
     try { r = await api({ action: 'me' }); } catch (e) { return errorScreen('No connection to the server. Check the internet and try again.'); }
-    if (r.status === 401) return signInScreen('Please sign in again.');
+    if (r.status === 401) return signInScreen('Please sign in again. If this keeps happening, open ' + location.origin + '/api to check the server setup.');
     if (r.status !== 200) return errorScreen(r.body.error || 'The server did not answer (' + r.status + ').');
     const m = r.body.member;
     if (!m) return blockedScreen(email);
     if (!G(() => ROLES[m.role])) return blockedScreen(email, 'The role “' + m.role + '” is not available in this version.');
     MEMBER = m; FTA.member = m;
-    try { await start(m); } catch (e) { console.error(e); errorScreen('Something went wrong while opening the academy: ' + (e && e.message || e)); }
+    try { await start(m, null, pullP); } catch (e) { console.error(e); errorScreen('Something went wrong while opening the academy: ' + (e && e.message || e)); }
+  }
+  let LEAVING = false;
+  function hardReload() { LEAVING = true; try { document.documentElement.classList.remove('fta-on'); } catch (e) { } location.reload(); }
+  /* opened from this device's copy: confirm the person may still sign in, then bring every record up to date */
+  async function verifyLater() {
+    let r;
+    try { r = await api({ action: 'me' }); } catch (e) { return; }                     /* offline: keep working on this device */
+    if (r.status !== 200 && r.status !== 401) return;
+    const m = r.status === 200 ? r.body.member : null;
+    /* signed out, removed, or a different role / person link: wipe this device's copy and open afresh,
+       so nothing from the old copy stays on screen or in memory (the fresh open shows the right screen) */
+    if (r.status === 401 || !m || m.role !== MEMBER.role || (m.mentor_id || null) !== (MEMBER.mentor_id || null) || (m.student_id || null) !== (MEMBER.student_id || null)) {
+      STARTED = false; await cacheDrop(EMAIL); return hardReload();
+    }
+    Object.assign(MEMBER, m);
+    await reconcile();
+  }
+  /* a full read compared with what is on screen: new and changed records come in, records gone on the server leave
+     (never one this person is still changing), and file links are refreshed */
+  async function reconcile() {
+    let r; try { r = await api({ action: 'pull' }); } catch (e) { return; }
+    if (r.status !== 200 || !STARTED) return;
+    addFiles(r.body.files);
+    const seen = new Set(), touched = new Set(); let changed = false;
+    (r.body.records || []).forEach(x => {
+      const a = BYC[x.c]; if (!a) return;
+      const k = mk(x.c, x.id); seen.add(k);
+      const cur = encodeOne(a, x.id), snap = SNAP[x.c] && SNAP[x.c].get(x.id);
+      if (cur !== snap) return;                                                  /* changed here and not sent yet */
+      if (META.get(k) === x.at && !(snap && snap.indexOf('fta-file:') > -1)) return;
+      const bad = x.data && G(() => window.FTAPolicy && window.FTAPolicy.shape(a.c, x.data)); if (bad) return;
+      applyOne(a, x.id, x.data); META.set(k, x.at); snapSet(x.c, x.id, encodeOne(a, x.id)); changed = true; touched.add(a);
+    });
+    REG.forEach(a => {
+      if (APPEND.has(a.c) || a.kind === 'one') return; const sm = SNAP[a.c]; if (!sm) return;
+      [...sm.keys()].forEach(id => { const k = mk(a.c, id); if (seen.has(k) || !META.has(k)) return; if (encodeOne(a, id) !== sm.get(id)) return; applyOne(a, id, null); snapSet(a.c, id, null); META.delete(k); changed = true; touched.add(a); });
+    });
+    if (r.body.cursor && r.body.cursor > CURSOR) CURSOR = r.body.cursor;
+    if (changed) { touched.forEach(sortArr); afterChange([...touched]); rerender(); }
+    cacheSoon();
   }
 
+  /* ---------- this device's copy (IndexedDB): opens the app at once next time. Never stores unsent changes (those are the outbox) ---------- */
+  const SNAPV = 1, CACHE_DAYS = 21, SNAP_ON = !MOCK || lsGet('fta-snap-on') === '1';
+  let IDB = null;
+  function idb() {
+    if (IDB) return IDB;
+    IDB = new Promise((ok, no) => { try { const q = indexedDB.open('fta-cache', 1); q.onupgradeneeded = () => q.result.createObjectStore('snap'); q.onsuccess = () => ok(q.result); q.onerror = () => no(q.error); q.onblocked = () => no(new Error('blocked')); } catch (e) { no(e); } });
+    IDB.catch(() => { IDB = null; });
+    return IDB;
+  }
+  async function cacheGet(email) {
+    if (!SNAP_ON) return null;
+    try { const db = await idb(); return await new Promise(ok => { const q = db.transaction('snap', 'readonly').objectStore('snap').get(email); q.onsuccess = () => ok(q.result || null); q.onerror = () => ok(null); }); } catch (e) { return null; }
+  }
+  async function cachePut(email, v) {
+    if (!SNAP_ON || !email) return;
+    try { const db = await idb(); await new Promise(ok => { const t = db.transaction('snap', 'readwrite'); t.objectStore('snap').put(v, email); t.oncomplete = ok; t.onerror = ok; t.onabort = ok; }); } catch (e) { }
+  }
+  async function cacheDrop(email) {
+    try { const db = await idb(); await new Promise(ok => { const t = db.transaction('snap', 'readwrite'), st = t.objectStore('snap'); if (email) st.delete(email); else st.clear(); t.oncomplete = ok; t.onerror = ok; t.onabort = ok; }); } catch (e) { }
+  }
+  let CACHE_T = 0;
+  function cacheSoon() { if (!SNAP_ON || !STARTED) return; clearTimeout(CACHE_T); CACHE_T = setTimeout(cacheNow, 3000); }
+  function cacheNow() {
+    if (!SNAP_ON || !STARTED || !MEMBER) return;
+    const records = [];
+    Object.keys(SNAP).forEach(c => SNAP[c].forEach((j, id) => { const k = mk(c, id); if (!META.has(k) || j == null) return; try { records.push({ c, id, data: JSON.parse(j), at: META.get(k) }); } catch (e) { } }));
+    const files = {}; FILES.forEach((u, p) => { files[p] = u; });
+    cachePut(EMAIL, { v: SNAPV, email: EMAIL, member: MEMBER, records, files, cursor: CURSOR, at: Date.now() });
+  }
+  FTA.cacheNow = cacheNow; FTA.cacheDrop = cacheDrop;
+
   function googleName() { return G(() => SB && SB._lastUser && SB._lastUser.user_metadata.full_name) || ''; }
-  async function start(m) {
-    loadingScreen('Loading your academy…');
+  async function start(m, pre, pullP) {
+    if (!pre) loadingScreen('Loading your academy…');
     if (typeof FTA.resetData === 'function') { try { FTA.resetData(); } catch (e) { console.warn('resetData', e); } }
-    const pull = await api({ action: 'pull' });
-    if (pull.status !== 200) throw new Error(pull.body.error || 'Could not load the records (' + pull.status + ')');
-    addFiles(pull.body.files);
-    hydrate(pull.body.records || [], m);
-    CURSOR = pull.body.cursor || '';
-    if (!MOCK) { const { data } = await SB.auth.getUser(); if (data && data.user) SB._lastUser = data.user; }
+    let body = pre;
+    if (!body) {
+      let pull = pullP ? await pullP : null;
+      if (!pull || pull.status !== 200) pull = await api({ action: 'pull' });   /* the early read failed (e.g. a slow server start): once more */
+      if (pull.status !== 200) throw new Error(pull.body.error || 'Could not load the records (' + pull.status + ')');
+      body = pull.body;
+    }
+    addFiles(body.files);
+    hydrate(body.records || [], m);
+    CURSOR = body.cursor || '';
     await setIdentity(m);
     STARTED = true;
     replayOutbox();
@@ -381,12 +482,15 @@
     setInterval(() => schedule(0), 5000);
     setInterval(() => pullSoon(), 30000);
     try { window.dispatchEvent(new CustomEvent('fta:started', { detail: { member: m } })); } catch (e) { }
+    /* after the app is on screen: the Google profile name (only used when the list has no name) */
+    if (!MOCK && SB) SB.auth.getUser().then(({ data }) => { if (!data || !data.user) return; SB._lastUser = data.user; const u = USERS[0]; if (u && (!m.name || m.name === 'Owner')) { const n = googleName(); if (n && u.name !== n) { u.name = n; rerender(); } } }).catch(() => { });
+    if (!pre) cacheSoon();
     window.addEventListener('focus', () => pullSoon());
     document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') pullSoon(); else saveOutbox(); });
     window.addEventListener('online', () => { BACKOFF = 0; schedule(0); pullSoon(); });
     window.addEventListener('offline', () => setStatus());
-    window.addEventListener('pagehide', saveOutbox);
-    window.addEventListener('beforeunload', e => { saveOutbox(); if (INFLIGHT || collectChanges().length) { e.preventDefault(); e.returnValue = ''; } });
+    window.addEventListener('pagehide', () => { saveOutbox(); cacheNow(); });
+    window.addEventListener('beforeunload', e => { saveOutbox(); if (!LEAVING && (INFLIGHT || collectChanges().length)) { e.preventDefault(); e.returnValue = ''; } });
   }
 
   /* who is signed in: USERS / ME() / SCH.STAFF for this role */
@@ -398,8 +502,10 @@
     else if (m.role === 'Student') { const s = STUDENTS.find(x => x.id === m.student_id) || {}; USERS.push({ id: 'me', name: s.name || name, email: EMAIL, role: 'Student', stu: m.student_id }); }
     else USERS.push({ id: EMAIL, name, email: EMAIL, role: m.role });
     G(() => { SCH.STAFF.length = 0; });
-    if (G(() => window.FTAPolicy.canListMembers(m))) await loadMembers();
-    else { if (OFFICE.includes(m.role)) G(() => SCH.STAFF.push({ uid: EMAIL, status: 'Active', last: 'Now', twoStep: false })); MBASE = desiredMembers(); }
+    if (OFFICE.includes(m.role)) G(() => SCH.STAFF.push({ uid: EMAIL, status: 'Active', last: 'Now', twoStep: false }));
+    MBASE = desiredMembers();
+    /* Owner / Admin: the full sign-in list comes in right after the app opens (no wait at start-up) */
+    if (G(() => window.FTAPolicy.canListMembers(m))) { MLOADED = Date.now(); loadMembers().then(() => rerender()).catch(() => { }); }
   }
   async function loadMembers() {
     const r = await api({ action: 'members' }); if (r.status !== 200) { MBASE = desiredMembers(); return; }
@@ -668,6 +774,7 @@
     /* this device stops getting this person's notifications (a shared phone or laptop) */
     try { if (typeof FTA.beforeSignOut === 'function') await Promise.race([FTA.beforeSignOut(), new Promise(r => setTimeout(r, 3000))]); } catch (e) { }
     STARTED = false;
+    await cacheDrop();
     try { sessionStorage.removeItem('sc-in'); } catch (e) { }
     if (MOCK) lsSet(MSESS, null); else if (SB) { try { await SB.auth.signOut({ scope: 'local' }); } catch (e) { } }
     location.reload();
@@ -692,6 +799,7 @@
     STATE = s;
     const t = { saved: 'All changes saved', saving: 'Saving…', offline: 'Offline · ' + n + ' change' + (n === 1 ? '' : 's') + ' kept on this device', error: 'Not saved yet · retrying' }[s];
     e.dataset.s = s; e.innerHTML = '<i></i><span>' + h(t) + '</span>';
+    if (s === 'saved') cacheSoon();
     e.title = s === 'error' ? LASTERR + ' · click to try now' : s === 'offline' ? 'They are sent when the internet is back' : 'Click to check for updates';
   }
   FTA.status = () => STATE;

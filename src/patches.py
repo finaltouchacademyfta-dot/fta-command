@@ -163,3 +163,21 @@ rep("t1 = SCH.mk('EX1', g.id), avg = Math.round(sum(g.stu, id => t1.m[id] || 0) 
     "t1 = SCH.mk((SCH.EXAMS[0] || FTA.noEx).id, g.id), avg = Math.round(sum(g.stu, id => t1.m[id] || 0) / g.stu.length / (SCH.EXAMS[0] || FTA.noEx).max * 100);")
 rep("X = i => pl + (W - pl - pr2) * i / (ms.length - 1)", "X = i => pl + (W - pl - pr2) * (ms.length < 2 ? .5 : i / (ms.length - 1))")
 rep("const pts = s.v.map((v, i) => v == null ? null : [X(i), Y(v), v])", "const pts = s.v.map((v, i) => v == null || isNaN(v) ? null : [X(i), Y(v), v])")
+# new student with no subject yet (an empty academy has no programmes): save the student, skip the enrolment, never crash
+rep("  ENROL.push({ id: 'ENR-' + String(2001 + FTA.n(ENROL, 'ENR-', 2001)), stu: id, prog, mentor: $('#nf-m').value, type: PROGS.find(p => p.id === prog).type,",
+    "  if (PROGS.find(p => p.id === prog)) ENROL.push({ id: 'ENR-' + String(2001 + FTA.n(ENROL, 'ENR-', 2001)), stu: id, prog, mentor: $('#nf-m').value, type: PROGS.find(p => p.id === prog).type,")
+# empty academy: average subjects per active student is 0, not NaN
+rep("'Active student প্রতি গড়ে ' + dg((enr.length / act.length).toFixed(1))", "'Active student প্রতি গড়ে ' + dg((act.length ? enr.length / act.length : 0).toFixed(1))")
+# live app: teachers sign in with Google (not a one-time code)
+rep("The teacher signs in with this Gmail and a one-time code. No separate mentor code is needed.", "The teacher signs in with Google using this Gmail and sees the students you link to them. No separate mentor code is needed.")
+# staff form note: one text block (it was split into narrow flex columns) and the live sign-in wording
+rep("<p class=\"v9g-n\">${ic('info')}They sign in on the Office tab with this Gmail and open the portal of the role you choose. Teachers are added from <b>Teacher Dashboards → Add teacher</b> with their Gmail; students get a Gmail at entry.</p>",
+    "<p class=\"v9g-n\">${ic('info')}<span>They sign in with Google using this Gmail and see only what their role allows. Teachers are added from <b>Mentors → New mentor</b> with their Gmail; students get a Gmail when they are added.</span></p>")
+# demo / sample data only: the advertising sample had no amount for months after October 2026 (NaN in the charts)
+rep("desc: 'Page boost', amt: ADV[m],", "desc: 'Page boost', amt: ADV[m] || 8000,")
+# 9 Nov 2026: Bangla words were left on the English payroll card ("তৈরি: … · রিভিউ: … · অনুমোদন: …"); English in English, Bangla in Bangla
+rep("<p>তৈরি: ${esc(r.preparedBy)}${r.reviewedBy ? ' · রিভিউ: ' + esc(r.reviewedBy) : ''}${r.approvedBy ? ' · অনুমোদন: ' + esc(r.approvedBy) : ''}</p>",
+    "<p>${LANG === 'bn' ? 'তৈরি' : 'Prepared by'}: ${esc(r.preparedBy)}${r.reviewedBy ? ' · ' + (LANG === 'bn' ? 'রিভিউ' : 'Reviewed by') + ': ' + esc(r.reviewedBy) : ''}${r.approvedBy ? ' · ' + (LANG === 'bn' ? 'অনুমোদন' : 'Approved by') + ': ' + esc(r.approvedBy) : ''}</p>")
+# the report header showed a fixed sample time (10:42) and a Bangla word in English: now the real time it was made
+rep("<span class=\"sub\">${R.period} · তৈরি: ${fdate(TODAY)} 10:42 · ${esc(ME().name)}</span>",
+    "<span class=\"sub\">${R.period} · ${LANG === 'bn' ? 'তৈরি' : 'Made'}: ${fdate(TODAY)} ${new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })} · ${esc(ME().name)}</span>")

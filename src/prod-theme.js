@@ -3,7 +3,7 @@
    "FTA Premium" now runs on the new design engine (all new features,
    3D cards, charts, dialogs) with FTA Premium's own colours and fonts:
    skin = midnight engine, palette = premium (html[data-palette]).
-   First visit: FTA Premium · dark · English. A person's own choice of
+   First visit: Premium Light ("Onyx & Gold", owner-approved 9 Nov 2026) · English. A person's own choice of
    theme, mode and language is remembered in their browser.
    ===================================================================== */
 /* run an inline-handler string without eval (keeps the CSP free of 'unsafe-eval') */
@@ -41,12 +41,12 @@ window.__ftaRun = function (code, v) {
   };
   /* switching the theme from code must not leave the theme picker open (setSkin refreshes the picker) */
   function quiet(f) { const ov = document.getElementById('ov'), was = !!(ov && !ov.hidden); f(); if (!was && typeof closeSheet === 'function') { try { closeSheet(); } catch (e) { } } }
-  /* first visit (nothing saved yet): FTA Premium, dark, English */
+  /* first visit (nothing saved yet): Premium Light (the approved Onyx & Gold design), English */
   let first = false; try { first = !localStorage.getItem('fta-skin') && !localStorage.getItem(KEY); } catch (e) { }
   if (first) {
-    try { localStorage.setItem('fta-demo-theme', 'dark'); if (!localStorage.getItem('fta-lang')) localStorage.setItem('fta-lang', 'en'); } catch (e) { }
+    try { localStorage.setItem('fta-demo-theme', 'light'); if (!localStorage.getItem('fta-lang')) localStorage.setItem('fta-lang', 'en'); } catch (e) { }
     if (typeof LANG !== 'undefined' && LANG !== 'en' && typeof setLang === 'function') setLang('en');
-    quiet(() => { setTheme('dark'); setSkin('premium'); });
+    quiet(() => { setTheme('light'); setSkin('m-light'); });
   } else paint();
   /* the old FTA Premium skin key (saved by earlier versions) opens the new FTA Premium */
   if (skinKey() === 'premium') quiet(() => setSkin('premium'));

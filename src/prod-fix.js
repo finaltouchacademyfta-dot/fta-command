@@ -167,7 +167,7 @@
     if (!it || typeof it !== 'object') return it;
     const d = Object.getOwnPropertyDescriptor(it, 'net'); if (d && d.get) return it;
     delete it.net;
-    Object.defineProperty(it, 'net', { get() { return this.gross + this.bonus - this.deduct; }, enumerable: true, configurable: true });
+    Object.defineProperty(it, 'net', { get() { return (+this.gross || 0) + (+this.bonus || 0) - (+this.deduct || 0); }, enumerable: true, configurable: true });
     return it;
   };
   add('PAYROLL', 'map', null, { restore: r => { if (r && Array.isArray(r.items)) r.items.forEach(netGetter); return r; } });
@@ -281,6 +281,52 @@
   }
   /* a student added from any skin also gets the next months' draft invoices (as an enrolment does) */
   wrap(W, 'saveStudent', function (o, a) { const before = new Set(STUDENTS.map(x => x.id)); const r = o.apply(this, a); const add = STUDENTS.filter(x => !before.has(x.id)).map(x => x.id); if (add.length && window.V8 && V8.sync) { try { V8.sync(add); } catch (e) { console.warn('[FTA] sync', e); } } return r; });
+  /* a monthly fee belongs to a subject: with no subject chosen (or none made yet) say so, instead of dropping the fee */
+  const feeTyped = () => { try { return SCH.NEW() && window.V9H && V9H.F && document.getElementById('v9h-sb') && !Object.keys(V9H.F.subs || {}).length && window.PU && PU.F && Object.values(PU.F.rows || {}).some(r => r.st !== 'Off' && (+r.pay > 0 || +r.paid > 0)); } catch (e) { return false; } };
+  wrap(W, 'saveStudent', function (o, a) {
+    if (feeTyped()) { toast(PROGS.length ? 'Choose the student’s subject first — the monthly fee belongs to a subject' : 'No subjects yet: add one in Programmes & Enrolments → Add programme, then add the student (or clear the fee and save the student now)'); const sb = document.getElementById('v9h-sb'); if (sb) sb.scrollIntoView({ block: 'center', behavior: 'smooth' }); return; }
+    return o.apply(this, a);
+  });
+  wrap(W, 'studentForm', function (o, a) {
+    const r = o.apply(this, a);
+    try { if (!PROGS.length) { const sb = document.getElementById('v9h-sb'), f = sb && (sb.closest('.fld') || sb.parentElement); if (f && !document.getElementById('fx-noprog')) f.insertAdjacentHTML('afterend', `<div id="fx-noprog" class="v9j-bar" style="grid-column:1/-1;margin:4px 0 10px"><div class="grow"><b>No subjects yet</b><small>Add your subjects and their monthly fee first in Programmes & Enrolments. You can still save the student now (without a fee) and add the subject later.</small></div><button type="button" class="btn p" onclick="closeSheet();go('programmes')">Add a subject</button></div>`); } } catch (e) { }
+    return r;
+  });
+  /* one Save = one student: a second click while saving is ignored, and the same name + phone asks before adding again */
+  let dupOk = null;
+  const digits = v => String(v || '').replace(/\D/g, '');
+  wrap(W, 'saveStudent', function (o, a) {
+    const nEl = document.getElementById('nf-n'), pEl = document.getElementById('nf-p');
+    if (nEl && nEl.__saved) return;                                  /* this form already saved its student (double click) */
+    const n = ((nEl && nEl.value) || '').trim().toLowerCase(), ph = digits(pEl && pEl.value);
+    const dup = n && STUDENTS.find(s => String(s.name || '').trim().toLowerCase() === n && (!ph || digits(s.phone) === ph || (s.phones || []).some(x => digits(x) === ph)));
+    if (dup && dupOk !== dup.id) { dupOk = dup.id; toast(dup.name + ' (' + dup.id + ') is already a student' + (ph ? ' with this phone' : '') + '. Press Save again only if this is a different person.'); return; }
+    dupOk = null; const n0 = STUDENTS.length, r = o.apply(this, a); if (nEl && STUDENTS.length > n0) nEl.__saved = true; return r;
+  });
+  /* each chosen subject shows "Mentor ▾"; with no mentors yet it says where to add them */
+  if (window.V9H && typeof V9H.sbDraw === 'function') wrap(V9H, 'sbDraw', function (o, a) {
+    const r = o.apply(this, a);
+    try {
+      const act = MENTORS.filter(m => m.status === 'Active');
+      document.querySelectorAll('#v9h-sl .v9h-sr select[data-v9h]').forEach(sel => {
+        if (!act.length) { if (!sel.parentElement.querySelector('.fx-nom')) sel.insertAdjacentHTML('beforebegin', '<span class="fx-nom">No mentor yet — add one in Mentors → New mentor</span>'); sel.hidden = true; return; }
+        if (!sel.previousElementSibling || !sel.previousElementSibling.classList.contains('fx-ml')) sel.insertAdjacentHTML('beforebegin', '<span class="fx-ml">Mentor</span>');
+      });
+    } catch (e) { }
+    return r;
+  });
+  /* the Mentors page gets its own "New mentor" button (like "New student") */
+  if (typeof PAGES !== 'undefined' && PAGES.mentors) wrap(PAGES, 'mentors', function (o, a) {
+    const r = o.apply(this, a);
+    try {
+      if (SCH.NEW() && typeof SCH.menForm === 'function' && R_().edit !== false && ['Owner', 'Admin', 'Junior Admin', 'Finance Manager'].includes(ST.role) && !document.getElementById('fx-newmen')) {
+        const rep = [...document.querySelectorAll('#view button')].find(b => /^\s*Report\s*$/.test(b.innerText));
+        const html = '<button type="button" class="btn p" id="fx-newmen" onclick="SCH.menForm()">' + ic('plus') + 'New mentor</button>';
+        if (rep) rep.insertAdjacentHTML('afterend', html); else { const v = document.querySelector('#view'); if (v) v.insertAdjacentHTML('afterbegin', '<div style="display:flex;justify-content:flex-end;margin-bottom:10px">' + html + '</div>'); }
+      }
+    } catch (e) { }
+    return r;
+  });
   /* teacher pay rule: teachers made in the app start as "fixed · ৳0"; the Owner / Admin sets the rule on the teacher form */
   if (SCH.menForm && SCH.menSave) {
     const canRule = () => ['Owner', 'Admin'].includes(ST.role) && !SCH.preview;

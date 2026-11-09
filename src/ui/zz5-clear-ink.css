@@ -1,0 +1,124 @@
+/* =====================================================================
+   FTA · Premium Light v3.1: "Clear Ink" + "Royal Sidebar" (demo layer only)
+   Owner feedback (8 Nov): light-mode text is hard to read; the sidebar is fine
+   but plain. The reference is the owner's QIT Finance light demo: near-black
+   bold headings, dark readable sub-text, heavy numbers, glossy 3D icon coins.
+   Scope: Premium Light only (midnight + light). Loads after zz4.
+   ===================================================================== */
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5){
+  --rl-ink:#101012; --rl-ink-2:#232325; --rl-muted:#444446; --rl-muted-2:#535355; --rl-gold-ink:#6B4A0F;
+  --ink:#101012; --ink-2:#232325; --muted:#444446; --gold-ink:#6B4A0F;
+  --fx-ink:#101012; --fx-ink-2:#232325; --fx-muted:#444446; --fx-gold-ink:#6B4A0F;
+  --ok-ink:#0F5E3B; --bad-ink:#94261C; --warn-ink:#7A4A06;
+}
+
+/* ---------- 1. Clear ink: readable text everywhere in the work area ---------- */
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5) body #view{color:#101012}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5) body #view :is(h1,h2,h3,h4,.ttl b,.ttl,.qc-n,.nm,.name,.card > b,.card > strong):not(.cc-hero *):not(.cck *):not(.btn){color:#101012!important;-webkit-text-fill-color:currentColor!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5) body #view :is(h2,h3,.ttl b,.card-h b,.ch b,.ch h3):not(.cc-hero *):not(.cck *){font-weight:750!important;letter-spacing:-.005em}
+/* secondary text: dark warm grey (about 8:1 on cream), never pale */
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5) body #view :is(small,.sub,p.sub,.muted,.m,.tm,.sc-time,.kx,.bn-sub,.idc,.lgd span,.xc-lg span,.v8-nlink,.cc-quote,.hint,.note,.meta,.desc,figcaption,dd,.zc-r2 small):not(.cc-hero *):not(.cck *):not(.pill):not(.btn *):not(.cx-bar *){color:#444446!important;-webkit-text-fill-color:currentColor!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5) body #view :is(small,.sub,p.sub,.tm,.sc-time,.kx,.idc,.v8-nlink):not(.cc-hero *):not(.cck *):not(.pill){font-weight:500!important}
+/* tiny labels: bigger and darker, never under 11.5px */
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5) body #view :is(label,th,.qbx small,.tg,.eyebrow,.bn-eye,.lbl,.fld > span:first-child):not(.cc-hero *):not(.cck *){color:#404042!important;font-weight:700!important;-webkit-text-fill-color:currentColor!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5) body #view .qbx small,html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5) body #view th,html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5) body #view label{font-size:11.5px!important;letter-spacing:.04em}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5) body #view .page > section.banner .bn-eye{color:#6B4A0F!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5) body #view .page > section.banner .bn-sub{color:#444446!important;font-weight:500!important;font-size:14.5px!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5) body #view .page > section.banner .bn-h{font-weight:800!important;color:#101012!important}
+/* body copy in tables, lists and cards */
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5) body #view :is(td,li,.it,.row,.qc-f,.qc-f span,.grow,p):not(.cc-hero *):not(.cck *):not(.pill){color:#1B1B1D}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5) body #view td{font-weight:500}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5) body #view td b,html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5) body #view td strong{color:#101012!important;font-weight:750!important}
+/* numbers: heavy and dark, like the owner's demo */
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5) body #view :is(.num,.kv,.qbx b,.fig,.amt,.v,.tot,.big,.n):not(.cc-hero *):not(.cck *):not(.pill):not(.btn *){font-weight:800!important;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5) body #view :is(.kv,.qbx b,.big,.tot):not(.cc-hero *):not(.cck *){color:#101012!important}
+/* status colours: deeper inks so green and red stay readable on cream */
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5) body #view :is(.ok,.up,.pos,.delta.up,.qbx.ok b,.wa-n,.p-ok):not(.cc-hero *):not(.cck *){color:#0F5E3B!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5) body #view :is(.bad,.dn,.neg,.delta.dn,.qbx.bad b,.p-bad):not(.cc-hero *):not(.cck *){color:#94261C!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5) body #view :is(.warn,.p-warn):not(.cc-hero *):not(.cck *){color:#7A4A06!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5) body #view .pill{font-weight:700!important;font-size:11.5px!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5) body #view .pill.p-n{color:#363638!important;background:#E7E7E8!important;border-color:#CECED0!important}
+/* links and text buttons: deep bronze, bold */
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5) body #view :is(.lk,.cc-link,a:not(.btn)):not(.cc-hero *):not(.cck *){color:#6B4A0F!important;font-weight:700!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5) body #view .btn.s.p:not(#qab):not(:disabled){background:linear-gradient(180deg,#2D2D2F,#1A1A1C)!important;color:#F1D79B!important;border:1px solid rgba(231,199,127,.5)!important;box-shadow:inset 0 1px 0 rgba(237,237,237,.18),0 2px 0 #0E0E10,0 8px 14px -10px rgba(27,27,27,.6)!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5) body #view .btn.s.p:not(#qab):not(:disabled) *{color:#E7C77F!important}
+/* disabled buttons: clearly inactive but still readable */
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5) body #view .btn:is(:disabled,[disabled],[aria-disabled="true"]){background:linear-gradient(180deg,#EEEEEF,#E6E6E7)!important;color:#6D6D6F!important;border:1px dashed #BCBCBE!important;box-shadow:none!important;opacity:1!important;filter:none!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5) body #view .btn:is(:disabled,[disabled],[aria-disabled="true"]) *{color:#6D6D6F!important}
+/* tabs and chips: dark readable words */
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5) body #view :is(.chips,.seg,.zc-chips,.vt) > button{color:#313133!important;font-weight:650!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5) body #view :is(.chips,.seg,.zc-chips,.vt) > button.on{color:#101012!important;font-weight:750!important}
+/* form fields */
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5) body :is(input,select,textarea){color:#101012!important;font-weight:500}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5) body :is(input,textarea)::placeholder{color:#6F6F71!important;opacity:1}
+/* top bar title + search */
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5) body #top #ttl{font-weight:800!important;color:#101012!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5) body #top .gsearch,html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5) body #top .gsearch *{color:#444446!important}
+/* jewel tiles: crisp white words with a soft shadow */
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5) body #view .cc-k > .cck :is(.lb,.tg,.sb,.ch,small,span){color:#FFFFFF!important;text-shadow:0 1px 1px rgba(0,0,0,.25)}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5) body #view .cc-k > .cck .fg{color:#FFFFFF!important;font-weight:800!important;text-shadow:0 1px 2px rgba(0,0,0,.3)}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5) body #view .cc-k > .cck .lb{font-weight:700!important;font-size:13px!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5) body #view .cc-k > .cck .tg{opacity:.85}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5) body #view .cc-quote cite{color:#6B4A0F!important;font-weight:700!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5) body #view :is(.zc-meta,.av):not(.cck *){color:#444446!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5) body #view .cc-hero .cc-fig span{color:#CCCCCE!important}
+/* hero: brighter sub-text */
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5) body #view .cc-hero p,html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5) body #view .cc-hero small{color:#DADADB!important;font-weight:500}
+
+/* ---------- 2. glossy 3D icon coins (as in the owner's demo) ---------- */
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5) body #view .kpis > .kpi svg.i,
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5) body #view .card .ch > svg.i,
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5) body #view .card .ttl > svg.i,
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5) body #view .xcard .xc-h svg.i{background:radial-gradient(120% 90% at 30% 15%,rgba(255,255,255,.35),transparent 45%),linear-gradient(160deg,var(--j2,#2A8A63),var(--j1,#0F5E3B))!important;color:#FFFFFF!important;border:0!important;border-radius:11px!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.4),inset 0 -2px 0 rgba(0,0,0,.18),0 3px 0 rgba(0,0,0,.14),0 8px 14px -8px rgba(20,20,20,.55)!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5) body #view .cc-k > .cck svg.i,html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5) body #view .cc-k > .cck .sc-ic{background:radial-gradient(120% 90% at 30% 15%,rgba(255,255,255,.45),transparent 50%),rgba(255,255,255,.16)!important;border:1px solid rgba(255,255,255,.32)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.45),0 3px 0 rgba(0,0,0,.18),0 8px 14px -8px rgba(0,0,0,.45)!important;border-radius:11px!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5) body #view .cc-k > .cck .sc-ic svg,html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5) body #view .cc-k > .cck .sc-ic svg *{color:#FFFFFF!important}
+
+/* ---------- 3. Royal sidebar: engraved lattice, foil edge, bevelled active key ---------- */
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5) body #side{
+  background:
+    radial-gradient(130% 40% at 0% 0%,rgba(231,199,127,.22),transparent 60%),
+    radial-gradient(100% 26% at 100% 100%,rgba(231,199,127,.10),transparent 70%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='44' height='44' viewBox='0 0 44 44'%3E%3Cg fill='none' stroke='%23E7C77F' stroke-opacity='.075' stroke-width='1'%3E%3Cpath d='M22 2 42 22 22 42 2 22Z'/%3E%3Cpath d='M22 12 32 22 22 32 12 22Z'/%3E%3C/g%3E%3Ccircle cx='22' cy='22' r='1.3' fill='%23E7C77F' fill-opacity='.12'/%3E%3C/svg%3E"),
+    linear-gradient(180deg,#202022 0%,#151517 50%,#0C0C0E 100%)!important;
+  border-right:0!important;
+  box-shadow:inset -1px 0 0 rgba(231,199,127,.32),inset -2px 0 0 rgba(0,0,0,.5),24px 0 60px -10px rgba(5,5,5,.5)!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5) body #side::before{opacity:0!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5) body #side::after{content:"";position:absolute;top:0;bottom:0;right:0;width:1px;pointer-events:none;background:linear-gradient(180deg,rgba(241,215,155,0),rgba(241,215,155,.75) 18%,rgba(201,154,71,.35) 55%,rgba(241,215,155,.6) 85%,rgba(241,215,155,0))}
+/* brand plaque */
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5) body #side .brand{position:relative;margin:10px 10px 6px!important;padding:12px 12px!important;border-radius:14px!important;border:1px solid rgba(231,199,127,.32)!important;border-image:none!important;
+  background:radial-gradient(80% 120% at 20% 0%,rgba(231,199,127,.20),transparent 60%),linear-gradient(180deg,rgba(45,45,45,.9),rgba(20,20,20,.9))!important;
+  box-shadow:inset 0 1px 0 rgba(237,237,237,.16),inset 0 -1px 0 rgba(0,0,0,.4),0 4px 0 rgba(0,0,0,.35),0 14px 24px -14px rgba(0,0,0,.8)!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5) body #side .brand b{color:#F1D79B!important;font-weight:700!important;letter-spacing:.01em;text-shadow:0 1px 0 rgba(0,0,0,.6),0 0 18px rgba(231,199,127,.25)!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5) body #side .brand span{color:#B5B5B7!important;font-weight:500!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5) body #side .logo{border:1.5px solid #E7C77F!important;box-shadow:0 0 0 3px rgba(231,199,127,.10),0 0 22px -4px rgba(231,199,127,.55),0 6px 14px -6px rgba(0,0,0,.7)!important}
+/* group headings: gold with a diamond ornament */
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5) body #side .navg h6{color:#CDAE6E!important;font-weight:750!important;letter-spacing:.16em;font-size:11px!important;display:flex;align-items:center;gap:8px}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5) body #side .navg h6::before{content:"";width:5px;height:5px;transform:rotate(45deg);background:linear-gradient(135deg,#F1D79B,#A8752E);box-shadow:0 0 6px rgba(231,199,127,.5);flex:none}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5) body #side .navg h6::after{background:linear-gradient(90deg,rgba(231,199,127,.35),transparent)!important}
+/* nav items: brighter words, gentle slide on hover */
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5) body #side .nav{color:#E5E5E6!important;font-weight:550!important;transition:background .18s,transform .18s,box-shadow .18s,border-color .18s}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5) body #side .nav span.l{color:#E5E5E6!important;-webkit-text-fill-color:currentColor!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5) body #side .nav:hover{background:linear-gradient(90deg,rgba(237,237,237,.07),rgba(237,237,237,.02))!important;border-color:rgba(231,199,127,.14)!important;transform:translateX(2px)}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5) body #side .nav:hover span.l{color:#F8F8F9!important}
+/* icon: thin gold outline on dark glass (no coloured fill, per owner's earlier note) */
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5) body #side .nav svg.i{color:#E2C88C!important;background:linear-gradient(180deg,rgba(237,237,237,.06),rgba(0,0,0,.18))!important;border:1px solid rgba(231,199,127,.34)!important;box-shadow:inset 0 1px 0 rgba(237,237,237,.10),0 2px 6px -3px rgba(0,0,0,.6)!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5) body #side .nav:hover svg.i{border-color:rgba(231,199,127,.7)!important;color:#F1D79B!important}
+/* active: raised bevelled key with gold rim and lamp glow */
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5) body #side .nav.on{
+  background:radial-gradient(120% 140% at 0% 50%,rgba(231,199,127,.22),transparent 60%),linear-gradient(180deg,rgba(69,69,69,.65),rgba(32,32,32,.85))!important;
+  border:1px solid rgba(231,199,127,.55)!important;transform:none;
+  box-shadow:inset 0 1px 0 rgba(237,237,237,.28),inset 0 -1px 0 rgba(0,0,0,.45),inset 3px 0 0 #E7C77F,0 3px 0 rgba(0,0,0,.45),0 12px 22px -12px rgba(0,0,0,.9),0 0 24px -10px rgba(231,199,127,.55)!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5) body #side .nav.on span.l{color:#FFFFFF!important;font-weight:700!important;text-shadow:0 1px 0 rgba(0,0,0,.5)}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5) body #side .nav.on svg.i{color:#F1D79B!important;border:1.5px solid #E7C77F!important;background:radial-gradient(circle at 50% 30%,rgba(231,199,127,.22),rgba(0,0,0,.2))!important;box-shadow:0 0 0 3px rgba(231,199,127,.12),0 0 18px -3px rgba(231,199,127,.7)!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5) body #side .nav .cnt{font-weight:800!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5) body #side .slive,html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5) body #side .slive *{color:#A6A6A8!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5) body #side .side-foot{background:linear-gradient(180deg,transparent,rgba(0,0,0,.25))!important;border-top:1px solid rgba(231,199,127,.18)!important}
+
+/* ---------- 4. faint engraved pattern on the cream canvas (as in the demo) ---------- */
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5) body{background:
+  radial-gradient(700px 420px at 100% 0%,rgba(231,199,127,.22),transparent 70%) fixed,
+  radial-gradient(620px 400px at 18% 100%,rgba(231,199,127,.16),transparent 70%) fixed,
+  url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cg fill='none' stroke='%23B8893A' stroke-opacity='.07' stroke-width='1'%3E%3Cpath d='M32 4 60 32 32 60 4 32Z'/%3E%3Cpath d='M32 18 46 32 32 46 18 32Z'/%3E%3C/g%3E%3C/svg%3E") fixed,
+  linear-gradient(180deg,#F3F3F4,#ECECED) fixed!important}
+
+@media (prefers-reduced-motion:reduce){html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5) body #side .nav{transition:none!important}html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5) body #side .nav:hover{transform:none}}

@@ -1,0 +1,12 @@
+/* =====================================================================
+   FTA · Restore the page-header slider (demo layer only)
+   The earlier ui-luxe layer hid each list page's header slider (.rs: Active
+   students / Total due / New enrolments / Thought). That is an existing
+   feature, so it is restored here. Scope: Midnight skin (Premium Dark + Light).
+   Owner (8 Nov): no FTA logo behind any slider, so .bn-emb stays hidden.
+   The new Messages / Live / Watch pages keep their own header (no slider).
+   Light-theme slider styling lives in zz7-onyx-gold.css.
+   ===================================================================== */
+html[data-skin="midnight"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6) body #view .page:not(:has(> #cx-root)) > section.banner .rs{display:grid!important}
+html[data-skin="midnight"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6) body #view section.banner .bn-emb{display:none!important}
+html[data-skin="midnight"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6) body #view .page:not(:has(> #cx-root)) > section.banner > :is(.bn-top,.rs){position:relative;z-index:1}

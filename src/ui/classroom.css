@@ -1,0 +1,45 @@
+/* =====================================================================
+   FTA · Class status page (Messages use the approved zz3-connect / zz8-c styles).
+   Uses the app's own colour tokens, so it follows every theme. Green and red only for status.
+   ===================================================================== */
+#cx-root .cl-wrap{display:grid;gap:14px;min-width:0}
+#cx-root .cl-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+#cx-root .cl-kpis>div{display:grid;gap:4px;padding:14px 16px;border-radius:16px;border:1px solid var(--line-2,var(--line));background:var(--surface);min-width:0}
+#cx-root .cl-kpis b{font-size:28px;line-height:1;font-weight:800;color:var(--ink);font-variant-numeric:tabular-nums}
+#cx-root .cl-kpis span{font-size:12.5px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+#cx-root .cl-kpis .is-live b{color:#0F7A46}
+#cx-root .cl-kpis .is-late b{color:#B42318}
+#cx-root .cl-list{display:grid;gap:10px}
+#cx-root .cl-row{display:grid;grid-template-columns:150px minmax(0,1.3fr) minmax(0,1fr) auto;gap:14px;align-items:center;padding:14px 16px;min-width:0}
+#cx-root .cl-row.is-live{box-shadow:inset 3px 0 0 #12A15A}
+#cx-root .cl-row.is-late,#cx-root .cl-row.is-missed{box-shadow:inset 3px 0 0 #D92D20}
+#cx-root .cl-when{font-weight:700;font-size:13.5px;color:var(--ink);font-variant-numeric:tabular-nums}
+#cx-root .cl-what{display:grid;gap:2px;min-width:0}
+#cx-root .cl-what b{font-size:15px;font-weight:700;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#cx-root .cl-what small,#cx-root .cl-sub,#cx-root .cl-muted{font-size:12.5px;color:var(--muted)}
+#cx-root .cl-st{display:grid;gap:4px;justify-items:start;min-width:0}
+#cx-root .cl-pill{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;font-size:12px;font-weight:700;border:1px solid var(--line-2,var(--line));color:var(--ink-2,var(--ink));background:var(--surface)}
+#cx-root .cl-pill.is-live{color:#0B6B3D;border-color:#9ED9B8;background:#EAF8F0}
+#cx-root .cl-pill.is-late{color:#9A1C12;border-color:#F3B4AD;background:#FDEDEB}
+#cx-root .cl-pill.is-soon{color:#7A4E00;border-color:#EBCB8B;background:#FBF3E2}
+#cx-root .cl-pill.is-ended{color:var(--muted)}
+#cx-root .cl-dot{width:8px;height:8px;border-radius:50%;background:#12A15A;box-shadow:0 0 0 0 rgba(18,161,90,.55);animation:clp 1.6s infinite}
+@keyframes clp{70%{box-shadow:0 0 0 7px rgba(18,161,90,0)}100%{box-shadow:0 0 0 0 rgba(18,161,90,0)}}
+@media (prefers-reduced-motion:reduce){#cx-root .cl-dot{animation:none}}
+#cx-root .cl-act{display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end;align-items:center;min-width:0}
+#cx-root .cl-link{width:260px;max-width:100%;height:38px;padding:0 12px;border-radius:10px;border:1px solid var(--line-2,var(--line));background:var(--surface);color:var(--ink);font:inherit;font-size:13px;box-sizing:border-box}
+#cx-root .cl-link:focus-visible,#cx-root #cl-gsel:focus-visible{outline:none;border-color:var(--gold,#C9A24D);box-shadow:0 0 0 3px rgba(201,162,77,.2)}
+#cx-root .cl-extra{display:grid;gap:10px;padding:14px 16px}
+#cx-root .cl-extra b{font-size:14px;color:var(--ink)}
+#cx-root .cl-extra-r{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+#cx-root #cl-gsel{height:38px;min-width:200px;padding:0 10px;border-radius:10px;border:1px solid var(--line-2,var(--line));background:var(--surface);color:var(--ink);font:inherit}
+#cx-root .cl-empty{display:grid;gap:6px;justify-items:center;text-align:center;padding:34px 16px;color:var(--muted)}
+#cx-root .cl-empty b{font-size:16px;color:var(--ink)}
+#cx-root .cl-empty p{margin:0;max-width:460px}
+#cx-root .cl-note{margin:0;font-size:13px;line-height:1.55;color:var(--muted)}
+#cx-root .cl-note b{color:var(--ink)}
+#cx-root .cl-note.is-warn{color:#9A1C12;font-weight:600}
+#cx-root .cl-hint{display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:12px 14px;border-radius:12px;border:1px dashed var(--gold,#C9A24D);color:var(--ink);font-weight:600}
+#cx-root .cl-hint[hidden]{display:none}
+#sidenav .cnt.cl-nb.is-live{background:#12A15A;color:#fff}
+@media (max-width:900px){#cx-root .cl-row{grid-template-columns:minmax(0,1fr) auto}#cx-root .cl-when{grid-column:1/-1}#cx-root .cl-act{grid-column:1/-1;justify-content:flex-start}#cx-root .cl-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}#cx-root .cl-link{width:100%}}

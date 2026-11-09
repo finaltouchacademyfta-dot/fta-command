@@ -24,7 +24,8 @@
     att: { S: 'sp-att', M: 'tp-att', O: 'ac-att' }, events: { S: 'sp-cal', M: 'tp-cal', O: 'ac-cal' }, rt: { S: 'sp-cal', M: 'tp-routine', O: 'ac-routine' },
     marks: { S: 'sp-results', M: 'tp-marks', O: 'ac-exams' }, prr: { S: 'sp-results', M: 'tp-progress', O: 'ac-progress' }, ox: { S: 'sp-exams', M: 'tp-exams', O: 'ac-online' },
     oxatt: { M: 'tp-exams', O: 'ac-online' }, qb: { M: 'tp-exams', O: 'ac-online' }, pend: { M: 'tp-students', O: 'ac-portals' }, sreq: { M: 'tp-students', O: 'students' },
-    leave: { M: 'tp-leave', O: 'ac-portals' }, payments: { O: 'payments' }, test: { S: 'sp-home', M: 'tp-home', O: 'dashboard' }
+    leave: { M: 'tp-leave', O: 'ac-portals' }, payments: { O: 'payments' },
+    msg: { S: 'sp-chat', M: 'tp-chat', O: 'cx-chat' }, clslive: { S: 'sp-live', M: 'tp-live', O: 'cx-live' }, slotreq: { M: 'tp-profile', O: 'cx-people' }, test: { S: 'sp-home', M: 'tp-home', O: 'dashboard' }
   };
   const has = (a, x) => (a || []).indexOf(x) > -1;
   const uniq = a => Array.from(new Set((a || []).filter(Boolean)));
@@ -67,7 +68,7 @@
 
   /* ---------- 1. a saved change → notifications ---------- */
   /* quick test first, so ordinary saves (payments edits, settings…) cost nothing */
-  const WATCH = ['notices', 'circles', 'req', 'hw', 'cnotes', 'att', 'events', 'rt', 'marks', 'prr', 'ox', 'oxatt', 'qb', 'pend', 'sreq', 'leave', 'payments'];
+  const WATCH = ['msg', 'clslive', 'slotreq', 'notices', 'circles', 'req', 'hw', 'cnotes', 'att', 'events', 'rt', 'marks', 'prr', 'ox', 'oxatt', 'qb', 'pend', 'sreq', 'leave', 'payments'];
   function watched(c) { return has(WATCH, c); }
   function events(c, id, prev, next, actor, tg, X) {
     const E = [], d = next || {}, p = prev || {}, A = actor.role, office = has(OFFICE, A);
@@ -169,6 +170,29 @@
         else if (prev && office && d.status !== p.status && !has(['Submitted', 'Pending'], d.status)) add('office', { men: [d.mentor] }, 'Leave ' + String(d.status).toLowerCase(), [d.from && fdate(d.from), d.note].filter(Boolean).join(' · '), { tag: 'lv-' + id });
         break;
       }
+      /* Messages (src/ui/classroom.js): the other person, or everyone in the class group; the office chat → Owner / Admin */
+      case 'msg': {
+        if (prev) break;
+        const room = String(d.room || ''), who = d.by === 'U:office' ? 'Academy Office' : /^MEN-/.test(d.by) ? X.menName(d.by) : X.stuName(d.by);
+        if (room.indexOf('g:') === 0) { const g = X.group(d.gid || room.slice(2)); add('messages', { stu: g.stu || [], men: g.mentor ? [g.mentor] : [] }, who + ' · ' + (g.name || 'Class group'), d.text, { tag: 'ms-' + room }); }
+        else if (room.indexOf('dm:') === 0) {
+          const ab = room.slice(3).split('|'), to = ab.find(x => x !== d.by) || '';
+          const aud = to === 'U:office' ? { office: ['Owner', 'Admin'] } : /^MEN-/.test(to) ? { men: [to] } : /^STU-/.test(to) ? { stu: [to] } : null;
+          if (aud) add('messages', aud, 'Message from ' + who, d.text, { tag: 'ms-' + room });
+        }
+        break;
+      }
+      /* Class status: students of the class hear when it starts (online classes: with the Join link on their page) */
+      case 'clslive': {
+        if (!prev && d.status === 'On') { const g = X.group(d.gid); add('classes', { stu: g.stu || [] }, 'Class started · ' + (g.name || 'your class'), d.link ? 'Tap to open the class page and join.' : X.menName(d.mentor) + ' has started the class.', { tag: 'cl-' + d.gid, urgency: 'high' }); }
+        break;
+      }
+      /* a mentor's own slot request → the office; the answer → the mentor */
+      case 'slotreq': {
+        if (!prev && A === 'Mentor') add('office', { office: DESK }, 'Slot request from ' + X.menName(d.mentor), [X.stuName(d.stu) !== d.stu ? X.stuName(d.stu) : d.stu ? '' : 'Open slot', d.when].filter(Boolean).join(' · '), { tag: 'sq-' + id });
+        else if (prev && office && d.status !== p.status && has(['Approved', 'Declined'], d.status)) add('office', { men: [d.mentor] }, 'Your slot request was ' + d.status.toLowerCase(), d.when || '', { tag: 'sq-' + id });
+        break;
+      }
       case 'payments': if (!prev && d.status === 'Pending') add('money', { office: FIN }, 'Payment to verify', X.stuName(d.stu) + ' · ' + money(d.amt), { tag: 'py-' + id }); break;
     }
     return E;
@@ -257,6 +281,22 @@
       const h = r.data || {}; if (h.status === 'Closed' || h.due !== plus(1)) continue;
       if (!(await store.sentOnce('hw-due:' + r.id))) continue;
       evs.push([r, { c: 'hw', id: r.id, cat: 'homework', aud: { stu: Array.isArray(h.stu) && h.stu.length ? h.stu : r.student_ids || [] }, title: 'Homework due tomorrow', body: clip(h.title), tag: 'hw-' + r.id }]);
+    }
+    /* Class status: a mentor is reminded 10 minutes before a class on the routine ("press Start class");
+       if it has not started 10 minutes after its time, the mentor and the office hear about it */
+    const rts = (await rowsOf('rt')).filter(r => r.data && r.data.gid && r.data.day === dow(today) && /^\d{1,2}:\d{2}/.test(r.data.start || ''));
+    if (rts.length) {
+      const live = (await rowsOf('clslive')).map(r => r.data || {}), names = {};
+      for (const g of await rowsOf('groups')) names[g.id] = (g.data || {}).name || '';
+      for (const r of rts) {
+        const e = r.data, at = atDhaka(today, String(e.start).padStart(5, '0')), end = /^\d{1,2}:\d{2}/.test(e.end || '') ? atDhaka(today, String(e.end).padStart(5, '0')) : at + 3600e3;
+        const started = live.some(x => x.gid === e.gid && (x.status === 'On' || (Date.parse(x.start) >= at - 30 * 60e3 && Date.parse(x.start) <= end)));
+        const gname = names[e.gid] || 'your class';
+        if (!started && now >= at - 10 * 60e3 && now < at && e.mentor && (await store.sentOnce('cl-soon:' + r.id + ':' + today)))
+          evs.push([r, { c: 'clslive', id: r.id, cat: 'classes', aud: { men: [e.mentor] }, title: 'Class at ' + t12(e.start) + ' · ' + gname, body: 'Open Class status and press Start class when you begin.', tag: 'cl-' + e.gid }]);
+        if (!started && now >= at + 10 * 60e3 && now < Math.min(end, at + 40 * 60e3) && (await store.sentOnce('cl-late:' + r.id + ':' + today)))
+          evs.push([r, { c: 'clslive', id: r.id, cat: 'classes', aud: { men: e.mentor ? [e.mentor] : [], office: DESK }, title: 'Class not started · ' + gname, body: 'It was on the routine at ' + t12(e.start) + '. If it is running, press Start class.', tag: 'cl-' + e.gid, urgency: 'high' }]);
+      }
     }
     if (!evs.length) return [];
     const members = await store.listMembers(), rows = [];

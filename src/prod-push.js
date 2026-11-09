@@ -53,8 +53,25 @@
       if (d.type === 'fta-push') G(() => FTA.pull && FTA.pull());
       if (d.type === 'fta-open' && typeof d.u === 'string') openLink(d.u.split('?')[1] || '');
       if (d.type === 'fta-resub') resync();
+      if (d.type === 'fta-updated') updateReady();
     });
+    /* look for a new version now and then (the page itself opens from this device at once) */
+    setInterval(() => { if (REG && document.visibilityState === 'visible') REG.update().catch(() => { }); }, 30 * 60000);
+    document.addEventListener('visibilitychange', () => { if (REG && document.visibilityState === 'visible') REG.update().catch(() => { }); });
   });
+  /* a new version is installed: one tap reloads (never by itself, so nothing being typed is lost) */
+  function updateReady() {
+    if (document.getElementById('fta-upd')) return;
+    const b = document.createElement('div'); b.id = 'fta-upd'; b.setAttribute('role', 'status');
+    b.innerHTML = '<span>A new version of the app is ready.</span><button type="button">Reload</button><button type="button" aria-label="Later">×</button>';
+    b.style.cssText = 'position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:2147483600;display:flex;align-items:center;gap:10px;padding:10px 12px 10px 16px;border-radius:14px;background:#111;color:#F2F2F2;font:600 14px/1.3 Inter,system-ui,sans-serif;border:1px solid rgba(231,199,127,.55);box-shadow:0 14px 34px -10px rgba(0,0,0,.6);max-width:calc(100vw - 24px)';
+    const [, ok, no] = b.children;
+    ok.style.cssText = 'border:1px solid #E7C77F;background:#1E1E1E;color:#F1D79B;border-radius:10px;padding:7px 14px;font:inherit;cursor:pointer';
+    no.style.cssText = 'border:0;background:transparent;color:#BDBDBD;font-size:20px;line-height:1;cursor:pointer;padding:2px 6px';
+    ok.onclick = async () => { ok.disabled = true; ok.textContent = 'Saving…'; try { if (FTA.sync) await Promise.race([FTA.sync(), new Promise(r => setTimeout(r, 4000))]); } catch (e) { } location.reload(); };
+    no.onclick = () => b.remove();
+    document.body.appendChild(b);
+  }
   const meta = (n, c) => { let m = document.querySelector('meta[name="' + n + '"]'); if (!m) { m = document.createElement('meta'); m.name = n; document.head.appendChild(m); } if (m.content !== c) m.content = c; };
   function paintBar() { const c = G(() => getComputedStyle(document.body).backgroundColor); if (c && c !== 'rgba(0, 0, 0, 0)') meta('theme-color', c); }
   G(() => new MutationObserver(() => setTimeout(paintBar, 60)).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme', 'data-skin', 'data-palette', 'class'] }));

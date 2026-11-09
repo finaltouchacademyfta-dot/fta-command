@@ -110,6 +110,8 @@ export function makeStore(env = process.env) {
     cleanup: async () => {
       try { await rest('push_sent?at=lt.' + enc(new Date(Date.now() - 40 * 864e5).toISOString()), { method: 'DELETE' }); } catch (e) { }
       try { await rest('push_queue?created_at=lt.' + enc(new Date(Date.now() - 2 * 864e5).toISOString()), { method: 'DELETE' }); } catch (e) { }
+      /* Messages are kept 6 months (owner's decision, 9 Nov 2026), then removed for good */
+      try { await rest('records?collection=eq.msg&updated_at=lt.' + enc(new Date(Date.now() - 183 * 864e5).toISOString()), { method: 'DELETE' }); } catch (e) { }
     }
   };
   return store;
