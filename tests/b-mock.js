@@ -129,7 +129,7 @@ const userClick = p => p.mouse.click(5, 300);   /* a real user action (the layer
   ok(await p.evaluate(() => STUDENTS.length === 0 && !FTA.member), 'no data loaded for an unknown Gmail');
   const sapi = await p.evaluate(() => FTA.api({ action: 'pull' }));
   ok(sapi.status === 403, 'server refuses to send records to an unknown Gmail');
-  await p.click('#fg-other'); await ready(p);
+  await Promise.all([p.waitForNavigation({ timeout: 15000 }).catch(() => { }), p.click('#fg-other')]); await ready(p);   /* sign-out clears this device's copy, then reloads */
   ok(/Sign in|TEST MODE/i.test(await gateText(p)), '“Use another Gmail” goes back to the sign-in screen');
 
   console.log('6. Owner adds staff; Finance Manager can use money pages but cannot change roles');

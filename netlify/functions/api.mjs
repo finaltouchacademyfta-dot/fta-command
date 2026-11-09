@@ -77,6 +77,8 @@ async function diagnose() {
   /* 4. Owner Gmail */
   const ow = String(process.env.OWNER_EMAIL || '').trim();
   add(!!ow && /^[^@\s]+@[^@\s]+\.[a-z]{2,}$/i.test(ow), ow ? 'OWNER_EMAIL is set' + (ow !== ow.toLowerCase() ? ' (capital letters are fine; it is compared in lower case)' : '') + '.' : 'OWNER_EMAIL is missing in Netlify.', ow ? '' : 'Netlify-তে OWNER_EMAIL = আপনার Gmail দিন।');
+  /* 5. the AI assistant (optional) */
+  add(process.env.ANTHROPIC_API_KEY ? true : null, process.env.ANTHROPIC_API_KEY ? 'FTA Assistant (AI): key is set.' : 'FTA Assistant (AI) is off: add ANTHROPIC_API_KEY in Netlify to turn it on (optional).');
   const bad = L.filter(x => x.startsWith('✖')).length;
   const text = 'FTA Command Centre · server setup check\n' + (bad ? '✖ ' + bad + ' thing(s) to fix — after fixing, Netlify → Deploys → Trigger deploy, then open this page again.\n  ' + bad + 'টা জিনিস ঠিক করতে হবে। ঠিক করে Trigger deploy দিন, তারপর এই পেজ আবার খুলুন।' : '✔ Everything looks right. / সব ঠিক আছে।') + '\n\n' + L.join('\n') + '\n';
   LAST = { t: Date.now(), text }; return text;

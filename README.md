@@ -68,6 +68,7 @@ git push -u origin main
 | `SUPABASE_ANON_KEY` | **Publishable** key (`sb_publishable_…`) বা পুরনো anon key |
 | `SUPABASE_SERVICE_ROLE_KEY` | **Secret** key (`sb_secret_…`) বা পুরনো service_role key (গোপন — "Contains secret values" টিক দিন)। **দুটো key উল্টো বসাবেন না।** |
 | `OWNER_EMAIL` | আপনার Gmail (ধাপ ২-এ যেটা দিয়েছেন) |
+| `ANTHROPIC_API_KEY` | *(ঐচ্ছিক)* AI এজেন্টের key — নিচে "FTA Assistant" অংশ দেখুন। গোপন — "Contains secret values" টিক দিন |
 
 4. **Deploys → Trigger deploy → Deploy site**। ১–২ মিনিটে শেষ হবে।
 5. পাওয়া ঠিকানাটা (যেমন `https://xxxx.netlify.app`) Supabase-এর **URL Configuration**-এ বসান (ধাপ ৩খ)।
@@ -124,6 +125,11 @@ git push -u origin main
 | ছাত্র exam জমা দিল | যে শিক্ষক খাতা দেখবেন |
 | শিক্ষক নতুন ছাত্র / subject change / leave পাঠাল, marks জমা দিল | অফিস (approve-এর জন্য); উত্তর গেলে সেই শিক্ষক |
 | নতুন Pending payment | Owner, Admin, Finance Manager |
+| Messages-এ নতুন message | private chat-এ অন্যজন; class group-এ সেই ক্লাসের ছাত্র ও mentor; Office chat-এ Owner আর Admin |
+| Mentor **Start class** চাপল | সেই ক্লাসের ছাত্ররা (online হলে ট্যাপ করে Join) |
+| রুটিনের ক্লাসের ১০ মিনিট আগে | সেই mentor ("Start class চাপুন") |
+| রুটিনের সময়ের ১০ মিনিট পরেও ক্লাস শুরু হয়নি | সেই mentor আর Owner, Admin, Junior Admin |
+| Mentor নতুন slot চাইল / অফিস উত্তর দিল | Owner, Admin, Junior Admin / সেই mentor |
 
 **নিরাপত্তা:**
 - কে কী পাবে তা সার্ভার ঠিক করে, অ্যাপের ব্যবহারকারী না। আর কেউ যে রেকর্ড দেখার অনুমতি পায় না, তার notification-ও পায় না। যেমন ছাত্র পেমেন্টের notification পায় না, এক শিক্ষক অন্য শিক্ষকের ক্লাসের কিছু পান না।
@@ -136,10 +142,46 @@ git push -u origin main
 
 **ভাষা:** notification-এর লেখা এখন English-এ যায় (অ্যাপের ভেতরের সব বোতাম বাংলাতেও আছে)।
 
+## FTA Assistant (AI এজেন্ট) — শুধু Owner
+
+উপরের বারে ✦ **AI** বোতাম (শুধু Owner দেখেন)। বাংলা, English বা Banglish-এ যা চান লিখুন — যেমন "Nusrat Jahan কে mentor হিসেবে add করো, 017…", "Ayaan এর সব details দাও", "এই মাসে কত due আছে?", "Raisa 2500 টাকা bKash এ দিয়েছে"।
+
+- **নিজে খুঁজে নেয়, নিজে পরিকল্পনা করে।** দেখা/খোঁজা/হিসাব সঙ্গে সঙ্গে করে। কিছু **বদলানোর আগে একটা কার্ড দেখায়** — আপনি **Approve** দিলে তবেই সেভ হয় (কয়েকটা হলে **Approve all**)। না চাইলে **Skip**।
+- কাজ করে অ্যাপের **নিজের form আর function দিয়েই** (New student, payment, expense, mentor, programme, staff, transfer, notice… সব), তাই invoice নম্বর, fee, mentor link, receipt, Recycle bin, Activity log, notification — সব নিয়ম আগের মতোই চলে। Activity log-এ লেখা থাকে "Approved by … via FTA Assistant"।
+- মুছলে **Recycle bin**-এ যায় (৩০ দিনের মধ্যে ফেরত আনা যায়), কারণসহ।
+- পুরো অ্যাপ চালু অবস্থায় পড়ে নেয় (সব পেজ, ডাটা, form, function, অনুমতি) — তাই **নতুন ফিচার যোগ হলে এজেন্ট নিজেই সেটা চিনে নেয়**, এজেন্ট বদলাতে হয় না।
+- **শেখে আর মনে রাখে:** আপনি যা শেখাবেন ("মনে রাখো: bKash আমাদের মূল account") আর আপনার সংশোধন — Supabase-এ সেভ থাকে (শুধু Owner দেখতে পারে)। 💡 বোতামে দেখা যায় কী শিখেছে; "ভুলে যাও …" বললে মুছে ফেলে। শেষ করা কাজগুলোও মনে রাখে।
+- নিরাপত্তা: AI-এর key থাকে শুধু Netlify-তে। `/api/agent` শুধু Owner-কে ঢুকতে দেয় (সার্ভারে যাচাই)। এজেন্টের প্রতিটা পরিবর্তন `/api` দিয়ে সেভ হয়, যেখানে সার্ভার আবার অনুমতি যাচাই করে। রেকর্ডের ভেতরের লেখা (notice, note) কে নির্দেশ হিসেবে মানে না।
+- গোপনীয়তা: প্রশ্নের উত্তর দিতে দরকারি ডাটা (নাম, ফোন, টাকার হিসাব) Anthropic-এর Claude-এর কাছে যায়। Anthropic API-র ডাটা ডিফল্টভাবে মডেল ট্রেনিংয়ে ব্যবহার হয় না।
+
+**চালু করতে (একবার):**
+1. https://console.anthropic.com → Sign up → **Billing**-এ কিছু credit কিনুন → **API Keys → Create Key** → কপি করুন (`sk-ant-…`)।
+2. Netlify → **Project configuration → Environment variables → Add a variable**: নাম `ANTHROPIC_API_KEY`, মান = সেই key। (ঐচ্ছিক: `AGENT_MODEL`, ডিফল্ট `claude-sonnet-5-5`)
+3. **Deploys → Trigger deploy**। তারপর `https://my.finaltouch.academy/api/agent` খুললে `{"ready":true}` দেখাবে।
+
+খরচ: প্রতিটা প্রশ্নে কয়েক সেন্ট পর্যন্ত (কাজ যত বড়, তত বেশি)। console.anthropic.com-এ খরচের সীমা (limit) বেঁধে দিতে পারেন।
+
 ## থিম ও ভাষা
 
-- প্রথমবার খুললে **FTA Premium** থিম আর **English** দিয়ে খোলে।
+- প্রথমবার খুললে **Premium Light ("Onyx & Gold")** থিম আর **English** দিয়ে খোলে (৯ নভেম্বর ২০২৬-এ Owner-এর অনুমোদিত ডিজাইন)। FTA Premium (dark) সহ বাকি থিম 🎨 থেকে বাছা যায়।
 - যে কেউ উপরের 🎨 বোতাম থেকে থিম, আর **Settings → Language** থেকে বাংলা বা Mixed বাছতে পারবে। বাছাই নিজের ব্রাউজারে মনে থাকে।
+
+## Receipt Maker, Profiles আর My Profile
+
+- **Receipt Maker** (Students → Receipt Maker): যেকারও জন্য Payment receipt আর Salary slip। নম্বর `FTA-2026-0001` / `FTA-SAL-2026-0001` — সার্ভার নিশ্চিত করে যে একই নম্বর দুইবার কখনো হবে না (দুজন একসাথে Save করলে দ্বিতীয়জন বার্তা পায় "Press Save again")। Issue করা কাগজ আর বদলানো যায় না, মোছা যায় না — শুধু **VOID** (Owner / Admin / Finance), কে কখন করল সার্ভার নিজে লিখে রাখে। ইন্টারনেট ছাড়া Issue হয় না (নম্বর সার্ভার দেয়)।
+  - কে কী পারে (Access → Roles-এ বদলানো যায়): Owner / Admin / Finance — সব; Junior Admin — receipt বানানো; Collection Staff — receipt বানানো (void নয়); Viewer — শুধু দেখা ও প্রিন্ট। Salary slip — Owner, Admin, Finance (আর যার Payroll অনুমতি আছে)। Mentor / Student কিছুই দেখে না।
+- **Profiles** (Owner / Admin / Junior Admin): Mentor → তার Student → ক্লাস, এক গাছে। Mentor-এর নিজের যোগ করা slot এখানে **Approve / Decline** হয়।
+- **My Profile** (Mentor / Student): নিজের Profile Tree। Mentor নিজে বদলাতে পারে: phone, address, bio, qualifications, specialties, availability, preferred students, salary account, photo, আর নতুন slot-এর অনুরোধ। Student: photo, address, About me। বাকি সব অফিস বদলায় — সার্ভারও এটাই যাচাই করে।
+- **Class status** (Connect → Class status; Mentor ও Student-এর মেনুতেও): Mentor ক্লাস শুরুতে **Start class**, শেষে **End class** চাপে — সময় সার্ভার লেখে। Office আজকের রুটিন অনুযায়ী দেখে: কোনটা চলছে, কোনটা শেষ, কোনটা ১০ মিনিট পার হয়েও শুরু হয়নি। Online ক্লাসে mentor নিজের Meet / Zoom লিংক দেয়; student **Join class** বোতাম দেখে শুধু ক্লাস চলার সময়। কোনো ভিডিও সার্ভিস বা খরচ নেই।
+- **Messages**: class group আর private chat — mentor ↔ নিজের student, যে কেউ ↔ Office। Owner / Admin সব chat পড়তে পারেন (mentor–student chat শুধু পড়া যায়) আর দরকারে মুছতে পারেন। পাঠানো message বদলানো যায় না। ৬ মাস পর সার্ভার নিজে মুছে ফেলে।
+- **নম্বর লুকানো**: Mentor-এর ব্রাউজারে student-এর phone, guardian phone, Gmail, address কখনো পৌঁছায় না (সার্ভারের নিয়ম)। Student-ও mentor-এর নম্বর পায় না।
+- Watch Together আর Recordings নেই (Owner-এর সিদ্ধান্ত: কোনো paid সার্ভিস নয়)।
+- নতুন কোনো Supabase টেবিল লাগে না: সব `records` টেবিলেই থাকে (`rcpt`, `rcsal`, `rcset`, `slotreq`, `clslive`, `msg`)।
+
+## দ্রুত খোলা
+
+- দ্বিতীয়বার থেকে অ্যাপ এই ডিভাইসে রাখা শেষ কপি থেকে সাথে সাথে খোলে, তারপর চুপচাপ সার্ভারের সাথে মিলিয়ে নেয় (নতুন/মোছা রেকর্ড, role বদল, Gmail বাদ পড়া — সব ধরা পড়ে)। Sign out করলে কপি মুছে যায়।
+- নতুন ভার্সন deploy হলে নিচে "A new version of the app is ready · Reload" আসে।
 
 ## ব্যাকআপ
 
@@ -165,8 +207,13 @@ Netlify নিজে থেকে নতুন ভার্সন চালু �
 MODE=demo python3 build.py   # নমুনা ডাটাসহ ডেমো (site-demo/)
 MODE=mock python3 build.py   # সার্ভার ছাড়া পুরো লগইন আর সেভ পরীক্ষা (site-mock/)
 node tests/b-mock.js         # এন্ড-টু-এন্ড পরীক্ষা
+node tests/h-speed.js        # দ্রুত খোলা (ডিভাইসের কপি), role বদল, sign-out, update banner
+node tests/i-phase1.js       # Receipt Maker, Profiles / My Profile, slot request — সার্ভারের অনুমতিসহ
+node tests/j-classroom.js    # Class status, Messages, mentor-এর কাছে নম্বর না যাওয়া
 node tests/b-function.mjs    # সার্ভার ফাংশনের পরীক্ষা
 node tests/e-push.js         # ইনস্টল + notification (ব্রাউজারে)
+node tests/g-agent.js        # AI এজেন্ট: খোঁজা, approval card, form দিয়ে সেভ, মেমরি (নকল AI দিয়ে)
+node tests/d-agent.mjs       # /api/agent: শুধু Owner, key সার্ভারে, সীমা
 ECE=<http_ece ফোল্ডার> node tests/d-notify.mjs   # কে কোন notification পায় (সার্ভারে, encrypt করা মেসেজ খুলে মিলিয়ে দেখে)
 ```
 
@@ -187,6 +234,9 @@ ECE=<http_ece ফোল্ডার> node tests/d-notify.mjs   # কে কো�
 | iPhone-এ Turn on বোতাম নেই | আগে Add to Home Screen করে সেই আইকন থেকে খুলুন |
 | Reminder আসছে না | Netlify → Logs → Functions → `notify-tick` চলছে কিনা দেখুন (Production deploy-এ চলে) |
 | deploy ব্যর্থ: "missing environment variable" | ধাপ ৪-এর চারটা variable দিন |
+| AI প্যানেলে "The AI key is not set yet" | Netlify-তে `ANTHROPIC_API_KEY` দিয়ে Trigger deploy |
+| AI: "no credit left" / "busy" | console.anthropic.com → Billing-এ credit যোগ করুন / এক মিনিট পরে আবার |
+| AI: "not installed on the server yet" | `netlify/edge-functions/` ফোল্ডারটা GitHub-এ আপলোড হয়েছে কিনা দেখুন |
 
 ## ফোল্ডারের মানচিত্র
 
@@ -194,6 +244,7 @@ ECE=<http_ece ফোল্ডার> node tests/d-notify.mjs   # কে কো�
 site/                   তৈরি করা ওয়েবসাইট (Netlify এটাই দেখায়)
 netlify/functions/api.mjs  নিরাপদ সার্ভার ফাংশন (/api)
 netlify/functions/notify-tick.mjs  প্রতি ৫ মিনিটে: reminder আর বাকি notification পাঠানো
+netlify/edge-functions/agent.js  AI এজেন্টের দরজা (/api/agent): শুধু Owner, Claude-এর সাথে কথা বলে
 server/                 Supabase-এ লেখা-পড়া আর Web Push (encrypt + পাঠানো)
 public/sw.js            অ্যাপের background worker: notification দেখানো, দ্রুত খোলা
 public/manifest.webmanifest, public/icons/  অ্যাপের নাম, FTA লোগোর আইকন
@@ -202,7 +253,8 @@ supabase/schema.sql     ডাটাবেস টেবিল আর নির�
 tools/make-config.mjs   deploy-এর সময় config.js আর নিরাপত্তা হেডার তৈরি করে
 tools/make-icons.py     লোগো থেকে অ্যাপ আইকন (লোগো বদলালে আবার চালান)
 layers/                 আপনার v8 ডেমো (অপরিবর্তিত) + v9 লেয়ারগুলো
-src/                    প্রোডাকশন লেয়ার (তারিখ, খালি ডাটা, থিম, ডাটা সেভ)
+src/ui/                 অনুমোদিত ডিজাইন (Onyx & Gold), Profiles / My Profile, Profile Tree, Receipt Maker, Class status + Messages (classroom.js)
+src/                    প্রোডাকশন লেয়ার (তারিখ, খালি ডাটা, থিম, ডাটা সেভ, AI এজেন্ট prod-agent.js)
 build.py                সব জোড়া লাগিয়ে site/ তৈরি করে
 tests/                  স্বয়ংক্রিয় পরীক্ষা
 docs/requirements-checklist.md  আপনার সব চাহিদার তালিকা আর কোথায় আছে

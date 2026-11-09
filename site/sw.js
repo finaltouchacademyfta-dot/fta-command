@@ -6,7 +6,7 @@
    It never stores academy data: /api and Supabase are never cached.
    ===================================================================== */
 'use strict';
-const V = '1cca85c260d5';
+const V = '208bcf852e5f';
 const SHELL = 'fta-shell-' + V, ASSETS = 'fta-assets-v1';
 const PRE = ['/', '/manifest.webmanifest', '/config.js', '/vendor/supabase.js', '/vendor/fta-policy.js', '/icons/icon-192.png', '/icons/icon-512.png', '/icons/notify-192.png', '/icons/badge-96.png'];
 
@@ -14,7 +14,13 @@ self.addEventListener('install', e => {
   e.waitUntil(caches.open(SHELL).then(c => Promise.all(PRE.map(u => c.add(new Request(u, { cache: 'reload' })).catch(() => null)))).then(() => self.skipWaiting()));
 });
 self.addEventListener('activate', e => {
-  e.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(k => k.startsWith('fta-shell-') && k !== SHELL).map(k => caches.delete(k)))).then(() => self.clients.claim()));
+  e.waitUntil(caches.keys().then(keys => {
+    const old = keys.filter(k => k.startsWith('fta-shell-') && k !== SHELL);
+    return Promise.all(old.map(k => caches.delete(k))).then(() => self.clients.claim()).then(() => old.length
+      /* a new version was installed while the old page is open: the page offers a one-tap reload */
+      ? self.clients.matchAll({ type: 'window' }).then(list => list.forEach(c => c.postMessage({ type: 'fta-updated', v: V })))
+      : null);
+  }));
 });
 
 /* ---------- loading ---------- */
@@ -27,6 +33,13 @@ async function networkFirst(req, key, ms) {
     return r;
   } catch (e) { return (await c.match(key || req)) || (await caches.match('/')) || Response.error(); }
 }
+/* the app page: shown at once from this device, refreshed in the background (a new deploy also brings a new worker, which tells the page) */
+async function shellFirst(e, req) {
+  const c = await caches.open(SHELL), hit = await c.match('/');
+  const net = fetch(req).then(r => { if (r && r.ok && r.type === 'basic') c.put('/', r.clone()); return r; }).catch(() => null);
+  if (hit) { e.waitUntil(net); return hit; }
+  return (await Promise.race([net, new Promise(ok => setTimeout(() => ok(null), 8000))])) || (await net) || Response.error();
+}
 async function staleWhileRevalidate(req) {
   const c = await caches.open(ASSETS), hit = await c.match(req);
   const net = fetch(req).then(r => { if (r && r.ok && r.type === 'basic') c.put(req, r.clone()); return r; }).catch(() => null);
@@ -36,7 +49,7 @@ self.addEventListener('fetch', e => {
   const req = e.request; if (req.method !== 'GET') return;
   const u = new URL(req.url); if (!sameOrigin(u)) return;                      /* Supabase, fonts: straight to the network */
   if (u.pathname === '/api' || u.pathname.startsWith('/.netlify/')) return;    /* academy data is never cached */
-  if (req.mode === 'navigate') { e.respondWith(networkFirst(req, '/', 6000)); return; }
+  if (req.mode === 'navigate') { e.respondWith(u.pathname === '/' || u.pathname === '/index.html' ? shellFirst(e, req) : networkFirst(req, '/', 6000)); return; }
   if (u.pathname === '/config.js') { e.respondWith(networkFirst(req)); return; }
   if (/^\/(vendor|icons|brand)\//.test(u.pathname) || u.pathname === '/manifest.webmanifest') { e.respondWith(staleWhileRevalidate(req)); return; }
 });

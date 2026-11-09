@@ -57,12 +57,12 @@ const CHECKS = [
   // ---------- 1 · first visit: no saved settings ----------
   { const ctx = await b.newContext({ viewport: { width: 1440, height: 900 } }); const p = await ctx.newPage(); await L.setup(p); await p.goto(FILE); await p.waitForTimeout(900);
     const r = await p.evaluate(() => ({ skin: document.documentElement.dataset.skin, pal: document.documentElement.dataset.palette, th: document.documentElement.dataset.theme, lang: LANG, lsSkin: localStorage.getItem('fta-skin'), lsPal: localStorage.getItem('fta-palette'), lsLang: localStorage.getItem('fta-lang') }));
-    rec('F1 first visit opens FTA Premium · dark · English', r.pal === 'premium' && r.th === 'dark' && r.lang === 'en' && (r.skin === 'midnight' || r.skin === 'emerald'), JSON.stringify(r));
+    rec('F1 first visit opens Premium Light (Onyx & Gold, approved 9 Nov 2026) · English', !r.pal && r.th === 'light' && r.lang === 'en' && r.skin === 'midnight', JSON.stringify(r));
     await p.screenshot({ path: path.join(OUT, 'F1-first-visit.png') });
     // the person's own choice is remembered
     await p.evaluate(() => { setTheme('light'); setLang('bn'); }); await p.reload(); await p.waitForTimeout(900);
     const r2 = await p.evaluate(() => ({ pal: document.documentElement.dataset.palette, th: document.documentElement.dataset.theme, lang: LANG }));
-    rec('F2 reload keeps the choice (Premium light + Bangla)', r2.pal === 'premium' && r2.th === 'light' && r2.lang === 'bn', JSON.stringify(r2));
+    rec('F2 reload keeps the choice (Premium Light + Bangla)', !r2.pal && r2.th === 'light' && r2.lang === 'bn', JSON.stringify(r2));
     await p.evaluate(() => { SCH.lgAs && SCH.lgAs('Owner'); setSkin('m-dark'); }); await p.reload(); await p.waitForTimeout(900);
     const r3 = await p.evaluate(() => ({ pal: document.documentElement.dataset.palette || '', skin: document.documentElement.dataset.skin }));
     rec('F3 switching to another theme sticks after reload', r3.pal === '' && r3.skin === 'midnight', JSON.stringify(r3));

@@ -107,6 +107,21 @@
 | Sign out / Inactive → ডিভাইস বাদ | prod-push, api core | e-push §6, d-notify |
 | বাইরের কোনো সার্ভারে মেসেজ পাঠানো যায় না, শুধু আসল push service-এ | `server/webpush.mjs`, `fta-notify subOk` | d-webpush, d-notify |
 
+## FTA Assistant (AI এজেন্ট)
+
+| চাহিদা | কোথায় | যাচাই |
+|---|---|---|
+| বাংলা / English / Banglish-এ নির্দেশ বোঝে, নিজে পরিকল্পনা করে, কয়েক ধাপের কাজ একবারে | `src/prod-agent.js` (Claude, tool loop, ১৮ ধাপ পর্যন্ত) | g-agent §2–5 |
+| শুধু Owner (বোতাম, আর সার্ভারেও যাচাই) | `netlify/edge-functions/agent.js`, prod-agent `isOwner` | d-agent, g-agent §7 |
+| সব ডাটা পড়ে: খোঁজা, filter, যোগফল, group, student-এর পুরো তথ্য, টাকার হিসাব | tools `find`, `query`, `student_summary`, `money_summary` | g-agent §2, §4 |
+| অ্যাপের নিজের form আর function দিয়ে add / edit / delete (নিয়ম বজায় থাকে) | `fill_form`, `add_student`, `call_app_function`, `delete_record` | g-agent §3–5 |
+| Save-এর আগে কার্ড, Owner-এর Approve ছাড়া কিছু বদলায় না; Approve all / Skip | prod-agent `runTools` | g-agent §3, §5 |
+| মুছলে Recycle bin-এ যায় (কারণসহ); Activity log-এ "via FTA Assistant" | prod-agent `guarded` | g-agent §3, §5 |
+| কাজের পরে যাচাই: কী তৈরি / বদল / মুছল, অ্যাপের বার্তা, সার্ভারে সেভ হয়েছে কিনা | prod-agent `snapshot`/`diff`/`saved` | g-agent §3–4 |
+| পুরো অ্যাপ বোঝে: পেজ, form-এর field, function-এর কোড, ডাটার গঠন, অনুমতি; নতুন ফিচার নিজে চিনে নেয় | `inspect_form`, `inspect_page`, `read_function_source`, `shapeNews` | g-agent §2 |
+| দীর্ঘ মেমরি: শেখানো তথ্য, সংশোধন, শেষ করা কাজ — Supabase-এ, শুধু Owner | `agentmem` collection, fta-policy | g-agent §6, d-agent |
+| ভুল / সমস্যা হলে কারণ বলে (key নেই, credit শেষ, form-এ ভুল) | agent.js, prod-agent | d-agent, g-agent §7 |
+
 ## লাইভ ও নিরাপত্তা
 
 | চাহিদা | কোথায় | যাচাই |
@@ -122,6 +137,9 @@
 
 ## জানা সীমা (সৎভাবে)
 
+- **FTA Assistant আসল Claude-এর সাথে এখানে চালানো যায়নি** (এই পরিবেশে ইন্টারনেট বন্ধ)। পুরো পথটা — tool, approval card, form দিয়ে সেভ, মেমরি — একটা নকল AI দিয়ে পরীক্ষা করা হয়েছে, যেটা হুবহু Anthropic-এর stream format-এ উত্তর দেয়। `ANTHROPIC_API_KEY` বসানোর পর প্রথমে ছোট কাজ দিয়ে দেখে নিন।
+- **AI ফাইল (ছবি / PDF) attach করতে পারে না** — সেগুলো হাতে দিতে হবে। ব্রাউজারের ভেতরে চলে, তাই অ্যাপ খোলা থাকতে হয়।
+- AI-এর উত্তর মাঝে মাঝে ভুল হতে পারে; তাই প্রতিটা পরিবর্তন আগে কার্ডে দেখে Approve দিন।
 - **`'unsafe-inline'`**: আপনার মূল ডেমোর সব বোতাম `onclick` দিয়ে লেখা, তাই CSP-তে এটা রাখতে হয়েছে। বাকি সব সংযোগ বন্ধ, আর `eval` পুরোপুরি বাদ।
 - **Notification-এর লেখা** এখন English-এ যায়। অ্যাপের ভেতরের নতুন বোতামগুলো বাংলাতেও আছে।
 - **iPhone-এ notification** চায় iOS 16.4 বা নতুন, আর Home Screen-এ যোগ করা FTA আইকন থেকে খোলা অ্যাপ। এটা Apple-এর নিয়ম।

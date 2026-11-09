@@ -31,7 +31,8 @@ const fn = (await import('../netlify/functions/api.mjs')).default, cfg = (await 
 const call = async (tok, body, method = 'POST', origin = 'https://fta.netlify.app') => { const r = await fn(new Request('https://fta.netlify.app/api', { method, headers: Object.assign({ 'Content-Type': 'application/json', Origin: origin }, tok ? { Authorization: 'Bearer ' + tok } : {}), body: method === 'POST' ? JSON.stringify(body) : undefined })); return { s: r.status, b: await r.json(), h: r.headers }; };
 let pass = 0, fail = 0; const ok = (c, m) => { c ? pass++ : fail++; console.log((c ? '  ✓ ' : '  ✗ ') + m); };
 ok(cfg.path === '/api', 'served at /api');
-ok((await call(null, { action: 'me' }, 'GET')).s === 405, 'GET is refused (POST only)');
+{ const g = await fn(new Request('https://fta.netlify.app/api', { method: 'GET' })); const t = await g.text(); ok(g.status === 200 && /server setup check/.test(t) && !/service-key/.test(t) && !/owner@gmail/.test(t), 'GET /api = setup check page (never shows the key or the Owner Gmail)'); }
+ok((await call(null, { action: 'me' }, 'PUT')).s === 405, 'other methods are refused');
 ok((await call(null, { action: 'me' })).s === 401, 'no token → 401');
 ok((await call('tok-bad', { action: 'me' })).s === 401, 'bad token → 401');
 const x = await call('tok-x', { action: 'pull' }); ok(x.s === 403, 'unknown Gmail → 403 on pull');

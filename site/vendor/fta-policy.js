@@ -11,19 +11,30 @@
   const OFFICE = ['Owner', 'Admin', 'Junior Admin', 'Finance Manager', 'Collection Staff', 'Viewer'];
   /* collection classes */
   const MONEY = ['invoices', 'payments', 'expenses', 'payroll', 'prpay', 'accounts', 'others', 'transfers', 'advapp', 'refunds', 'bonus', 'deduct', 'close', 'budget', 'recon', 'follow', 'shares', 'mst', 'mstatus', 'expcats', 'checks', 'methods'];
-  const MONEY_SECRET = ['payroll', 'prpay', 'accounts', 'others', 'transfers', 'budget', 'recon', 'bonus', 'deduct', 'shares', 'expenses', 'advapp', 'refunds', 'checks'];
+  const MONEY_SECRET = ['rcsal', 'payroll', 'prpay', 'accounts', 'others', 'transfers', 'budget', 'recon', 'bonus', 'deduct', 'shares', 'expenses', 'advapp', 'refunds', 'checks'];
   const PEOPLE = ['students', 'enrol', 'mentors', 'progs', 'batches', 'sport', 'pend'];
-  const TEACH = ['groups', 'rt', 'rout', 'prr', 'att', 'attx', 'hw', 'exams', 'marks', 'cnotes', 'leave', 'events', 'sreq', 'ox', 'qb', 'oxatt', 'topics', 'classes', 'snotices', 'subf'];
+  const TEACH = ['clslive', 'slotreq', 'groups', 'rt', 'rout', 'prr', 'att', 'attx', 'hw', 'exams', 'marks', 'cnotes', 'leave', 'events', 'sreq', 'ox', 'qb', 'oxatt', 'topics', 'classes', 'snotices', 'subf'];
   const COMMS = ['notices', 'circles', 'req'];
   const SETTINGS = ['org', 'perm', 'docset', 'msgs', 'ui', 'boards', 'boards8', 'levels', 'classlist', 'statuses', 'paymethods', 'lists', 'settings', 'themes'];
   const OFFICE_ONLY = ['logins', 'staff', 'users', 'bin', 'notes', 'audit'];
   const APPEND = ['log', 'audit'];
   const OWNER_ONLY_WRITE = ['perm', 'staff', 'logins', 'users', 'org', 'docset', 'msgs', 'ui', 'themes', 'settings'];
   /* collections teachers and students may read (always filtered by tags and redacted) */
-  const MENTOR_READ = ['students', 'enrol', 'mentors', 'progs', 'batches', 'sport', 'pend', 'payroll', 'prpay', 'shares'].concat(SETTINGS, TEACH, COMMS);
-  const MENTOR_WRITE = ['att', 'attx', 'hw', 'cnotes', 'leave', 'events', 'pend', 'sreq', 'rt', 'marks', 'sport', 'req', 'notices', 'circles', 'oxatt', 'ox', 'qb', 'prr', 'log'];
-  const STUDENT_READ = ['students', 'enrol', 'mentors', 'progs', 'groups', 'rt', 'att', 'attx', 'hw', 'exams', 'marks', 'cnotes', 'events', 'ox', 'qb', 'oxatt', 'notices', 'circles', 'req', 'topics', 'classes', 'prr'].concat(SETTINGS);
-  const STUDENT_WRITE = ['oxatt', 'req', 'notices', 'circles', 'log'];
+  const MENTOR_READ = ['msg', 'students', 'enrol', 'mentors', 'progs', 'batches', 'sport', 'pend', 'payroll', 'prpay', 'shares'].concat(SETTINGS, TEACH, COMMS);
+  const MENTOR_WRITE = ['msg', 'clslive', 'mentors', 'slotreq', 'att', 'attx', 'hw', 'cnotes', 'leave', 'events', 'pend', 'sreq', 'rt', 'marks', 'sport', 'req', 'notices', 'circles', 'oxatt', 'ox', 'qb', 'prr', 'log'];
+  const STUDENT_READ = ['msg', 'clslive', 'students', 'enrol', 'mentors', 'progs', 'groups', 'rt', 'att', 'attx', 'hw', 'exams', 'marks', 'cnotes', 'events', 'ox', 'qb', 'oxatt', 'notices', 'circles', 'req', 'topics', 'classes', 'prr'].concat(SETTINGS);
+  const STUDENT_WRITE = ['msg', 'students', 'oxatt', 'req', 'notices', 'circles', 'log'];
+  /* Receipt Maker: receipts, salary slips and their shared settings (numbering floor, look, texts, signature, templates) */
+  const RECEIPTS = ['rcpt', 'rcsal', 'rcset'];
+  const RC_MAKE = { rcpt: ['Owner', 'Admin', 'Finance Manager', 'Junior Admin', 'Collection Staff'], rcsal: ['Owner', 'Admin', 'Finance Manager'] };
+  const RC_VOID = ['Owner', 'Admin', 'Finance Manager'];
+  const RC_SET = ['Owner', 'Admin', 'Finance Manager', 'Junior Admin'];
+  /* the fields a teacher / student may change on their own profile (everything else stays as the office saved it) */
+  const SELF = { mentors: ['phone', 'address', 'pay', 'specialties', 'qual', 'bio', 'availability', 'slotsPreferred', 'photo'], students: ['address', 'bio', 'photo'] };
+  /* a mentor never receives a student's contact details, and a student never a mentor's: they talk only inside the academy's Messages */
+  const CONTACT = ['phone', 'gphone', 'gmail', 'email', 'address', 'whatsapp', 'wa', 'emergency', 'mobile', 'altPhone'];
+  /* messages: only these office roles may read or write them (Owner / Admin read every chat, to keep students safe) */
+  const MSG_OFFICE = ['Owner', 'Admin'];
   const has = (a, x) => a.indexOf(x) > -1;
   const clone = o => o == null ? o : JSON.parse(JSON.stringify(o));
   const omit = (o, keys) => { if (!o || typeof o !== 'object') return o; const r = Object.assign({}, o); keys.forEach(k => delete r[k]); return r; };
@@ -50,12 +61,13 @@
     const tagged = R === 'Mentor' ? has(tg.mentor_ids, mine) : has(tg.student_ids, mine);
     const d = clone(data);
     switch (c) {
-      case 'students': if (!tagged) return null; return omit(d, ['notes', 'fees', 'disc']);
+      case 'students': if (!tagged) return null; return omit(d, ['notes', 'fees', 'disc'].concat(R === 'Mentor' ? CONTACT : []));
       case 'enrol': if (!tagged) return null; return omit(d, ['fees', 'disc', 'discEnd', 'discBy']);
       case 'progs': return omit(d, ['fee', 'fees', 'price']);
       case 'batches': if (R === 'Student') return null; return omit(d, ['mentorPay', 'direct', 'directNote', 'fee']);
       case 'mentors': if (R === 'Mentor' && id === mine) return omit(d, ['notes']); return pick(d, ['id', 'name', 'subjects', 'status']);
-      case 'sport': case 'pend': return tagged ? (R === 'Student' ? omit(d, ['by', 'role']) : d) : null;
+      case 'sport': return tagged ? (R === 'Student' ? omit(d, ['by', 'role']) : omit(d, ['gmail'])) : null;
+      case 'pend': return tagged ? (R === 'Student' ? omit(d, ['by', 'role']) : d) : null;
       case 'payroll': { if (R !== 'Mentor') return null; const items = (d.items || []).filter(i => i.mentor === mine).map(i => Object.assign(omit(i, []), { lines: (i.lines || []).map(l => pick(l, ['who', 'method', 'amt'])) })); return items.length ? Object.assign(pick(d, ['month', 'status']), { items }) : null; }
       case 'prpay': return R === 'Mentor' && d.mentor === mine ? d : null;
       case 'shares': return R === 'Mentor' && String(id).split('|')[0] === mine ? pick(d, ['pct', 'from']) : null;
@@ -70,6 +82,9 @@
       case 'events': if (R === 'Mentor') return d.mentor === mine || has(tg.mentor_ids, mine) ? d : null; return has(d.stu || [], mine) ? d : null;
       case 'sreq': return R === 'Mentor' && (d.by === mine || tagged) ? d : null;
       case 'rout': return d;
+      case 'slotreq': return R === 'Mentor' && d.mentor === mine ? d : null;
+      case 'clslive': if (!tagged && !(R === 'Mentor' && d.mentor === mine)) return null; return R === 'Student' && d.status !== 'On' ? omit(d, ['link']) : d;
+      case 'msg': { const room = String(d.room || ''); if (room.indexOf('dm:') === 0) return room.slice(3).split('|').indexOf(mine) > -1 ? d : null; return tagged ? d : null; }
       case 'prr': if (!tagged) return null; if (R === 'Student' && d.status && ['Sent', 'Published', 'Approved'].indexOf(d.status) < 0) return null; return d;
       case 'exams': case 'topics': case 'classes': case 'snotices': case 'subf': return R === 'Student' && c === 'snotices' ? null : d;
       case 'ox': { if (!tagged && R === 'Mentor') return null; if (R === 'Student') { const inIt = has(tg.student_ids, mine) || (d.stu && has(d.stu, mine)); if (!inIt && !tagged) return null; return omit(d, ['log', 'examiners', 'extra']); } return d; }
@@ -85,9 +100,11 @@
   /* ---------- reads ---------- */
   function canSee(me, c) {
     if (!me || !me.active) return false; const R = me.role;
+    if (c === 'agentmem') return R === 'Owner';   /* the AI assistant's memory: Owner only */
+    if (c === 'msg') return has(MSG_OFFICE, R) || R === 'Mentor' || R === 'Student';
     if (R === 'Owner' || R === 'Admin' || R === 'Finance Manager' || R === 'Viewer') return c !== 'audit' || R === 'Owner' || R === 'Admin';
     if (R === 'Junior Admin') return !has(MONEY_SECRET, c) && c !== 'audit' && c !== 'staff' && c !== 'logins' && c !== 'users';
-    if (R === 'Collection Staff') return has(['students', 'enrol', 'progs', 'mentors', 'batches', 'invoices', 'payments', 'advapp', 'accounts', 'follow', 'notes', 'notices', 'circles', 'close', 'mst', 'mstatus', 'methods', 'expcats', 'log'], c) || has(SETTINGS, c);
+    if (R === 'Collection Staff') return has(['rcpt', 'rcset', 'students', 'enrol', 'progs', 'mentors', 'batches', 'invoices', 'payments', 'advapp', 'accounts', 'follow', 'notes', 'notices', 'circles', 'close', 'mst', 'mstatus', 'methods', 'expcats', 'log'], c) || has(SETTINGS, c);
     if (R === 'Mentor') return has(MENTOR_READ, c);
     if (R === 'Student') return has(STUDENT_READ, c);
     return false;
@@ -124,8 +141,12 @@
     if (!id || String(id).length > 200 || !/^[a-z][a-z0-9_]{1,30}$/.test(c)) return NO('Bad record');
     if (!del && JSON.stringify(data).length > 1500000) return NO('Too large');
     if (!del) { const bad = shape(c, data); if (bad) return NO(bad); }
+    if (c === 'agentmem' && R !== 'Owner') return NO('Only the Owner can change this');
     if (has(APPEND, c)) { if (del || prev) return R === 'Owner' ? YES(data) : IGNORE; return YES(data); }
     if (R === 'Viewer') return NO('Viewers cannot change anything');
+    if (has(RECEIPTS, c)) return writeReceipt(me, c, id, data, prev, now);
+    if (c === 'msg') return writeMsg(me, id, data, prev, ctx, now);
+    if (c === 'clslive') return writeLive(me, id, data, prev, ctx, now);
     if (R === 'Owner') return YES(data);
     if (has(OWNER_ONLY_WRITE, c)) return NO('Only the Owner can change this');
     if (R === 'Admin') return YES(data);
@@ -148,10 +169,126 @@
     if (R === 'Student') return writeStudent(me, c, id, data, prev, ctx, now);
     return NO('Not allowed');
   }
+  /* ---------- Receipt Maker ----------
+     A receipt / salary slip is never changed after it is issued and never deleted (Owner only, for a test copy).
+     The only later change is VOID, by Owner / Admin / Finance Manager, stamped by the server.
+     A new number that is already taken is refused, so two people can never print the same number. */
+  const txt = (v, n) => String(v == null ? '' : v).slice(0, n);
+  function writeReceipt(me, c, id, data, prev, now) {
+    const R = me.role, del = data == null;
+    if (c === 'rcset') {
+      if (!has(RC_SET, R)) return NO('You cannot change the Receipt Maker settings');
+      if (del) return R === 'Owner' ? YES(null) : NO('Only the Owner can delete the Receipt Maker settings');
+      if (id !== 'main') return NO('Bad record');
+      return YES(data);
+    }
+    if (del) return R === 'Owner' ? YES(null) : NO('Issued documents are never deleted. Void it instead.');
+    const doc = c === 'rcsal' ? 'salary' : 'receipt';
+    if (!data.d || data.d.doc !== doc || data.no !== id || !/^[A-Z0-9-]{1,40}$/.test(id)) return NO('Bad document');
+    if (!prev) {
+      if (!has(RC_MAKE[c], R)) return NO(c === 'rcsal' ? 'Only the Owner, Admin or Finance can issue salary slips' : 'You cannot issue receipts');
+      return { ok: true, data: Object.assign({}, data, { void: false, voidReason: '', voidBy: '', voidAt: '', issuedBy: me.email, issuedRole: R }), merged: true };
+    }
+    if (data.tok !== prev.tok || data.at !== prev.at) return NO('This number (' + id + ') was just used by someone else. Press Save again to take the next number.');
+    if (prev.void) return IGNORE;
+    if (!data.void) return IGNORE;                                     /* nothing that may change, changed */
+    if (!has(RC_VOID, R)) return NO('Only the Owner, Admin or Finance can void documents');
+    const why = txt(data.voidReason, 240).trim(); if (why.length < 3) return NO('Write why it is voided');
+    const out = clone(prev);
+    out.void = true; out.voidReason = why; out.voidBy = txt(data.voidBy || me.email, 80); out.voidByEmail = me.email; out.voidAt = new Date(now || Date.now()).toISOString();
+    return { ok: true, data: out, merged: true };
+  }
+  /* ---------- Messages ----------
+     rooms: 'g:<group id>' (the class group) and 'dm:<a>|<b>' (two people, sorted; 'U:office' = the academy office).
+     A mentor writes only to their own class groups and to their own students or the office; a student only to their
+     own classes, their own mentors or the office. Who wrote it and when is set by the server. Never edited; only the
+     Owner / Admin may remove a message. Kept 6 months (server housekeeping). */
+  const BD_DAY = t => new Date((t || Date.now()) + 6 * 3600000).toISOString().slice(0, 10);
+  function teaches(ctx, men, stu) { return !!ctx && (ctx.all('enrol').some(E => E.stu === stu && E.mentor === men && E.status !== 'Completed') || ctx.all('groups').some(G => G.mentor === men && G.status !== 'Closed' && (G.stu || []).indexOf(stu) > -1)); }
+  function writeMsg(me, id, data, prev, ctx, now) {
+    const R = me.role, office = has(MSG_OFFICE, R);
+    if (!office && R !== 'Mentor' && R !== 'Student') return NO('You cannot send messages');
+    if (data == null) return prev ? (office ? YES(null) : NO('Only the Owner or Admin can remove a message')) : IGNORE;
+    if (prev) return IGNORE;                                                            /* a sent message never changes */
+    const mine = R === 'Mentor' ? me.mentor_id : R === 'Student' ? me.student_id : 'U:office';
+    if (!mine) return NO('Your account is not linked yet');
+    const room = String(data.room || ''), text = txt(data.text, 2000).trim();
+    if (!text) return NO('Write a message');
+    let gid = '';
+    if (room.indexOf('g:') === 0) {
+      gid = room.slice(2); const G = ctx && ctx.get('groups', gid); if (!G) return NO('Class not found');
+      if (R === 'Mentor' && G.mentor !== mine) return NO('Not your class');
+      if (R === 'Student' && (G.stu || []).indexOf(mine) < 0) return NO('Not your class');
+    } else if (room.indexOf('dm:') === 0) {
+      const ab = room.slice(3).split('|'); if (ab.length !== 2 || ab[0] === ab[1] || ab.slice().sort().join('|') !== ab.join('|')) return NO('Bad chat');
+      if (ab.indexOf(mine) < 0) return NO('Not your chat');
+      const other = ab[0] === mine ? ab[1] : ab[0];
+      if (other !== 'U:office') {
+        if (R === 'Mentor' && !(/^STU-/.test(other) && teaches(ctx, mine, other))) return NO('You can message only your own students and the office');
+        if (R === 'Student' && !(/^MEN-/.test(other) && teaches(ctx, other, mine))) return NO('You can message only your own mentors and the office');
+        if (office) return NO('The office writes from the office chat');
+      }
+    } else return NO('Bad chat');
+    /* 'by' is the sender (from the sign-in); screens show the name from the academy's own list for that id */
+    return { ok: true, merged: true, data: { id, room, gid, by: mine, name: office ? 'Academy Office' : txt(data.name, 80), role: R, text, at: new Date(now || Date.now()).toISOString() } };
+  }
+  /* ---------- Class status: a mentor presses Start / End; everyone concerned sees which class is running ---------- */
+  function writeLive(me, id, data, prev, ctx, now) {
+    const R = me.role, t = new Date(now || Date.now()).toISOString();
+    if (R === 'Student') return NO('Students cannot change the class status');
+    const office = ['Owner', 'Admin', 'Junior Admin'].indexOf(R) > -1;
+    if (!office && R !== 'Mentor') return NO('You cannot change the class status');
+    if (data == null) return R === 'Owner' ? YES(null) : NO('Class records are kept');
+    const gid = String(data.gid || (prev && prev.gid) || ''), G = ctx && ctx.get('groups', gid);
+    if (!G) return NO('Class not found');
+    if (R === 'Mentor' && G.mentor !== me.mentor_id) return NO('Not your class');
+    const link = txt(data.link, 300).trim();
+    if (link && !/^https:\/\/[^\s"'<>]+$/.test(link)) return NO('The class link must start with https://');
+    if (!prev) {
+      if (data.status !== 'On') return NO('Start the class first');
+      return { ok: true, merged: true, data: { id, gid, mentor: G.mentor, status: 'On', link, date: BD_DAY(now), start: t, end: '', by: R === 'Mentor' ? me.mentor_id : 'U:office', note: txt(data.note, 140) } };
+    }
+    const out = clone(prev);
+    if (prev.status === 'Off') return IGNORE;
+    if (data.status === 'Off') { out.status = 'Off'; out.end = t; out.endBy = R === 'Mentor' ? me.mentor_id : 'U:office'; }
+    else out.link = link;
+    return { ok: true, data: out, merged: true };
+  }
+  /* a teacher / student changes their own profile: only their own row, only their own fields */
+  function selfProfile(me, c, id, data, prev) {
+    const mine = c === 'mentors' ? me.mentor_id : me.student_id;
+    if (!mine || id !== mine) return NO(c === 'mentors' ? 'Teachers can change only their own profile' : 'Students can change only their own profile');
+    if (!prev || data == null) return NO('Only the office can add or remove profiles');
+    const out = clone(prev);
+    for (const k of SELF[c]) {
+      if (!(k in data) || JSON.stringify(data[k]) === JSON.stringify(prev[k])) continue;
+      let v = data[k];
+      if (k === 'photo') { if (v && (typeof v !== 'string' || !(/^data:image\/(jpeg|png|webp);base64,/.test(v) && v.length < 200000) && !/^fta-file:/.test(v))) return NO('Use a smaller photo'); }
+      else if (k === 'slotsPreferred') { v = v === '' || v == null ? '' : Math.max(0, Math.min(200, parseInt(v, 10) || 0)); }
+      else v = txt(v, k === 'bio' || k === 'qual' || k === 'availability' ? 2000 : 300);
+      out[k] = v;
+    }
+    return { ok: true, data: out, merged: true };
+  }
+  /* a mentor asks the office for a new mentorship slot; the office approves or declines it */
+  function slotRequest(me, id, data, prev, ctx) {
+    const m = me.mentor_id;
+    if (prev && prev.mentor !== m) return NO('Not your request');
+    if (data == null) return prev && (prev.status || 'Pending') === 'Pending' ? YES(null) : NO('The office already answered this request');
+    if (prev) return NO('The office answers slot requests; cancel it and send a new one');
+    if (data.mentor !== m) return NO('Not your request');
+    if (data.stu) {
+      const teaches = (ctx ? ctx.all('enrol') : []).some(E => E.stu === data.stu && E.mentor === m) || (ctx ? ctx.all('groups') : []).some(G => G.mentor === m && (G.stu || []).indexOf(data.stu) > -1);
+      if (!teaches) return NO('You can add only your own students');
+    }
+    return { ok: true, merged: true, data: { id, mentor: m, stu: txt(data.stu, 40), prog: txt(data.prog, 40), when: txt(data.when, 120), medium: txt(data.medium, 20) || 'In person', grade: txt(data.grade, 60), note: txt(data.note, 140), at: txt(data.at, 10), by: 'mentor', status: 'Pending' } };
+  }
   function mineTag(me, c, id, data, ctx) { return has(tags(c, id, data, ctx).mentor_ids, me.mentor_id); }
   function writeMentor(me, c, id, data, prev, ctx) {
     const m = me.mentor_id, del = data == null;
     if (!has(MENTOR_WRITE, c)) return NO('Teachers cannot change this');
+    if (c === 'mentors') return selfProfile(me, c, id, data, prev);
+    if (c === 'slotreq') return slotRequest(me, id, data, prev, ctx);
     const chk = d => d && mineTag(me, c, id, d, ctx);
     if (c === 'notices' || c === 'circles') return selfOnly(me, c, data, prev, 'men:' + m);
     if (c === 'req') { const k = 'men:' + m; if (prev && prev.from !== k) return IGNORE; if (data && data.from !== k) return NO('Not your request'); return YES(data); }
@@ -159,7 +296,8 @@
     if (c === 'leave') { if ((prev && prev.mentor !== m) || (data && data.mentor !== m)) return NO('Not your leave report'); if (prev && prev.status && prev.status !== 'Pending' && data && data.status !== prev.status) return NO('The office already answered this report'); return YES(data); }
     if (c === 'events') { if ((prev && prev.mentor !== m) || (data && data.mentor !== m)) return NO('Not your event'); return YES(data); }
     if (c === 'pend' || c === 'sreq') { if ((prev && prev.by !== m) || (data && data.by !== m)) return NO('Not your request'); if (prev && prev.status && prev.status !== 'Pending' && !del) return NO('The office already answered this'); return YES(data); }
-    if (c === 'sport') { if (prev && prev.status !== 'Pending') return NO('Only the office can change an open portal'); if (data && data.status !== 'Pending') data = Object.assign({}, data, { status: 'Pending' }); if (data && !chk(data)) return NO('Not your student'); return YES(data); }
+    if (c === 'sport') { if (prev && prev.status !== 'Pending') return NO('Only the office can change an open portal');
+      if (prev && data && !data.gmail && prev.gmail) data = Object.assign({}, data, { gmail: prev.gmail });   /* the teacher never sees the Gmail again */ if (data && data.status !== 'Pending') data = Object.assign({}, data, { status: 'Pending' }); if (data && !chk(data)) return NO('Not your student'); return YES(data); }
     if (c === 'marks' && prev && ['Approved', 'Published'].indexOf(prev.status) > -1) return NO('These marks are approved; ask the office to reopen them');
     if (c === 'marks' && data && ['Approved', 'Published'].indexOf(data.status) > -1 && (!prev || prev.status !== data.status)) return NO('Only the office approves marks');
     if (prev && !chk(prev)) return NO('This belongs to another teacher');
@@ -181,6 +319,7 @@
   function writeStudent(me, c, id, data, prev, ctx, now) {
     const s = me.student_id;
     if (!has(STUDENT_WRITE, c)) return NO('Students cannot change this');
+    if (c === 'students') return selfProfile(me, c, id, data, prev);
     if (c === 'notices' || c === 'circles') return selfOnly(me, c, data, prev, 'stu:' + s);
     if (c === 'req') { const k = 'stu:' + s; if (prev && prev.from !== k) return IGNORE; if (data && data.from !== k) return NO('Not your request'); if (prev && data) { const out = clone(prev); out.thread = data.thread; out.msg = data.msg; return { ok: true, data: out, merged: true }; } return data ? YES(Object.assign({}, data, { status: 'New' })) : NO('Only the office can delete requests'); }
     if (c === 'oxatt') {
@@ -216,5 +355,5 @@
   }
   function canListMembers(me) { return !!me && me.active && ['Owner', 'Admin'].indexOf(me.role) > -1; }
 
-  return { ROLES, OFFICE, MONEY, PEOPLE, TEACH, COMMS, SETTINGS, tags, read, write, canSee, memberWrite, canListMembers, shape };
+  return { RECEIPTS, SELF, ROLES, OFFICE, MONEY, PEOPLE, TEACH, COMMS, SETTINGS, tags, read, write, canSee, memberWrite, canListMembers, shape };
 });

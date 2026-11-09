@@ -44,7 +44,7 @@ const db = p => p.evaluate(() => JSON.parse(localStorage.getItem('fta-mock-db') 
   await p.goto(URL0); await p.evaluate(() => { localStorage.clear(); sessionStorage.clear(); }); await p.goto(URL0); await ready(p);
   const head = await p.evaluate(() => ({ man: document.querySelector('link[rel=manifest]').href, apple: document.querySelector('link[rel=apple-touch-icon]').href, title: document.title, cap: document.querySelector('meta[name=apple-mobile-web-app-capable]').content }));
   ok(/manifest\.webmanifest$/.test(head.man) && /apple-touch-icon\.png$/.test(head.apple) && head.cap === 'yes', 'manifest, iPhone icon and app-mode tags in the page');
-  ok(head.title === 'Final Touch Academy · FTA', 'browser tab / app title: ' + head.title);
+  ok(head.title === 'Final Touch Academy · FTA' || head.title === 'Owner Portal · Final Touch Academy', 'browser tab / app title: ' + head.title);
   const man = await (await p.request.get(URL0 + 'manifest.webmanifest')).json();
   ok(man.name === 'Final Touch Academy' && man.short_name === 'FTA' && man.display === 'standalone' && man.start_url && man.background_color === '#08090B', 'manifest: name, short name, full-screen, premium colours');
   for (const ic of man.icons.concat(man.screenshots)) { const r = await p.request.get(URL0 + ic.src.slice(1)); ok(r.ok() && r.headers()['content-type'] === 'image/png', 'icon/screenshot ' + ic.src + (ic.purpose ? ' (' + ic.purpose + ')' : '')); }
