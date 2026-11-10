@@ -226,7 +226,8 @@
       if (other !== 'U:office') {
         if (R === 'Mentor' && !(/^STU-/.test(other) && teaches(ctx, mine, other))) return NO('You can message only your own students and the office');
         if (R === 'Student' && !(/^MEN-/.test(other) && teaches(ctx, other, mine))) return NO('You can message only your own mentors and the office');
-        if (office) return NO('The office writes from the office chat');
+        /* the office answers anyone in its own chat ('U:office' is one side, checked above) */
+        if (office && !/^(MEN|STU)-/.test(other)) return NO('Bad chat');
       }
     } else return NO('Bad chat');
     /* 'by' is the sender (from the sign-in); screens show the name from the academy's own list for that id */

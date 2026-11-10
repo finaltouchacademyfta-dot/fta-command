@@ -80,7 +80,7 @@ if os.path.isdir(pub): shutil.copytree(pub, OUT, dirs_exist_ok=True)
 # the background worker gets this build's fingerprint, so every deploy refreshes the installed app
 sw = os.path.join(OUT, 'sw.js')
 if os.path.exists(sw):
-    swsrc = open(sw, encoding='utf8').read().replace('__FTA_BUILD__', hashlib.sha256(src.encode()).hexdigest()[:12])
+    swsrc = open(sw, encoding='utf8').read().replace('__FTA_BUILD__', hashlib.sha256((src + ''.join(open(os.path.join(ROOT, 'public', 'vendor', f), encoding='utf8', errors='ignore').read() for f in sorted(os.listdir(os.path.join(ROOT, 'public', 'vendor'))) if f.endswith('.js'))).encode()).hexdigest()[:12])
     open(sw, 'w', encoding='utf8').write(swsrc)
 if MODE == 'mock': open(os.path.join(OUT, 'config.js'), 'w').write("window.FTA_CONFIG = { mock: true, ownerEmail: 'owner@gmail.com' };\n")
 print(OUT, len(src))
