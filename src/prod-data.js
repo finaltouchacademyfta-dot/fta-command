@@ -577,6 +577,7 @@
     try { return P.write(MEMBER, ch.c, ch.id, ch.data, old, localCtx(), Date.now()); } catch (e) { return { ok: true }; }
   }
   const userActed = () => Date.now() - LAST_ACT < 4000;
+  const APP_MADE = ['payroll', 'close', 'expcats', 'checks'];
   let lastWarn = 0;
   function warn(t) { if (Date.now() - lastWarn < 2500) return; lastWarn = Date.now(); say(t, 5200); }
   function snapSet(c, id, j) { if (!SNAP[c]) SNAP[c] = new Map(); if (j == null) SNAP[c].delete(id); else SNAP[c].set(id, j); }
@@ -592,6 +593,10 @@
       const w = precheck(ch); if (w.ok && !w.ignore) return true;
       const a = BYC[ch.c];
       if (w.ignore || !userActed()) { snapSet(ch.c, ch.id, ch._j); return false; }
+      /* totals a teacher's / student's app works out by itself (payroll months, month closing, expense
+         categories, checks): the app made the change, not the person, so it is quietly dropped —
+         no warning, nothing sent (the server would refuse it anyway). Anything the person does is still undone with a reason. */
+      if (/^(Mentor|Student)$/.test((MEMBER && MEMBER.role) || '') && APP_MADE.indexOf(ch.c) > -1) { snapSet(ch.c, ch.id, ch._j); return false; }
       warn(w.reason || 'You cannot change this'); undo(a, ch); touchedUI = true; return false;
     });
     const mem = memberChanges();

@@ -53,19 +53,24 @@
   const sessions = () => FTA.CLSLIVE.filter(x => x && x.gid);
   const latest = gid => sessions().filter(x => x.gid === gid).sort((a, b) => String(b.start).localeCompare(String(a.start)))[0] || null;
   const running = () => sessions().filter(x => x.status === 'On');
+  /* a routine entry or a session can be for some students only (per-student routine: 'stu'); empty = the whole class */
+  const stuKey = L => (Array.isArray(L) && L.length ? L.slice().sort().join(',') : '');
+  const sameStu = (a, b) => !stuKey(a) || !stuKey(b) || a.some(x => b.indexOf(x) > -1);
+  const stuNames = L => L.map(id => pname(id)).slice(0, 3).join(', ') + (L.length > 3 ? ' +' + (L.length - 3) : '');
   const lastLink = gid => (sessions().filter(x => x.gid === gid && x.link).sort((a, b) => String(b.start).localeCompare(String(a.start)))[0] || {}).link || '';
   /* today's routine for these classes, with what actually happened */
   function dayRows(gs) {
     const ids = new Set(gs.map(g => g.id)), rows = [];
-    (G(() => SCH.rtDay(today())) || []).filter(e => e.gid && ids.has(e.gid)).forEach(e => rows.push({ gid: e.gid, a: G(() => SCH.mins(e.start)), b: G(() => SCH.mins(e.end)), start: e.start, end: e.end, place: e.place || '' }));
+    const mm = me(), f = mm.kind === 's' ? { stu: mm.pid } : undefined;
+    (G(() => SCH.rtDay(today(), f)) || []).filter(e => e.gid && ids.has(e.gid)).forEach(e => rows.push({ gid: e.gid, stu: Array.isArray(e.stu) && e.stu.length ? e.stu.slice() : null, a: G(() => SCH.mins(e.start)), b: G(() => SCH.mins(e.end)), start: e.start, end: e.end, place: e.place || '' }));
     const td = today();
     /* a class started outside the routine today, or still running from before */
-    sessions().filter(x => ids.has(x.gid) && (x.date === td || x.status === 'On')).forEach(x => { if (!rows.some(r => r.gid === x.gid)) rows.push({ gid: x.gid, a: null, b: null, extra: true }); });
+    sessions().filter(x => ids.has(x.gid) && (x.date === td || x.status === 'On')).forEach(x => { if (!rows.some(r => r.gid === x.gid && sameStu(r.stu, x.stu))) rows.push({ gid: x.gid, stu: x.stu && x.stu.length ? x.stu.slice() : null, a: null, b: null, extra: true }); });
     /* each session belongs to one routine slot: the one whose time is nearest to when it started */
     const minOf = iso => { const d = new Date(iso); return d.getHours() * 60 + d.getMinutes(); };
     const owner = new Map();
     sessions().filter(x => ids.has(x.gid) && (x.date === td || x.status === 'On')).forEach(x => {
-      const cand = rows.filter(r => r.gid === x.gid); if (!cand.length) return;
+      const cand = rows.filter(r => r.gid === x.gid && sameStu(r.stu, x.stu)); if (!cand.length) return;
       const st = x.date === td ? minOf(x.start) : -1e4;
       const best = cand.reduce((a, r) => (r.a == null ? 1e5 : Math.abs(r.a - st)) < (a.a == null ? 1e5 : Math.abs(a.a - st)) ? r : a, cand[0]);
       (owner.get(best) || owner.set(best, []).get(best)).push(x);
@@ -85,13 +90,15 @@
     return '<span class="cl-pill is-' + p[0] + '">' + (r.state === 'live' ? '<i class="cl-dot"></i>' : '') + p[1] + '</span>' + (sub ? '<small class="cl-sub">' + sub + '</small>' : '');
   }
   const when = r => r.a == null ? '<span class="cl-muted">Not on today’s routine</span>' : h(G(() => SCH.t12(r.start)) || r.start) + ' – ' + h(G(() => SCH.t12(r.end)) || r.end);
-  function startClass(gid, link) {
+  function startClass(gid, link, stu) {
     const m = me(), g = grp(gid); if (!g) return;
-    if (running().some(x => x.gid === gid)) { say('This class is already running'); return; }
+    stu = (Array.isArray(stu) ? stu : String(stu || '').split(',')).filter(x => x && (g.stu || []).indexOf(x) > -1);
+    if (running().some(x => x.gid === gid && sameStu(x.stu, stu))) { say('This class is already running'); return; }
     link = String(link || '').trim();
     if (link && !/^https:\/\/[^\s"'<>]+$/.test(link)) { say('The class link must start with https://'); return; }
-    FTA.CLSLIVE.push({ id: gid + '|' + Date.now().toString(36), gid, mentor: g.mentor, status: 'On', link, date: today(), start: new Date().toISOString(), end: '', by: m.kind === 't' ? m.pid : 'U:office' });
-    G(() => log('Class started', g.name, link ? 'Online' : 'In person')); say(g.name + ' started');
+    FTA.CLSLIVE.push(Object.assign({ id: gid + '|' + Date.now().toString(36), gid, mentor: g.mentor, status: 'On', link, date: today(), start: new Date().toISOString(), end: '', by: m.kind === 't' ? m.pid : 'U:office' }, stu.length ? { stu } : {}));
+    const label = stu.length ? stuNames(stu) + ' · ' + g.name : g.name;
+    G(() => log('Class started', label, link ? 'Online' : 'In person')); say(label + ' started');
     G(() => FTA.sync && FTA.sync().then(() => draw()));
     draw();
   }
@@ -115,16 +122,19 @@
     if (!gs.length) body += '<div class="card cl-empty"><b>No classes yet</b><p>' + (m.kind === 'o' ? 'Classes appear here once they are set up under Academics.' : 'Your classes appear here once the office adds you to one.') + '</p></div>';
     else if (!rows.length) body += '<div class="card cl-empty"><b>No class on today’s routine</b><p>' + (m.kind === 't' ? 'You can still start any of your classes below.' : 'Nothing is running right now.') + '</p></div>';
     else body += '<div class="cl-list">' + rows.map(r => {
-      const g = grp(r.gid) || { name: r.gid }, s = r.sess, live = r.state === 'live';
+      const g = grp(r.gid) || { name: r.gid }, s = r.sess, live = r.state === 'live', sk = h(stuKey(r.stu)), lk = h(r.gid + '~' + stuKey(r.stu));
       let act = '';
       if (m.kind === 's') act = live && s.link ? '<a class="btn p" href="' + h(s.link) + '" target="_blank" rel="noopener noreferrer">Join class</a>' : live ? '<span class="cl-muted">In person</span>' : '';
       else if (canRun && live) act = (s.link ? '<a class="btn" href="' + h(s.link) + '" target="_blank" rel="noopener noreferrer">Open link</a>' : '') + '<button type="button" class="btn p" data-cl="end" data-id="' + h(s.id) + '">End class</button>';
-      else if (m.kind === 't' && r.state !== 'ended') act = '<input class="cl-link" data-link="' + h(r.gid) + '" type="url" inputmode="url" placeholder="Online? Paste the Meet / Zoom link (optional)" value="' + h(lastLink(r.gid)) + '" aria-label="Class link for ' + h(g.name) + '"><button type="button" class="btn p" data-cl="start" data-gid="' + h(r.gid) + '">Start class</button>';
-      else if (m.kind === 't' && r.state === 'ended') act = '<button type="button" class="btn" data-cl="start" data-gid="' + h(r.gid) + '">Start again</button>';
-      return '<article class="card cl-row is-' + r.state + '"><div class="cl-when">' + when(r) + '</div><div class="cl-what"><b>' + h(g.name) + '</b><small>' + (m.kind === 't' ? (g.stu || []).length + ' students' : h(pname(g.mentor))) + (r.place ? ' · ' + h(r.place) : '') + '</small></div><div class="cl-st">' + pill(r) + '</div><div class="cl-act">' + act + '</div></article>';
+      else if (m.kind === 't' && r.state !== 'ended') act = '<input class="cl-link" data-link="' + lk + '" type="url" inputmode="url" placeholder="Online? Paste the Meet / Zoom link (optional)" value="' + h(lastLink(r.gid)) + '" aria-label="Class link for ' + h(g.name) + '"><button type="button" class="btn p" data-cl="start" data-gid="' + h(r.gid) + '" data-stu="' + sk + '">Start class</button>';
+      else if (m.kind === 't' && r.state === 'ended') act = '<button type="button" class="btn" data-cl="start" data-gid="' + h(r.gid) + '" data-stu="' + sk + '">Start again</button>';
+      /* a student's own class time shows the student's name first, so the mentor sees at a glance whose class it is */
+      const title = r.stu && m.kind !== 's' ? stuNames(r.stu) : g.name;
+      const sub = r.stu && m.kind !== 's' ? g.name + (m.kind === 'o' ? ' · ' + pname(g.mentor) : '') : (m.kind === 't' ? (g.stu || []).length + ' students' : pname(g.mentor));
+      return '<article class="card cl-row is-' + r.state + '"><div class="cl-when">' + when(r) + '</div><div class="cl-what"><b>' + h(title) + '</b><small>' + h(sub) + (r.place ? ' · ' + h(r.place) : '') + '</small></div><div class="cl-st">' + pill(r) + '</div><div class="cl-act">' + act + '</div></article>';
     }).join('') + '</div>';
     if (m.kind === 't') {
-      const free = gs.filter(g => !rows.some(r => r.gid === g.id));
+      const free = gs.filter(g => !rows.some(r => r.gid === g.id && !r.stu));
       if (free.length) body += '<div class="card cl-extra"><b>Start a class that is not on today’s routine</b><div class="cl-extra-r"><select id="cl-gsel" aria-label="Class">' + free.map(g => '<option value="' + h(g.id) + '">' + h(g.name) + '</option>').join('') + '</select><input class="cl-link" id="cl-xlink" type="url" inputmode="url" placeholder="Meet / Zoom link (optional)"><button type="button" class="btn p" data-cl="startx">Start class</button></div></div>';
       body += '<div class="cl-hint" id="cl-att" hidden>Class ended. <button type="button" class="btn s" onclick="go(\'tp-att\')">Mark attendance now</button></div>';
       body += '<p class="cl-note">Press <b>Start class</b> when you begin and <b>End class</b> when you finish: the office and your students see it at once. For an online class paste your Meet / Zoom link; students see the Join button only while the class is running.</p>';
@@ -141,7 +151,7 @@
     root.onclick = e => {
       const b = e.target.closest('[data-cl]'); if (!b) return;
       if (b.disabled) return; b.disabled = true; setTimeout(() => { b.disabled = false; }, 1500);
-      if (b.dataset.cl === 'start') { const i = root.querySelector('[data-link="' + b.dataset.gid + '"]'); startClass(b.dataset.gid, i ? i.value : ''); }
+      if (b.dataset.cl === 'start') { const i = root.querySelector('[data-link="' + b.dataset.gid + '~' + (b.dataset.stu || '') + '"]'); startClass(b.dataset.gid, i ? i.value : '', b.dataset.stu || ''); }
       else if (b.dataset.cl === 'startx') startClass(($('cl-gsel') || {}).value, ($('cl-xlink') || {}).value);
       else if (b.dataset.cl === 'end') endClass(b.dataset.id);
     };

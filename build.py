@@ -67,8 +67,8 @@ if MODE != 'demo': end += '<script>\n' + rd('prod-data.js') + '\n</script>\n<sty
 # same files and order as the owner-approved preview (9 Nov 2026); Class status + Messages are classroom.js (no paid video service); Watch / Recordings are not included
 UI = os.path.join(ROOT, 'src', 'ui')
 UI_CSS = ['portal.css', 'profile-tree.css', 'ui-luxe.css', 'zz1-visual.css', 'zz2-light.css', 'zz3-connect.css', 'zz4-royal-light.css', 'zz5-clear-ink.css',
-          'zz6-restore-slider.css', 'zz7-onyx-gold.css', 'zz8-a-finance.css', 'zz8-b-academics.css', 'zz8-c-connect.css', 'receipt-maker.css', 'classroom.css']
-UI_JS = ['portal.js', 'profile-tree.js', 'ui-luxe.js', 'zz1-visual.js', 'zz2-light.js', 'receipt-maker.js', 'classroom.js']
+          'zz6-restore-slider.css', 'zz7-onyx-gold.css', 'zz8-a-finance.css', 'zz8-b-academics.css', 'zz8-c-connect.css', 'receipt-maker.css', 'classroom.css', 'student-times.css']
+UI_JS = ['portal.js', 'profile-tree.js', 'ui-luxe.js', 'zz1-visual.js', 'zz2-light.js', 'receipt-maker.js', 'classroom.js', 'student-times.js']
 ui_rd = lambda f: open(os.path.join(UI, f), encoding='utf8').read()
 end += ''.join(f'<style data-ui="{f}">\n{ui_rd(f)}\n</style>\n' for f in UI_CSS)
 end += ''.join(f'<script data-ui="{f}">\n{ui_rd(f).replace("</script", "<\\/script")}\n</script>\n' for f in UI_JS)

@@ -14991,6 +14991,7 @@ window.__ftaRun = function (code, v) {
     try { return P.write(MEMBER, ch.c, ch.id, ch.data, old, localCtx(), Date.now()); } catch (e) { return { ok: true }; }
   }
   const userActed = () => Date.now() - LAST_ACT < 4000;
+  const APP_MADE = ['payroll', 'close', 'expcats', 'checks'];
   let lastWarn = 0;
   function warn(t) { if (Date.now() - lastWarn < 2500) return; lastWarn = Date.now(); say(t, 5200); }
   function snapSet(c, id, j) { if (!SNAP[c]) SNAP[c] = new Map(); if (j == null) SNAP[c].delete(id); else SNAP[c].set(id, j); }
@@ -15006,6 +15007,10 @@ window.__ftaRun = function (code, v) {
       const w = precheck(ch); if (w.ok && !w.ignore) return true;
       const a = BYC[ch.c];
       if (w.ignore || !userActed()) { snapSet(ch.c, ch.id, ch._j); return false; }
+      /* totals a teacher's / student's app works out by itself (payroll months, month closing, expense
+         categories, checks): the app made the change, not the person, so it is quietly dropped —
+         no warning, nothing sent (the server would refuse it anyway). Anything the person does is still undone with a reason. */
+      if (/^(Mentor|Student)$/.test((MEMBER && MEMBER.role) || '') && APP_MADE.indexOf(ch.c) > -1) { snapSet(ch.c, ch.id, ch._j); return false; }
       warn(w.reason || 'You cannot change this'); undo(a, ch); touchedUI = true; return false;
     });
     const mem = memberChanges();
@@ -19902,6 +19907,29 @@ html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1
 @media (max-width:900px){#cx-root .cl-row{grid-template-columns:minmax(0,1fr) auto}#cx-root .cl-when{grid-column:1/-1}#cx-root .cl-act{grid-column:1/-1;justify-content:flex-start}#cx-root .cl-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}#cx-root .cl-link{width:100%}}
 
 </style>
+<style data-ui="student-times.css">
+/* FTA · student class times card on the routine pages, and the Duration choice. App colour tokens only. */
+.st-card{margin-top:14px}
+.st-card .st-list{display:grid;gap:8px}
+.st-card .st-row{display:grid;grid-template-columns:minmax(180px,1.1fr) minmax(0,2fr) auto;gap:12px;align-items:center;padding:12px 14px;border:1px solid var(--line-2,var(--line));border-radius:14px;background:var(--surface)}
+.st-card .st-row.is-none{box-shadow:inset 3px 0 0 #D92D20}
+.st-card .st-who{display:grid;gap:2px;min-width:0}
+.st-card .st-who b{font-size:14.5px;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.st-card .st-who small{font-size:12.5px;color:var(--muted)}
+.st-card .st-when{display:flex;flex-wrap:wrap;gap:6px;align-items:center;min-width:0}
+.st-card .st-chip{display:inline-flex;align-items:center;padding:4px 10px;border-radius:999px;border:1px solid var(--line-2,var(--line));font-size:12.5px;font-weight:650;color:var(--ink);font-variant-numeric:tabular-nums;white-space:nowrap}
+.st-card .st-none{font-size:13px;font-weight:650;color:#B42318}
+.st-card .st-tag{font-size:11.5px;color:var(--muted)}
+.st-card .st-warn{color:#B42318}
+.st-card .st-act{display:flex;gap:6px;justify-content:flex-end;flex-wrap:wrap}
+.st-card .st-empty{margin:0;padding:18px 4px;color:var(--muted)}
+.st-dur{display:grid;gap:5px;margin-top:8px}
+.st-dur label{font-size:12px;font-weight:700;color:var(--ink-2,var(--ink))}
+.st-dur select{height:40px;padding:0 10px;border-radius:10px;border:1px solid var(--line-2,var(--line));background:var(--surface);color:var(--ink);font:inherit}
+.st-dur small{font-size:12px;color:var(--muted)}
+@media (max-width:760px){.st-card .st-row{grid-template-columns:minmax(0,1fr)}.st-card .st-act{justify-content:flex-start}}
+
+</style>
 <script data-ui="portal.js">
 /* =====================================================================
    FTA · PORTAL LAYER (live app)
@@ -21871,19 +21899,24 @@ td.qty{width:80px}td.rate{width:120px}
   const sessions = () => FTA.CLSLIVE.filter(x => x && x.gid);
   const latest = gid => sessions().filter(x => x.gid === gid).sort((a, b) => String(b.start).localeCompare(String(a.start)))[0] || null;
   const running = () => sessions().filter(x => x.status === 'On');
+  /* a routine entry or a session can be for some students only (per-student routine: 'stu'); empty = the whole class */
+  const stuKey = L => (Array.isArray(L) && L.length ? L.slice().sort().join(',') : '');
+  const sameStu = (a, b) => !stuKey(a) || !stuKey(b) || a.some(x => b.indexOf(x) > -1);
+  const stuNames = L => L.map(id => pname(id)).slice(0, 3).join(', ') + (L.length > 3 ? ' +' + (L.length - 3) : '');
   const lastLink = gid => (sessions().filter(x => x.gid === gid && x.link).sort((a, b) => String(b.start).localeCompare(String(a.start)))[0] || {}).link || '';
   /* today's routine for these classes, with what actually happened */
   function dayRows(gs) {
     const ids = new Set(gs.map(g => g.id)), rows = [];
-    (G(() => SCH.rtDay(today())) || []).filter(e => e.gid && ids.has(e.gid)).forEach(e => rows.push({ gid: e.gid, a: G(() => SCH.mins(e.start)), b: G(() => SCH.mins(e.end)), start: e.start, end: e.end, place: e.place || '' }));
+    const mm = me(), f = mm.kind === 's' ? { stu: mm.pid } : undefined;
+    (G(() => SCH.rtDay(today(), f)) || []).filter(e => e.gid && ids.has(e.gid)).forEach(e => rows.push({ gid: e.gid, stu: Array.isArray(e.stu) && e.stu.length ? e.stu.slice() : null, a: G(() => SCH.mins(e.start)), b: G(() => SCH.mins(e.end)), start: e.start, end: e.end, place: e.place || '' }));
     const td = today();
     /* a class started outside the routine today, or still running from before */
-    sessions().filter(x => ids.has(x.gid) && (x.date === td || x.status === 'On')).forEach(x => { if (!rows.some(r => r.gid === x.gid)) rows.push({ gid: x.gid, a: null, b: null, extra: true }); });
+    sessions().filter(x => ids.has(x.gid) && (x.date === td || x.status === 'On')).forEach(x => { if (!rows.some(r => r.gid === x.gid && sameStu(r.stu, x.stu))) rows.push({ gid: x.gid, stu: x.stu && x.stu.length ? x.stu.slice() : null, a: null, b: null, extra: true }); });
     /* each session belongs to one routine slot: the one whose time is nearest to when it started */
     const minOf = iso => { const d = new Date(iso); return d.getHours() * 60 + d.getMinutes(); };
     const owner = new Map();
     sessions().filter(x => ids.has(x.gid) && (x.date === td || x.status === 'On')).forEach(x => {
-      const cand = rows.filter(r => r.gid === x.gid); if (!cand.length) return;
+      const cand = rows.filter(r => r.gid === x.gid && sameStu(r.stu, x.stu)); if (!cand.length) return;
       const st = x.date === td ? minOf(x.start) : -1e4;
       const best = cand.reduce((a, r) => (r.a == null ? 1e5 : Math.abs(r.a - st)) < (a.a == null ? 1e5 : Math.abs(a.a - st)) ? r : a, cand[0]);
       (owner.get(best) || owner.set(best, []).get(best)).push(x);
@@ -21903,13 +21936,15 @@ td.qty{width:80px}td.rate{width:120px}
     return '<span class="cl-pill is-' + p[0] + '">' + (r.state === 'live' ? '<i class="cl-dot"></i>' : '') + p[1] + '</span>' + (sub ? '<small class="cl-sub">' + sub + '</small>' : '');
   }
   const when = r => r.a == null ? '<span class="cl-muted">Not on today’s routine</span>' : h(G(() => SCH.t12(r.start)) || r.start) + ' – ' + h(G(() => SCH.t12(r.end)) || r.end);
-  function startClass(gid, link) {
+  function startClass(gid, link, stu) {
     const m = me(), g = grp(gid); if (!g) return;
-    if (running().some(x => x.gid === gid)) { say('This class is already running'); return; }
+    stu = (Array.isArray(stu) ? stu : String(stu || '').split(',')).filter(x => x && (g.stu || []).indexOf(x) > -1);
+    if (running().some(x => x.gid === gid && sameStu(x.stu, stu))) { say('This class is already running'); return; }
     link = String(link || '').trim();
     if (link && !/^https:\/\/[^\s"'<>]+$/.test(link)) { say('The class link must start with https://'); return; }
-    FTA.CLSLIVE.push({ id: gid + '|' + Date.now().toString(36), gid, mentor: g.mentor, status: 'On', link, date: today(), start: new Date().toISOString(), end: '', by: m.kind === 't' ? m.pid : 'U:office' });
-    G(() => log('Class started', g.name, link ? 'Online' : 'In person')); say(g.name + ' started');
+    FTA.CLSLIVE.push(Object.assign({ id: gid + '|' + Date.now().toString(36), gid, mentor: g.mentor, status: 'On', link, date: today(), start: new Date().toISOString(), end: '', by: m.kind === 't' ? m.pid : 'U:office' }, stu.length ? { stu } : {}));
+    const label = stu.length ? stuNames(stu) + ' · ' + g.name : g.name;
+    G(() => log('Class started', label, link ? 'Online' : 'In person')); say(label + ' started');
     G(() => FTA.sync && FTA.sync().then(() => draw()));
     draw();
   }
@@ -21933,16 +21968,19 @@ td.qty{width:80px}td.rate{width:120px}
     if (!gs.length) body += '<div class="card cl-empty"><b>No classes yet</b><p>' + (m.kind === 'o' ? 'Classes appear here once they are set up under Academics.' : 'Your classes appear here once the office adds you to one.') + '</p></div>';
     else if (!rows.length) body += '<div class="card cl-empty"><b>No class on today’s routine</b><p>' + (m.kind === 't' ? 'You can still start any of your classes below.' : 'Nothing is running right now.') + '</p></div>';
     else body += '<div class="cl-list">' + rows.map(r => {
-      const g = grp(r.gid) || { name: r.gid }, s = r.sess, live = r.state === 'live';
+      const g = grp(r.gid) || { name: r.gid }, s = r.sess, live = r.state === 'live', sk = h(stuKey(r.stu)), lk = h(r.gid + '~' + stuKey(r.stu));
       let act = '';
       if (m.kind === 's') act = live && s.link ? '<a class="btn p" href="' + h(s.link) + '" target="_blank" rel="noopener noreferrer">Join class</a>' : live ? '<span class="cl-muted">In person</span>' : '';
       else if (canRun && live) act = (s.link ? '<a class="btn" href="' + h(s.link) + '" target="_blank" rel="noopener noreferrer">Open link</a>' : '') + '<button type="button" class="btn p" data-cl="end" data-id="' + h(s.id) + '">End class</button>';
-      else if (m.kind === 't' && r.state !== 'ended') act = '<input class="cl-link" data-link="' + h(r.gid) + '" type="url" inputmode="url" placeholder="Online? Paste the Meet / Zoom link (optional)" value="' + h(lastLink(r.gid)) + '" aria-label="Class link for ' + h(g.name) + '"><button type="button" class="btn p" data-cl="start" data-gid="' + h(r.gid) + '">Start class</button>';
-      else if (m.kind === 't' && r.state === 'ended') act = '<button type="button" class="btn" data-cl="start" data-gid="' + h(r.gid) + '">Start again</button>';
-      return '<article class="card cl-row is-' + r.state + '"><div class="cl-when">' + when(r) + '</div><div class="cl-what"><b>' + h(g.name) + '</b><small>' + (m.kind === 't' ? (g.stu || []).length + ' students' : h(pname(g.mentor))) + (r.place ? ' · ' + h(r.place) : '') + '</small></div><div class="cl-st">' + pill(r) + '</div><div class="cl-act">' + act + '</div></article>';
+      else if (m.kind === 't' && r.state !== 'ended') act = '<input class="cl-link" data-link="' + lk + '" type="url" inputmode="url" placeholder="Online? Paste the Meet / Zoom link (optional)" value="' + h(lastLink(r.gid)) + '" aria-label="Class link for ' + h(g.name) + '"><button type="button" class="btn p" data-cl="start" data-gid="' + h(r.gid) + '" data-stu="' + sk + '">Start class</button>';
+      else if (m.kind === 't' && r.state === 'ended') act = '<button type="button" class="btn" data-cl="start" data-gid="' + h(r.gid) + '" data-stu="' + sk + '">Start again</button>';
+      /* a student's own class time shows the student's name first, so the mentor sees at a glance whose class it is */
+      const title = r.stu && m.kind !== 's' ? stuNames(r.stu) : g.name;
+      const sub = r.stu && m.kind !== 's' ? g.name + (m.kind === 'o' ? ' · ' + pname(g.mentor) : '') : (m.kind === 't' ? (g.stu || []).length + ' students' : pname(g.mentor));
+      return '<article class="card cl-row is-' + r.state + '"><div class="cl-when">' + when(r) + '</div><div class="cl-what"><b>' + h(title) + '</b><small>' + h(sub) + (r.place ? ' · ' + h(r.place) : '') + '</small></div><div class="cl-st">' + pill(r) + '</div><div class="cl-act">' + act + '</div></article>';
     }).join('') + '</div>';
     if (m.kind === 't') {
-      const free = gs.filter(g => !rows.some(r => r.gid === g.id));
+      const free = gs.filter(g => !rows.some(r => r.gid === g.id && !r.stu));
       if (free.length) body += '<div class="card cl-extra"><b>Start a class that is not on today’s routine</b><div class="cl-extra-r"><select id="cl-gsel" aria-label="Class">' + free.map(g => '<option value="' + h(g.id) + '">' + h(g.name) + '</option>').join('') + '</select><input class="cl-link" id="cl-xlink" type="url" inputmode="url" placeholder="Meet / Zoom link (optional)"><button type="button" class="btn p" data-cl="startx">Start class</button></div></div>';
       body += '<div class="cl-hint" id="cl-att" hidden>Class ended. <button type="button" class="btn s" onclick="go(\'tp-att\')">Mark attendance now</button></div>';
       body += '<p class="cl-note">Press <b>Start class</b> when you begin and <b>End class</b> when you finish: the office and your students see it at once. For an online class paste your Meet / Zoom link; students see the Join button only while the class is running.</p>';
@@ -21959,7 +21997,7 @@ td.qty{width:80px}td.rate{width:120px}
     root.onclick = e => {
       const b = e.target.closest('[data-cl]'); if (!b) return;
       if (b.disabled) return; b.disabled = true; setTimeout(() => { b.disabled = false; }, 1500);
-      if (b.dataset.cl === 'start') { const i = root.querySelector('[data-link="' + b.dataset.gid + '"]'); startClass(b.dataset.gid, i ? i.value : ''); }
+      if (b.dataset.cl === 'start') { const i = root.querySelector('[data-link="' + b.dataset.gid + '~' + (b.dataset.stu || '') + '"]'); startClass(b.dataset.gid, i ? i.value : '', b.dataset.stu || ''); }
       else if (b.dataset.cl === 'startx') startClass(($('cl-gsel') || {}).value, ($('cl-xlink') || {}).value);
       else if (b.dataset.cl === 'end') endClass(b.dataset.id);
     };
@@ -22175,6 +22213,119 @@ td.qty{width:80px}td.rate{width:120px}
   window.addEventListener('fta:started', () => { FORCE = true; register(); SIG = ''; });
   setTimeout(tick, 500); setInterval(tick, 2000);
   window.FTA_CLASSROOM = { running, dayRows: () => dayRows(myGroups()), rooms: myRooms, unread, startClass, endClass, open: id => { CH.room = id; CH.open = true; FORCE = true; } };
+})();
+
+</script>
+<script data-ui="student-times.js">
+/* =====================================================================
+   FTA · STUDENT CLASS TIMES (live app)
+   Owner's request (10 Nov 2026): class times by student, not only by subject, so a mentor sees at a
+   glance which student has class when (like the QIT app's per-student schedule).
+   The app already keeps a per-student routine (v9j: routine entries with 'stu'). This layer makes it
+   the easy way in:
+   1 the weekly routine shows the student's name on their own sessions ("Ayaan Rahman · IGCSE English")
+   2 under the weekly routine: every student with their days and times, "Set times" for each, and a
+     warning for students who have no class time yet
+   3 tapping a student's session opens that student's times (not the general session form)
+   4 the class-day window gets a Duration choice (30 – 120 min) that fills the end time
+   5 after a new student is saved, the office is taken straight to that student's class times
+   Saved as ordinary routine records ('rt' with 'stu'); who may change them is checked on the server
+   (fta-policy.js: a mentor only for their own students, the office for all).
+   ===================================================================== */
+(function () {
+  'use strict';
+  const G = f => { try { return f(); } catch (e) { return undefined; } };
+  const h = v => String(v == null ? '' : v).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const DL = ['Sat', 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
+  const sName = id => (G(() => stuOf(id)) || {}).name || id;
+  let done = false;
+
+  function install() {
+    if (done || typeof SCH === 'undefined' || !SCH.rtPage || !SCH.rtTitle || !window.V9J || !V9J.add || !window.V9I || !V9I.groups) return false;
+    done = true;
+
+    /* 1 · the student's name on their own sessions */
+    const _title = SCH.rtTitle;
+    SCH.rtTitle = e => {
+      if (e && Array.isArray(e.stu) && e.stu.length) { const g = e.gid ? G(() => SCH.grp(e.gid)) : null; return e.stu.slice(0, 2).map(sName).join(', ') + (e.stu.length > 2 ? ' +' + (e.stu.length - 2) : '') + (g ? ' · ' + g.name : ''); }
+      return _title(e);
+    };
+
+    /* 3 · a student's session opens that student's class times */
+    const _form = SCH.rtForm;
+    SCH.rtForm = function (id, mine, day) {
+      const e = id ? SCH.RT.find(x => x.id === id) : null;
+      if (e && Array.isArray(e.stu) && e.stu.length === 1 && e.gid) return V9J.add(e.stu[0], e.gid, e.id);
+      return _form.apply(this, arguments);
+    };
+
+    /* 4 · duration choice in the class-day window */
+    const _add = V9J.add;
+    V9J.add = function (sid, gid, id) {
+      const r = _add.apply(this, arguments);
+      requestAnimationFrame(() => {
+        const a = document.getElementById('v9j-a'), b = document.getElementById('v9j-b'); if (!a || !b || document.getElementById('st-dur')) return;
+        const m = t => { const [x, y] = String(t || '').split(':').map(Number); return x * 60 + y; }, cur = Math.max(0, m(b.value) - m(a.value));
+        const opts = [30, 45, 60, 75, 90, 120], pick = opts.includes(cur) ? cur : '';
+        const wrap = document.createElement('div'); wrap.className = 'st-dur';
+        wrap.innerHTML = '<label for="st-dur">Duration</label><select id="st-dur"><option value="">Custom (use the end time)</option>' + opts.map(o => '<option value="' + o + '"' + (o === pick ? ' selected' : '') + '>' + o + ' min</option>') .join('') + '</select><small>Times are Bangladesh time.</small>';
+        const box = b.closest('.grid') || b.parentElement; box.insertAdjacentElement('afterend', wrap);
+        const fill = () => { const d = +document.getElementById('st-dur').value; if (!d || !a.value) return; const t = m(a.value) + d; b.value = String(Math.floor(t / 60) % 24).padStart(2, '0') + ':' + String(t % 60).padStart(2, '0'); };
+        document.getElementById('st-dur').onchange = fill; a.addEventListener('change', fill); a.addEventListener('input', fill);
+      });
+      return r;
+    };
+
+    /* 2 · every student with their times, under the weekly routine */
+    const timesOf = (sid, gid) => { const own = V9J.own(sid, gid); const L = own.length ? own : SCH.RT.filter(e => e.gid === gid && !e.stu); return { own: own.length > 0, L: L.slice().sort((x, y) => DL.indexOf(x.day) - DL.indexOf(y.day) || (x.start < y.start ? -1 : 1)) }; };
+    function card(mine) {
+      const men = mine ? G(() => SCH.mentor()) : (SCH.RS && SCH.RS.by === 'men' ? SCH.RS.men : null);
+      if (!men) return '';
+      const groups = (SCH.GROUPS || []).filter(g => g.status === 'Active' && g.mentor === men);
+      const rows = [];
+      groups.forEach(g => (g.stu || []).forEach(sid => { const s = G(() => stuOf(sid)); if (!s || s.status === 'Withdrawn') return; rows.push({ sid, s, g, t: timesOf(sid, g.id) }); }));
+      rows.sort((a, b) => a.s.name.localeCompare(b.s.name) || a.g.name.localeCompare(b.g.name));
+      const can = sid => G(() => V9J.canEdit(sid));
+      const none = rows.filter(r => !r.t.L.length).length;
+      const list = rows.map(r => {
+        const chips = r.t.L.map(e => '<span class="st-chip">' + h(SCH.DAYL[e.day].slice(0, 3)) + ' ' + h(SCH.t12(e.start)) + '–' + h(SCH.t12(e.end)) + '</span>').join('');
+        return '<div class="st-row' + (r.t.L.length ? '' : ' is-none') + '"><div class="st-who"><b>' + h(r.s.name) + '</b><small>' + h(r.g.name) + (r.s.cls ? ' · ' + h(r.s.cls) : '') + '</small></div><div class="st-when">' + (chips || '<span class="st-none">No class time yet</span>') + (r.t.L.length && !r.t.own ? '<small class="st-tag">class days</small>' : '') + '</div>' +
+          (can(r.sid) ? '<div class="st-act"><button type="button" class="btn s' + (r.t.L.length ? '' : ' p') + '" onclick="V9J.add(\'' + r.sid + '\',\'' + r.g.id + '\')">' + (G(() => ic('plus')) || '') + (r.t.L.length ? 'Add time' : 'Set time') + '</button>' + (r.t.L.length ? '<button type="button" class="btn s" onclick="V9J.form(\'' + r.sid + '\')">' + (G(() => ic('edit')) || '') + 'Change</button>' : '') + '</div>' : '') + '</div>';
+      }).join('');
+      return '<div class="card st-card" data-notx><div class="ch"><div><h2>' + (mine ? 'My students’ class times' : 'Students’ class times · ' + h(G(() => SCH.mName(men)) || '')) + '</h2><p>' + rows.length + ' student' + (rows.length === 1 ? '' : 's') + (none ? ' · <b class="st-warn">' + none + ' without a class time</b>' : '') + ' · each student can have their own days and times</p></div></div>' +
+        (rows.length ? '<div class="st-list">' + list + '</div>' : '<p class="st-empty">No students yet. Students appear here once they are enrolled with ' + (mine ? 'you' : 'this teacher') + '.</p>') + '</div>';
+    }
+    const _page = SCH.rtPage;
+    SCH.rtPage = function (mine) {
+      const r = _page.apply(this, arguments);
+      const add = () => { const pg = document.querySelector('#view .page') || document.getElementById('view'); if (!pg || pg.querySelector('.st-card')) return; const wk = pg.querySelector('.rt-wk'); const host = wk ? wk.closest('.card') : null; const html = card(!!mine); if (!html) return; if (host) host.insertAdjacentHTML('afterend', html); else pg.insertAdjacentHTML('beforeend', html); };
+      add(); requestAnimationFrame(add);
+      return r;
+    };
+    /* the routine page follows changes made in the student-times windows */
+    const refresh = () => { const p = G(() => ST.page); if (p === 'ac-routine' || p === 'tp-routine') G(() => PAGES[p]()); };
+    if (window.V9H && typeof V9H.popClose === 'function') { const o = V9H.popClose; V9H.popClose = function () { const r = o.apply(this, arguments); setTimeout(refresh, 60); return r; }; }
+    if (typeof window.closeSheet === 'function') { const o = window.closeSheet; window.closeSheet = function () { const r = o.apply(this, arguments); setTimeout(refresh, 60); return r; }; }
+
+    /* 5 · a new student: straight to their class times (office) */
+    if (typeof window.saveStudent === 'function') {
+      const o = window.saveStudent;
+      window.saveStudent = function () {
+        const all = () => (typeof STUDENTS !== 'undefined' ? STUDENTS : []), before = new Set(all().map(s => s.id));
+        const r = o.apply(this, arguments);
+        setTimeout(() => {
+          const s = all().find(x => !before.has(x.id)); if (!s) return;
+          if (!V9I.groups(s.id).length || !G(() => V9J.canEdit(s.id))) return;
+          G(() => toast('Now set ' + s.name.split(' ')[0] + '’s class days and times'));
+          V9J.form(s.id);
+        }, 500);
+        return r;
+      };
+    }
+    return true;
+  }
+  if (!install()) { const t = setInterval(() => { if (install()) clearInterval(t); }, 300); setTimeout(() => clearInterval(t), 20000); }
+  window.addEventListener('fta:started', () => install());
 })();
 
 </script>

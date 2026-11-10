@@ -184,7 +184,7 @@
       }
       /* Class status: students of the class hear when it starts (online classes: with the Join link on their page) */
       case 'clslive': {
-        if (!prev && d.status === 'On') { const g = X.group(d.gid); add('classes', { stu: g.stu || [] }, 'Class started · ' + (g.name || 'your class'), d.link ? 'Tap to open the class page and join.' : X.menName(d.mentor) + ' has started the class.', { tag: 'cl-' + d.gid, urgency: 'high' }); }
+        if (!prev && d.status === 'On') { const g = X.group(d.gid); add('classes', { stu: Array.isArray(d.stu) && d.stu.length ? d.stu : (g.stu || []) }, 'Class started · ' + (g.name || 'your class'), d.link ? 'Tap to open the class page and join.' : X.menName(d.mentor) + ' has started the class.', { tag: 'cl-' + d.gid, urgency: 'high' }); }
         break;
       }
       /* a mentor's own slot request → the office; the answer → the mentor */
@@ -288,10 +288,13 @@
     if (rts.length) {
       const live = (await rowsOf('clslive')).map(r => r.data || {}), names = {};
       for (const g of await rowsOf('groups')) names[g.id] = (g.data || {}).name || '';
+      const sname = {}; if (rts.some(r => Array.isArray(r.data.stu) && r.data.stu.length)) for (const st of await rowsOf('students')) sname[st.id] = (st.data || {}).name || '';
       for (const r of rts) {
         const e = r.data, at = atDhaka(today, String(e.start).padStart(5, '0')), end = /^\d{1,2}:\d{2}/.test(e.end || '') ? atDhaka(today, String(e.end).padStart(5, '0')) : at + 3600e3;
-        const started = live.some(x => x.gid === e.gid && (x.status === 'On' || (Date.parse(x.start) >= at - 30 * 60e3 && Date.parse(x.start) <= end)));
-        const gname = names[e.gid] || 'your class';
+        const forStu = (x, e) => !(Array.isArray(x.stu) && x.stu.length) || !(Array.isArray(e.stu) && e.stu.length) || x.stu.some(v => e.stu.indexOf(v) > -1);
+        const started = live.some(x => x.gid === e.gid && forStu(x, e) && (x.status === 'On' || (Date.parse(x.start) >= at - 30 * 60e3 && Date.parse(x.start) <= end)));
+        const stuN = Array.isArray(e.stu) && e.stu.length ? e.stu.map(id => (sname[id] || id).split(' ')[0]).join(', ') + ' · ' : '';
+        const gname = stuN + (names[e.gid] || 'your class');
         if (!started && now >= at - 10 * 60e3 && now < at && e.mentor && (await store.sentOnce('cl-soon:' + r.id + ':' + today)))
           evs.push([r, { c: 'clslive', id: r.id, cat: 'classes', aud: { men: [e.mentor] }, title: 'Class at ' + t12(e.start) + ' · ' + gname, body: 'Open Class status and press Start class when you begin.', tag: 'cl-' + e.gid }]);
         if (!started && now >= at + 10 * 60e3 && now < Math.min(end, at + 40 * 60e3) && (await store.sentOnce('cl-late:' + r.id + ':' + today)))

@@ -83,7 +83,7 @@
       case 'sreq': return R === 'Mentor' && (d.by === mine || tagged) ? d : null;
       case 'rout': return d;
       case 'slotreq': return R === 'Mentor' && d.mentor === mine ? d : null;
-      case 'clslive': if (!tagged && !(R === 'Mentor' && d.mentor === mine)) return null; return R === 'Student' && d.status !== 'On' ? omit(d, ['link']) : d;
+      case 'clslive': if (!tagged && !(R === 'Mentor' && d.mentor === mine)) return null; if (R === 'Student' && Array.isArray(d.stu) && d.stu.length && !has(d.stu, mine)) return null; return R === 'Student' && d.status !== 'On' ? omit(d, ['link']) : d;
       case 'msg': { const room = String(d.room || ''); if (room.indexOf('dm:') === 0) return room.slice(3).split('|').indexOf(mine) > -1 ? d : null; return tagged ? d : null; }
       case 'prr': if (!tagged) return null; if (R === 'Student' && d.status && ['Sent', 'Published', 'Approved'].indexOf(d.status) < 0) return null; return d;
       case 'exams': case 'topics': case 'classes': case 'snotices': case 'subf': return R === 'Student' && c === 'snotices' ? null : d;
@@ -247,7 +247,9 @@
     if (link && !/^https:\/\/[^\s"'<>]+$/.test(link)) return NO('The class link must start with https://');
     if (!prev) {
       if (data.status !== 'On') return NO('Start the class first');
-      return { ok: true, merged: true, data: { id, gid, mentor: G.mentor, status: 'On', link, date: BD_DAY(now), start: t, end: '', by: R === 'Mentor' ? me.mentor_id : 'U:office', note: txt(data.note, 140) } };
+      /* a class for some students only (their own routine time); empty = the whole class */
+      const stu = Array.isArray(data.stu) ? data.stu.filter(x => typeof x === 'string' && (G.stu || []).indexOf(x) > -1).slice(0, 60) : [];
+      return { ok: true, merged: true, data: Object.assign({ id, gid, mentor: G.mentor, status: 'On', link, date: BD_DAY(now), start: t, end: '', by: R === 'Mentor' ? me.mentor_id : 'U:office', note: txt(data.note, 140) }, stu.length ? { stu } : {}) };
     }
     const out = clone(prev);
     if (prev.status === 'Off') return IGNORE;
@@ -356,5 +358,5 @@
   }
   function canListMembers(me) { return !!me && me.active && ['Owner', 'Admin'].indexOf(me.role) > -1; }
 
-  return { RECEIPTS, SELF, ROLES, OFFICE, MONEY, PEOPLE, TEACH, COMMS, SETTINGS, tags, read, write, canSee, memberWrite, canListMembers, shape };
+  return { MENTOR_WRITE, STUDENT_WRITE, RECEIPTS, SELF, ROLES, OFFICE, MONEY, PEOPLE, TEACH, COMMS, SETTINGS, tags, read, write, canSee, memberWrite, canListMembers, shape };
 });
