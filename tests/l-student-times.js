@@ -73,6 +73,16 @@ const rec = (p, c, id) => p.evaluate(([c, id]) => { const r = FTA.mock.db().reco
   ok(await p.evaluate(() => /Change class day · Ayaan Rahman/.test((document.getElementById('v9h-pop') || {}).innerText || '')), 'tapping the session opens Ayaan\'s own time, not the general form');
   await p.evaluate(() => V9H.popClose()); await p.waitForTimeout(200);
 
+  console.log('1b. "New session" asks which student');
+  await p.evaluate(() => { go('tp-routine'); SCH.rtForm('', 1); }); await p.waitForTimeout(400);
+  const nf = await p.evaluate(() => ({ stu: [...document.getElementById('rt-stu').options].map(o => o.text), val: document.getElementById('rt-stu').value, dur: !!document.getElementById('rt-dur'), also: document.querySelectorAll('.st-also input').length }));
+  ok(nf.stu.some(t => /Ayaan Rahman/.test(t)) && nf.val === 'STU-1001' && nf.dur && nf.also === 7, 'New session has Student (Ayaan chosen), Duration and "Also on" days');
+  await p.selectOption('#rt-d', 'Sat'); await p.fill('#rt-s', '10:00'); await p.selectOption('#rt-dur', '60');
+  ok(await p.evaluate(() => document.getElementById('rt-e').value) === '11:00', 'Duration 60 min → ends 11:00');
+  await p.check('.st-also input[value="Mon"]');
+  await p.click('#sheet button:has-text("Add session")'); await p.waitForTimeout(600); await p.evaluate(() => FTA.sync());
+  const rt2 = await p.evaluate(() => Object.values(FTA.mock.db().records).filter(r => r.collection === 'rt' && !r.deleted && r.data.start === '10:00').map(r => r.data.day + ':' + (r.data.stu || []).join()).sort());
+  ok(rt2.join('|') === 'Mon:STU-1001|Sat:STU-1001', 'saved as Ayaan\'s class on Saturday and Monday (' + rt2.join('|') + ')');
   console.log('2. Class status by student');
   await p.evaluate(() => go('tp-live')); await p.waitForTimeout(500);
   const row = await p.evaluate(() => { const r = document.querySelector('#cx-root .cl-row'); return r ? r.innerText : ''; });
