@@ -98,3 +98,72 @@
   ['gesturestart', 'gesturechange', 'gestureend'].forEach(t => document.addEventListener(t, e => e.preventDefault(), { passive: false }));
   document.addEventListener('touchmove', e => { if (e.touches && e.touches.length > 1) e.preventDefault(); }, { passive: false });
 })();
+
+/* phone top bar: the first visible action button takes the free space on its left, so menu + logo sit left
+   and every action sits on the right edge (whatever the title or the AI button does). */
+(function () {
+  let q = 0;
+  function fix() {
+    q = 0;
+    const bar = document.querySelector('#top .top-r'); if (!bar) return;
+    const acts = ['fa-btn', 'nb', 'skinb', 'thb', 'whob'].map(id => document.getElementById(id)).filter(Boolean);
+    let want = null;
+    if (innerWidth <= 820) want = acts.find(e => getComputedStyle(e).display !== 'none' && e.getBoundingClientRect().width > 0) || null;
+    acts.forEach(e => { if (e !== want && e.dataset.pmAuto) { e.style.removeProperty('margin-left'); delete e.dataset.pmAuto; } });
+    if (want && !want.dataset.pmAuto) { want.style.setProperty('margin-left', 'auto', 'important'); want.dataset.pmAuto = '1'; }
+  }
+  const sched = () => { if (!q) q = requestAnimationFrame(fix); };
+  function boot() {
+    const bar = document.getElementById('top'); if (!bar || bar.__pm) return; bar.__pm = 1;
+    new MutationObserver(sched).observe(bar, { childList: true, subtree: true, attributes: true, attributeFilter: ['style', 'hidden', 'class'] });
+    sched();
+  }
+  addEventListener('resize', sched); addEventListener('orientationchange', sched);
+  boot(); document.addEventListener('DOMContentLoaded', boot); addEventListener('load', () => { boot(); sched(); });
+  setInterval(() => { boot(); sched(); }, 1500);
+})();
+
+/* bottom menu (phone): a highlight pill glides under the active tab with spring physics, and the icon pops */
+(function () {
+  let pill = null, cx = null, cw = null, sx = null, sw = null, lastKey = '';
+  const reduce = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function spring1(from, to, tick, K, C) {
+    let x = from, v = 0, last = performance.now(), dead = false;
+    (function step(now) {
+      if (dead) return; let dt = Math.min(.032, (now - last) / 1000); last = now;
+      while (dt > 0) { const h = Math.min(dt, 1 / 240); v += (-K * (x - to) - C * v) * h; x += v * h; dt -= h; }
+      tick(x); if (Math.abs(x - to) < .15 && Math.abs(v) < .6) { tick(to); return; } requestAnimationFrame(step);
+    })(last);
+    return { stop() { dead = true; }, get x() { return x; } };
+  }
+  function ensure(bar) {
+    if (!pill) { pill = document.createElement('i'); pill.className = 'pm-pill'; pill.setAttribute('aria-hidden', 'true'); }
+    if (pill.parentNode !== bar) bar.insertBefore(pill, bar.firstChild);
+  }
+  function paint() { pill.style.width = cw + 'px'; pill.style.transform = 'translateX(' + cx + 'px)'; }
+  function sync() {
+    const bar = document.getElementById('bnav'); if (!bar) return;
+    const b = bar.querySelector('button.on:not(.mn-qa)');
+    ensure(bar);
+    if (!b || !bar.getClientRects().length) { pill.style.opacity = '0'; return; }
+    const br = bar.getBoundingClientRect(), r = b.getBoundingClientRect(); if (!r.width) return;
+    const x = r.left - br.left + 4, w = r.width - 8, key = b.getAttribute('data-go') || b.textContent;
+    pill.style.opacity = '1';
+    if (cx === null || reduce()) { cx = x; cw = w; paint(); lastKey = key; return; }
+    if (key === lastKey) { if (Math.abs(x - cx) > .5 || Math.abs(w - cw) > .5) { sx && sx.stop(); sw && sw.stop(); cx = x; cw = w; paint(); } return; }
+    lastKey = key; sx && sx.stop(); sw && sw.stop();
+    sx = spring1(cx, x, v => { cx = v; paint(); }, 380, 28);
+    sw = spring1(cw, w, v => { cw = v; paint(); }, 380, 28);
+    const ic = b.querySelector('svg.i');
+    if (ic) { const t0 = performance.now(); (function s(now) { const t = Math.min(1, (now - t0) / 420); const k = 1 + .22 * Math.exp(-5 * t) * Math.cos(t * 11); ic.style.scale = t < 1 ? k.toFixed(3) : ''; ic.style.translate = t < 1 ? '0 ' + (-3 * Math.exp(-5 * t) * Math.cos(t * 11)).toFixed(2) + 'px' : ''; if (t < 1) requestAnimationFrame(s); })(t0); }
+  }
+  let q = 0; const sched = () => { if (!q) q = requestAnimationFrame(() => { q = 0; sync(); }); };
+  function boot() {
+    const bar = document.getElementById('bnav'); if (!bar || bar.__pmp) return; bar.__pmp = 1;
+    new MutationObserver(sched).observe(bar, { childList: true, subtree: true, attributes: true, attributeFilter: ['class'] });
+    sched();
+  }
+  addEventListener('resize', () => { cx = null; sched(); }); addEventListener('orientationchange', () => { cx = null; sched(); });
+  boot(); document.addEventListener('DOMContentLoaded', boot); addEventListener('load', () => { boot(); sched(); });
+  setInterval(() => { boot(); if (pill && pill.parentNode && !document.getElementById('bnav').contains(pill)) sched(); }, 1200);
+})();
