@@ -1,0 +1,401 @@
+/* =====================================================================
+   FTA · every screen fits (12 Nov 2026)
+   Final layout guard, loaded last. On any phone, tablet or desktop no text,
+   pill, button or field may run outside its card or past the screen edge.
+   Found and checked by tests/n-audit.js at 320 · 360 · 375 · 390 · 412 ·
+   430 · 768 · 1024 · 1280 · 1440 px. Only sizing / wrapping rules — no
+   colours, no layout changes on screens that already fit.
+   The long :not() chain only lifts these rules above the older theme layers.
+   ===================================================================== */
+
+/* 1 · words never push a box wider than the screen */
+html:root:root:root:root body:not(#f1):not(#f2):not(#f3):not(#f4):not(#f5):not(#f6):not(#f7):not(#f8):not(#f9):not(#f10):not(#f11) :is(#view, #sheet, #fa-panel, .v8-pop, .v9h-pop) {
+  overflow-wrap: break-word !important;
+}
+html:root:root:root:root body:not(#f1):not(#f2):not(#f3):not(#f4):not(#f5):not(#f6):not(#f7):not(#f8):not(#f9):not(#f10):not(#f11) :is(#view, #sheet) :is(.card, .kpi, .qc, .qbx, .xsum > div, .li, .sc-li, .pt-stats > div, .cck) {
+  min-width: 0 !important;
+}
+html:root:root:root:root body:not(#f1):not(#f2):not(#f3):not(#f4):not(#f5):not(#f6):not(#f7):not(#f8):not(#f9):not(#f10):not(#f11) :is(#view, #sheet) :is(input, select, textarea) {
+  max-width: 100% !important;
+  min-width: 0 !important;
+}
+
+/* 2 · KPI cards: the "▲ 12.5% vs. last month" pill and long figures wrap inside the card */
+html:root:root:root:root body:not(#f1):not(#f2):not(#f3):not(#f4):not(#f5):not(#f6):not(#f7):not(#f8):not(#f9):not(#f10):not(#f11) #view .kpi :is(.kf, .kx, .kh, .kv, .ks) {
+  min-width: 0 !important;
+  max-width: 100% !important;
+}
+html:root:root:root:root body:not(#f1):not(#f2):not(#f3):not(#f4):not(#f5):not(#f6):not(#f7):not(#f8):not(#f9):not(#f10):not(#f11) :is(#view, #sheet) .kpi .delta {
+  white-space: normal !important;
+  display: inline-flex !important;
+  flex-wrap: wrap !important;
+  align-items: center;
+  column-gap: 4px;
+  max-width: 100% !important;
+  height: auto !important;
+  line-height: 1.3 !important;
+  text-align: left;
+  box-sizing: border-box;
+}
+html:root:root:root:root body:not(#f1):not(#f2):not(#f3):not(#f4):not(#f5):not(#f6):not(#f7):not(#f8):not(#f9):not(#f10):not(#f11) :is(#view, #sheet) .kpi .kv {
+  /* one line; zz9-fit.js shrinks the figure to the card when it is long */
+  white-space: nowrap !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  overflow-wrap: normal !important;
+}
+html:root:root:root:root body:not(#f1):not(#f2):not(#f3):not(#f4):not(#f5):not(#f6):not(#f7):not(#f8):not(#f9):not(#f10):not(#f11) :is(#view, #sheet) .kpi .kh {
+  white-space: normal !important;
+  overflow-wrap: normal !important;
+  word-break: normal !important;
+}
+
+/* 3 · chart summary boxes (Best month, This month’s rate…) */
+html:root:root:root:root body:not(#f1):not(#f2):not(#f3):not(#f4):not(#f5):not(#f6):not(#f7):not(#f8):not(#f9):not(#f10):not(#f11) #view .xsum {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 96px), 1fr)) !important;
+}
+html:root:root:root:root body:not(#f1):not(#f2):not(#f3):not(#f4):not(#f5):not(#f6):not(#f7):not(#f8):not(#f9):not(#f10):not(#f11) #view .xsum b {
+  white-space: nowrap !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+}
+
+/* 4 · small labelled boxes on payment cards */
+html:root:root:root:root body:not(#f1):not(#f2):not(#f3):not(#f4):not(#f5):not(#f6):not(#f7):not(#f8):not(#f9):not(#f10):not(#f11) #view .qbx small {
+  white-space: normal !important;
+}
+html:root:root:root:root body:not(#f1):not(#f2):not(#f3):not(#f4):not(#f5):not(#f6):not(#f7):not(#f8):not(#f9):not(#f10):not(#f11) #view .qbx b {
+  white-space: nowrap !important;
+}
+
+/* 5 · account reconciliation rows: the statement field gets its own line on phones */
+@media (max-width: 560px) {
+  html:root:root:root:root body:not(#f1):not(#f2):not(#f3):not(#f4):not(#f5):not(#f6):not(#f7):not(#f8):not(#f9):not(#f10):not(#f11) #view .alloc {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+  }
+  html:root:root:root:root body:not(#f1):not(#f2):not(#f3):not(#f4):not(#f5):not(#f6):not(#f7):not(#f8):not(#f9):not(#f10):not(#f11) #view .alloc > :first-child {
+    grid-column: 1 / -1;
+  }
+  html:root:root:root:root body:not(#f1):not(#f2):not(#f3):not(#f4):not(#f5):not(#f6):not(#f7):not(#f8):not(#f9):not(#f10):not(#f11) #view .alloc input {
+    width: 100% !important;
+  }
+}
+
+/* 6 · the 12-month payment table in the student form, on narrow phones */
+@media (max-width: 640px) {
+  html:root:root:root:root body:not(#f1):not(#f2):not(#f3):not(#f4):not(#f5):not(#f6):not(#f7):not(#f8):not(#f9):not(#f10):not(#f11) .pu-t tr {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+  html:root:root:root:root body:not(#f1):not(#f2):not(#f3):not(#f4):not(#f5):not(#f6):not(#f7):not(#f8):not(#f9):not(#f10):not(#f11) .pu-t td {
+    min-width: 0 !important;
+  }
+  html:root:root:root:root body:not(#f1):not(#f2):not(#f3):not(#f4):not(#f5):not(#f6):not(#f7):not(#f8):not(#f9):not(#f10):not(#f11) .pu-t td :is(input, select, .v9-in, .v9h-accw) {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    box-sizing: border-box;
+  }
+  html:root:root:root:root body:not(#f1):not(#f2):not(#f3):not(#f4):not(#f5):not(#f6):not(#f7):not(#f8):not(#f9):not(#f10):not(#f11) .pu-t td .v9h-accw {
+    display: flex !important;
+    gap: 6px;
+  }
+  html:root:root:root:root body:not(#f1):not(#f2):not(#f3):not(#f4):not(#f5):not(#f6):not(#f7):not(#f8):not(#f9):not(#f10):not(#f11) .pu-t td .v9h-accw select {
+    flex: 1 1 auto;
+  }
+  html:root:root:root:root body:not(#f1):not(#f2):not(#f3):not(#f4):not(#f5):not(#f6):not(#f7):not(#f8):not(#f9):not(#f10):not(#f11) .pu-t td .v9h-accw .v9h-plus {
+    flex: 0 0 auto;
+  }
+  html:root:root:root:root body:not(#f1):not(#f2):not(#f3):not(#f4):not(#f5):not(#f6):not(#f7):not(#f8):not(#f9):not(#f10):not(#f11) .pu-t td.m {
+    flex-wrap: wrap;
+  }
+}
+@media (max-width: 400px) {
+  html:root:root:root:root body:not(#f1):not(#f2):not(#f3):not(#f4):not(#f5):not(#f6):not(#f7):not(#f8):not(#f9):not(#f10):not(#f11) .pu-t tr {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+/* desktop: the "+ account" button stays inside its table cell */
+html:root:root:root:root body:not(#f1):not(#f2):not(#f3):not(#f4):not(#f5):not(#f6):not(#f7):not(#f8):not(#f9):not(#f10):not(#f11) .pu-t td .v9h-accw {
+  display: inline-flex;
+  max-width: 100%;
+  align-items: center;
+  gap: 6px;
+}
+html:root:root:root:root body:not(#f1):not(#f2):not(#f3):not(#f4):not(#f5):not(#f6):not(#f7):not(#f8):not(#f9):not(#f10):not(#f11) .pu-t td .v9h-accw select {
+  min-width: 0 !important;
+  flex: 1 1 auto;
+}
+
+/* 7 · wide tables (marks, permission matrix, report papers) scroll inside their card on phones */
+html:root:root:root:root body:not(#f1):not(#f2):not(#f3):not(#f4):not(#f5):not(#f6):not(#f7):not(#f8):not(#f9):not(#f10):not(#f11) :is(#view, #sheet) :is(.card, .v8-pr-r, .sheet-body):has(> :is(table.sc-mat, table.v8-rep-t)) {
+  overflow-x: auto !important;
+}
+@media (max-width: 640px) {
+  html:root:root:root:root body:not(#f1):not(#f2):not(#f3):not(#f4):not(#f5):not(#f6):not(#f7):not(#f8):not(#f9):not(#f10):not(#f11) :is(#view, #sheet) table:is(.sc-mat, .sc-marks) {
+    display: block !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+    max-width: 100% !important;
+  }
+  html:root:root:root:root body:not(#f1):not(#f2):not(#f3):not(#f4):not(#f5):not(#f6):not(#f7):not(#f8):not(#f9):not(#f10):not(#f11) :is(#view, #sheet) .v8-paper {
+    overflow-x: auto !important;
+    max-width: 100% !important;
+  }
+  html:root:root:root:root body:not(#f1):not(#f2):not(#f3):not(#f4):not(#f5):not(#f6):not(#f7):not(#f8):not(#f9):not(#f10):not(#f11) :is(#view, #sheet) .v8-paper table.v8-rep-t th {
+    letter-spacing: .04em !important;
+    white-space: normal !important;
+    overflow-wrap: break-word;
+  }
+}
+
+/* 8 · page-banner buttons with long names wrap instead of running out */
+html:root:root:root:root body:not(#f1):not(#f2):not(#f3):not(#f4):not(#f5):not(#f6):not(#f7):not(#f8):not(#f9):not(#f10):not(#f11) #view .banner .bn-acts .btn {
+  white-space: normal !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  height: auto !important;
+  text-align: center;
+  line-height: 1.25;
+}
+
+/* 9 · My Profile stat tiles (Attendance, …) */
+html:root:root:root:root body:not(#f1):not(#f2):not(#f3):not(#f4):not(#f5):not(#f6):not(#f7):not(#f8):not(#f9):not(#f10):not(#f11) .pt-stats span {
+  letter-spacing: .06em !important;
+  overflow-wrap: break-word;
+}
+
+/* 10 · dashboard command-centre tiles: label and figure stay inside */
+html:root:root:root:root body:not(#f1):not(#f2):not(#f3):not(#f4):not(#f5):not(#f6):not(#f7):not(#f8):not(#f9):not(#f10):not(#f11) #view .cck .lb {
+  display: block !important;
+  -webkit-line-clamp: unset !important;
+  overflow-wrap: normal !important;
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+}
+
+/* 11 · report KPI tiles in a popup (academy name as a value) */
+html:root:root:root:root body:not(#f1):not(#f2):not(#f3):not(#f4):not(#f5):not(#f6):not(#f7):not(#f8):not(#f9):not(#f10):not(#f11) #sheet .kpi .kv {
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+}
+
+/* 12 · when the AI panel is open on a desktop, the page beside it may be narrow: same rules as a tablet */
+html:root:root:root:root body.fa-open:not(#f1):not(#f2):not(#f3):not(#f4):not(#f5):not(#f6):not(#f7):not(#f8):not(#f9):not(#f10):not(#f11) #view .xdn-l li {
+  min-width: 0 !important;
+}
+html:root:root:root:root body.fa-open:not(#f1):not(#f2):not(#f3):not(#f4):not(#f5):not(#f6):not(#f7):not(#f8):not(#f9):not(#f10):not(#f11) #view .xprog b {
+  white-space: normal !important;
+}
+
+/* 13 · AI panel subtitle wraps instead of being cut */
+html:root:root:root:root body:not(#f1):not(#f2):not(#f3):not(#f4):not(#f5):not(#f6):not(#f7):not(#f8):not(#f9):not(#f10):not(#f11) #fa-panel #fa-sub {
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+}
+
+/* 14 · the very narrowest phones (320 px): a touch less padding so content gets the room */
+@media (max-width: 360px) {
+  html:root:root:root:root body:not(#f1):not(#f2):not(#f3):not(#f4):not(#f5):not(#f6):not(#f7):not(#f8):not(#f9):not(#f10):not(#f11) #view .kpi {
+    padding-inline: 12px !important;
+  }
+}
+
+/* 15 · weekly routine on small laptops / tablets in landscape: seven columns fit without a hidden day */
+@media (min-width: 901px) {
+  html:root:root:root:root body:not(#f1):not(#f2):not(#f3):not(#f4):not(#f5):not(#f6):not(#f7):not(#f8):not(#f9):not(#f10):not(#f11) #view .rt-wk {
+    grid-template-columns: repeat(7, minmax(96px, 1fr)) !important;
+  }
+}
+
+/* 16 · donut chart legends: never wider than their card (the list had a fixed 250 px minimum) */
+html:root:root:root:root body:not(#f1):not(#f2):not(#f3):not(#f4):not(#f5):not(#f6):not(#f7):not(#f8):not(#f9):not(#f10):not(#f11) #view .xdn-l {
+  min-width: min(100%, 220px) !important;
+}
+html:root:root:root:root body:not(#f1):not(#f2):not(#f3):not(#f4):not(#f5):not(#f6):not(#f7):not(#f8):not(#f9):not(#f10):not(#f11) #view .xdn-l li {
+  grid-template-columns: 12px minmax(0, 1fr) auto auto !important;
+}
+html:root:root:root:root body:not(#f1):not(#f2):not(#f3):not(#f4):not(#f5):not(#f6):not(#f7):not(#f8):not(#f9):not(#f10):not(#f11) #view .xdn-l li > :is(span, b, em) {
+  min-width: 0;
+  overflow-wrap: break-word;
+}
+html:root:root:root:root body:not(#f1):not(#f2):not(#f3):not(#f4):not(#f5):not(#f6):not(#f7):not(#f8):not(#f9):not(#f10):not(#f11) #view .xdn {
+  flex-wrap: wrap !important;
+  min-width: 0 !important;
+}
+
+/* 17 · page banner slider captions wrap inside the banner */
+html:root:root:root:root body:not(#f1):not(#f2):not(#f3):not(#f4):not(#f5):not(#f6):not(#f7):not(#f8):not(#f9):not(#f10):not(#f11) #view :is(.rs, .rs-stage, .rs-s, .rs-cap) {
+  min-width: 0 !important;
+}
+html:root:root:root:root body:not(#f1):not(#f2):not(#f3):not(#f4):not(#f5):not(#f6):not(#f7):not(#f8):not(#f9):not(#f10):not(#f11) #view .rs-cap :is(b, span) {
+  overflow-wrap: break-word;
+  white-space: normal !important;
+}
+
+/* 18 · long action buttons inside popups (e.g. "Give Afrin own days (start from the class days)") wrap */
+html:root:root:root:root body:not(#f1):not(#f2):not(#f3):not(#f4):not(#f5):not(#f6):not(#f7):not(#f8):not(#f9):not(#f10):not(#f11) #sheet :is(.v9h-add, .acts .btn, .row .btn) {
+  white-space: normal !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  height: auto !important;
+  line-height: 1.25;
+}
+
+/* 19 · month picker footer ("3 selected · November 2026") shows in full */
+html:root:root:root:root body:not(#f1):not(#f2):not(#f3):not(#f4):not(#f5):not(#f6):not(#f7):not(#f8):not(#f9):not(#f10):not(#f11) .v8-pop-f .v8-sum {
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+  min-width: 0;
+}
+
+/* 20 · top-bar page title: one line; zz9-fit.js shrinks it a little, or hides it on the tiniest phones (the banner shows the name) */
+@media (max-width: 400px) {
+  html:root:root:root:root body:not(#f1):not(#f2):not(#f3):not(#f4):not(#f5):not(#f6):not(#f7):not(#f8):not(#f9):not(#f10):not(#f11) #top h1 {
+    white-space: nowrap !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    min-width: 0 !important;
+  }
+}
+
+
+/* 22 · grid tiles (Overview & Reports …) never collapse narrower than their words */
+html:root:root:root:root body:not(#f1):not(#f2):not(#f3):not(#f4):not(#f5):not(#f6):not(#f7):not(#f8):not(#f9):not(#f10):not(#f11) #view :is(.mg-grid, .mg-tiles, .ph-card .mg) > * {
+  min-width: min(100%, 150px);
+}
+
+/* 23 · student / payment cards: the three money boxes on the narrowest phones */
+html:root:root:root:root body:not(#f1):not(#f2):not(#f3):not(#f4):not(#f5):not(#f6):not(#f7):not(#f8):not(#f9):not(#f10):not(#f11) #view .qbx small {
+  overflow-wrap: break-word !important;
+}
+@media (max-width: 380px) {
+  html:root:root:root:root body:not(#f1):not(#f2):not(#f3):not(#f4):not(#f5):not(#f6):not(#f7):not(#f8):not(#f9):not(#f10):not(#f11) #view .qc .qc-b {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+  html:root:root:root:root body:not(#f1):not(#f2):not(#f3):not(#f4):not(#f5):not(#f6):not(#f7):not(#f8):not(#f9):not(#f10):not(#f11) #view .qbx small {
+    letter-spacing: .3px !important;
+  }
+}
+
+/* 24 · the note field of the 12-month payment table has room for its hint */
+html:root:root:root:root body:not(#f1):not(#f2):not(#f3):not(#f4):not(#f5):not(#f6):not(#f7):not(#f8):not(#f9):not(#f10):not(#f11) .pu-t td.nt input {
+  min-width: 96px !important;
+  width: 100% !important;
+}
+
+/* 25 · "In plain words" boxes: the text column may shrink to the card (it ran off the screen on phones) */
+html:root:root:root:root body:not(#f1):not(#f2):not(#f3):not(#f4):not(#f5):not(#f6):not(#f7):not(#f8):not(#f9):not(#f10):not(#f11) :is(#view, #sheet) .easy > div {
+  min-width: 0 !important;
+}
+
+/* 26 · Profiles tree list: class names and long names wrap instead of "Gra…" */
+html:root:root:root:root body:not(#f1):not(#f2):not(#f3):not(#f4):not(#f5):not(#f6):not(#f7):not(#f8):not(#f9):not(#f10):not(#f11) #view .cx-ti small {
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+  text-align: right;
+}
+html:root:root:root:root body:not(#f1):not(#f2):not(#f3):not(#f4):not(#f5):not(#f6):not(#f7):not(#f8):not(#f9):not(#f10):not(#f11) #view :is(.cx-rt b, .cx-rt small, .pt-rows li span, .pt-mht h2) {
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+}
+
+/* 27 · Profile stat tiles: figure on one line (fitted by zz9-fit.js) */
+html:root:root:root:root body:not(#f1):not(#f2):not(#f3):not(#f4):not(#f5):not(#f6):not(#f7):not(#f8):not(#f9):not(#f10):not(#f11) .pt-stats b {
+  white-space: nowrap !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+}
+
+/* 28 · card grids (KPI tiles, dashboard command tiles): two per row while each tile has room,
+   one per row on the narrowest screens / biggest Box size — tiles never get squeezed below their words */
+@media (max-width: 480px) {
+  html:root:root:root:root body:not(#f1):not(#f2):not(#f3):not(#f4):not(#f5):not(#f6):not(#f7):not(#f8):not(#f9):not(#f10):not(#f11) :is(#view, #sheet) :is(.kpis, .cc-k) {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 136px), 1fr)) !important;
+  }
+}
+
+/* 29 · top bar and bottom menu on the narrowest phones (280–360 px, or a large Box size):
+   every button stays on screen, a little smaller */
+@media (max-width: 360px) {
+  html:root:root:root:root body:not(#f1):not(#f2):not(#f3):not(#f4):not(#f5):not(#f6):not(#f7):not(#f8):not(#f9):not(#f10):not(#f11) #top .top-r {
+    gap: 4px !important;
+    min-width: 0 !important;
+  }
+  html:root:root:root:root body:not(#f1):not(#f2):not(#f3):not(#f4):not(#f5):not(#f6):not(#f7):not(#f8):not(#f9):not(#f10):not(#f11) #top .top-r > :is(.ib, .who, button) {
+    width: 34px !important;
+    min-width: 34px !important;
+    height: 34px !important;
+    min-height: 34px !important;
+    padding: 0 !important;
+    flex: 0 0 auto !important;
+  }
+  html:root:root:root:root body:not(#f1):not(#f2):not(#f3):not(#f4):not(#f5):not(#f6):not(#f7):not(#f8):not(#f9):not(#f10):not(#f11) #top .top-r > .who > :not(.av) {
+    display: none !important;
+  }
+  html:root:root:root:root body:not(#f1):not(#f2):not(#f3):not(#f4):not(#f5):not(#f6):not(#f7):not(#f8):not(#f9):not(#f10):not(#f11) #top .top-r > .logo {
+    flex: 0 0 auto !important;
+  }
+  html:root:root:root:root body:not(#f1):not(#f2):not(#f3):not(#f4):not(#f5):not(#f6):not(#f7):not(#f8):not(#f9):not(#f10):not(#f11) #bnav nav {
+    max-width: calc(100vw - 12px) !important;
+    box-sizing: border-box !important;
+  }
+  html:root:root:root:root body:not(#f1):not(#f2):not(#f3):not(#f4):not(#f5):not(#f6):not(#f7):not(#f8):not(#f9):not(#f10):not(#f11) #bnav nav > button {
+    min-width: 0 !important;
+    flex: 1 1 0 !important;
+    padding-inline: 0 !important;
+  }
+}
+html:root:root:root:root body:not(#f1):not(#f2):not(#f3):not(#f4):not(#f5):not(#f6):not(#f7):not(#f8):not(#f9):not(#f10):not(#f11) #view .xprog .xbar {
+  max-width: 100% !important;
+}
+
+/* 30 · a search / example hint that still does not fit its box is drawn smaller (size set by zz9-english.js) */
+html:root:root:root:root body:not(#f1):not(#f2):not(#f3):not(#f4):not(#f5):not(#f6):not(#f7):not(#f8):not(#f9):not(#f10):not(#f11) input[data-ph-fit]::placeholder {
+  font-size: var(--ph-fs) !important;
+}
+
+/* 31 · info pills (class · board) inside profile drawers wrap on the narrowest phones */
+html:root:root:root:root body:not(#f1):not(#f2):not(#f3):not(#f4):not(#f5):not(#f6):not(#f7):not(#f8):not(#f9):not(#f10):not(#f11) :is(#view, #sheet) .chips2 .pill {
+  white-space: normal !important;
+  max-width: 100% !important;
+  height: auto !important;
+}
+
+/* 32 · teacher planner / calendar bar: the teacher picker and Month·Week·Day·Agenda tabs wrap on small phones */
+html:root:root:root:root body:not(#f1):not(#f2):not(#f3):not(#f4):not(#f5):not(#f6):not(#f7):not(#f8):not(#f9):not(#f10):not(#f11) #view .v8-cal-bar :is(.row, .v8-seg) {
+  flex-wrap: wrap !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+}
+html:root:root:root:root body:not(#f1):not(#f2):not(#f3):not(#f4):not(#f5):not(#f6):not(#f7):not(#f8):not(#f9):not(#f10):not(#f11) #view .v8-cal-bar select {
+  max-width: 100% !important;
+  min-width: 0 !important;
+}
+
+/* 33 · 12-month payment table: status / account pickers and the note field keep readable widths
+   (the table scrolls sideways inside its box when the popup is narrower) */
+@media (min-width: 641px) {
+  html:root:root:root:root body:not(#f1):not(#f2):not(#f3):not(#f4):not(#f5):not(#f6):not(#f7):not(#f8):not(#f9):not(#f10):not(#f11) .pu-t td select {
+    min-width: 118px !important;
+  }
+  html:root:root:root:root body:not(#f1):not(#f2):not(#f3):not(#f4):not(#f5):not(#f6):not(#f7):not(#f8):not(#f9):not(#f10):not(#f11) .pu-t td input[placeholder] {
+    min-width: 104px !important;
+  }
+  html:root:root:root:root body:not(#f1):not(#f2):not(#f3):not(#f4):not(#f5):not(#f6):not(#f7):not(#f8):not(#f9):not(#f10):not(#f11) .pu-tw {
+    overflow-x: auto !important;
+    max-width: 100% !important;
+  }
+}
+
+/* 34 · "In plain words" box: long bold category names wrap */
+html:root:root:root:root body:not(#f1):not(#f2):not(#f3):not(#f4):not(#f5):not(#f6):not(#f7):not(#f8):not(#f9):not(#f10):not(#f11) :is(#view, #sheet) .easy :is(b, strong, li, p, span) {
+  white-space: normal !important;
+  overflow-wrap: break-word !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+}

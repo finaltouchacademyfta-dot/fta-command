@@ -1,0 +1,25 @@
+/* zzB · Bangla interface text, part 6 (role names and section names used in headings) */
+FTA_BNX.add({
+  "Owner": "মালিক",
+  "Finance Manager": "হিসাব ব্যবস্থাপক",
+  "Collection Staff": "আদায় কর্মী",
+  "Junior Admin": "জুনিয়র অ্যাডমিন",
+  "Admin": "অ্যাডমিন",
+  "Teacher": "শিক্ষক",
+  "Student": "শিক্ষার্থী",
+  "STUDENTS": "শিক্ষার্থী",
+  "INVOICES & DUES": "ইনভয়েস ও বকেয়া",
+  "PAYMENTS": "পেমেন্ট",
+  "MENTORS": "শিক্ষক",
+  "MENTOR PAYROLL": "শিক্ষকের বেতন তালিকা",
+  "EXPENSES": "খরচ",
+  "ACCOUNTS & TRANSFERS": "অ্যাকাউন্ট ও স্থানান্তর",
+  "LOANS & OTHERS": "ঋণ ও অন্যান্য",
+  "REPORTS": "রিপোর্ট",
+  "NOTES": "নোট",
+  "ACTIVITY LOG": "কাজের লগ",
+  "SETTINGS": "সেটিংস",
+  "PROGRAMMES & ENROLMENTS": "প্রোগ্রাম ও ভর্তি",
+  "DASHBOARD": "ড্যাশবোর্ড",
+  "PROFILES": "প্রোফাইল"
+});

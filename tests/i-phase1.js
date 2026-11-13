@@ -37,7 +37,7 @@ const userClick = p => p.mouse.click(5, 300);
   await p.waitForSelector('#fg-email', { timeout: 30000 }); await p.fill('#fg-email', OWNER); await p.click('#fg-go'); await ready(p);
   const look = await p.evaluate(() => ({ skin: document.documentElement.dataset.skin, theme: document.documentElement.dataset.theme, pal: document.documentElement.dataset.palette || '', ui: document.querySelectorAll('style[data-ui]').length }));
   ok(look.skin === 'midnight' && look.theme === 'light' && !look.pal, 'opens in Premium Light (' + look.skin + ' / ' + look.theme + ')');
-  ok(look.ui === 16, 'all approved design layers (and the Class status styles) are in the page');
+  ok(look.ui === 17, 'all approved design layers (plus Class status styles and the every-screen fit layer) are in the page');
   const nav = await p.evaluate(() => ({ pages: ROLES.Owner.pages || [], flat: FLAT.map(f => f[0]), title: document.title, brand: (document.querySelector('#side .brand b') || {}).textContent }));
   ok(nav.flat.includes('cx-people') && nav.flat.includes('rc-maker'), 'Profiles and Receipt Maker are registered');
   ok(!nav.flat.some(x => /^(cx|tp|sp)-(watch|rec|monitor)$/.test(x)), 'Watch Together / Recordings / Chat Monitor are not in the live app');
