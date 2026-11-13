@@ -6,7 +6,7 @@
    It never stores academy data: /api and Supabase are never cached.
    ===================================================================== */
 'use strict';
-const V = '2e3e45f715f8';
+const V = '7b7f639534a9';
 const SHELL = 'fta-shell-' + V, ASSETS = 'fta-assets-v1';
 const PRE = ['/', '/manifest.webmanifest', '/config.js', '/vendor/supabase.js', '/vendor/fta-policy.js', '/icons/icon-192.png', '/icons/icon-512.png', '/icons/notify-192.png', '/icons/badge-96.png'];
 

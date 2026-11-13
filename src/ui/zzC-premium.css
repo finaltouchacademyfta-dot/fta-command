@@ -98,3 +98,15 @@ html:root:root body{overscroll-behavior-y:none}
 @media (pointer:coarse){
   html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]),html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) select,html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) textarea{font-size:16px!important}
 }
+
+/* month picker: quick-choice buttons must never squeeze into one-letter columns, and the row must not stretch tall */
+html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) .v8-pop-b{grid-auto-rows:min-content!important;align-content:start!important}
+@media (max-width:640px){
+  html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) .v8-pre{align-self:start!important;align-items:flex-start!important;flex-wrap:nowrap!important;height:auto!important;max-height:none!important;overflow-x:auto!important;overflow-y:hidden!important;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+  html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) .v8-pre::-webkit-scrollbar{display:none}
+}
+html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) .v8-pre button{flex:0 0 auto!important;white-space:nowrap!important;overflow-wrap:normal!important;word-break:normal!important;min-width:max-content}
+
+/* horizontally scrolling tab rows: tabs keep their natural width, the row scrolls (never one-letter columns) */
+html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) .cx-tree button,html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) .tabs > button,html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) [role="tablist"] > *,html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) .v8-tabs > button,html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) .rs-tab{flex:0 0 auto}
+@media (max-width:760px){html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) .cx-tree button{white-space:nowrap!important;overflow-wrap:normal!important;word-break:normal!important}}
