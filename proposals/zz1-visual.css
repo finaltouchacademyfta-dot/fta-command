@@ -1,0 +1,317 @@
+/* FTA · ZZ1 VISUAL — teammate #1 (demo layer, loads after ui-luxe)
+   Owner feedback round 2:
+     1 premium notification sheet          (dark premium themes)
+     2 no broad gold fills on buttons       (dark premium themes)
+     3 crisp, consistent icons              (icon SHAPE fixes apply to all midnight themes; colours only in dark)
+     5 tasteful 3D depth + 3D-level charts  (depth colours = dark; chart STRUCTURE = all midnight, colours from variables)
+   Selector prefixes (both beat ui-luxe, which is (0,4,2)+ with !important):
+     DARK  html[data-skin="midnight"][data-skin]:root:root:not([data-theme="light"]) body:not(#z1):not(#z2):not(#z3)
+     ALL   html[data-skin="midnight"][data-skin][data-skin]:root:root body:not(#z1):not(#z2):not(#z3)
+   For teammate #2 (light): chart depth reads --z-ch-shadow / --z-ch-sheen / --z-ring-hi / --z-ring-lo / --z-dial-a / --z-dial-b /
+   --z-tip-bg; defaults below are light-safe, dark values are set in the dark token block. lux / qit are never matched. */
+
+/* ================= 0 · TOKENS ================= */
+html[data-skin="midnight"][data-skin][data-skin]:root:root{
+  --z-ch-shadow:rgba(15,23,42,.16);--z-ch-sheen:rgba(255,255,255,.42);
+  --z-ring-hi:rgba(255,255,255,.55);--z-ring-lo:rgba(15,23,42,.18);
+  --z-dial-a:#FFFFFF;--z-dial-b:#F3EFE6;--z-dial-line:rgba(15,23,42,.08);
+  --z-tip-bg:rgba(255,255,255,.94);--z-tip-ink:#0F172A;--z-tip-line:rgba(15,23,42,.10);
+}
+html[data-skin="midnight"][data-skin]:root:root:not([data-theme="light"]){
+  /* onyx & champagne depth */
+  --z-onyx-1:#2A2D33;--z-onyx-2:#1C1F24;--z-onyx-3:#141619;
+  --z-champ:#D9B970;--z-champ-hi:#EBD29A;--z-champ-line:rgba(217,185,112,.52);--z-champ-line-hi:rgba(226,194,126,.85);
+  --z-card:linear-gradient(180deg,#17191E 0%,#121418 46%,#101216 100%);
+  --z-card-2:linear-gradient(180deg,#1C1F25 0%,#16181D 100%);
+  --z-raise-1:inset 0 1px 0 rgba(255,240,210,.065),inset 0 -1px 0 rgba(0,0,0,.35),0 1px 1px rgba(0,0,0,.45),0 2px 6px -2px rgba(0,0,0,.45),0 18px 36px -22px rgba(0,0,0,.95);
+  --z-raise-2:inset 0 1px 0 rgba(255,240,210,.09),inset 0 -1px 0 rgba(0,0,0,.35),0 2px 2px rgba(0,0,0,.45),0 8px 18px -6px rgba(0,0,0,.6),0 28px 50px -26px rgba(0,0,0,1);
+  --z-btn:linear-gradient(180deg,#2C2F36 0%,#1D2025 52%,#16181C 100%);
+  --z-btn-h:linear-gradient(180deg,#33363E 0%,#23262C 52%,#1A1C21 100%);
+  --z-btn-sh:inset 0 1px 0 rgba(255,236,190,.16),inset 0 -1px 0 rgba(0,0,0,.55),0 1px 2px rgba(0,0,0,.55),0 6px 14px -8px rgba(0,0,0,.95);
+  --z-btn-sh-h:inset 0 1px 0 rgba(255,236,190,.2),inset 0 -1px 0 rgba(0,0,0,.55),0 2px 3px rgba(0,0,0,.5),0 10px 22px -10px rgba(217,185,112,.32),0 0 0 3px rgba(217,185,112,.07);
+  --z-btn-sh-a:inset 0 2px 4px rgba(0,0,0,.55),inset 0 -1px 0 rgba(255,236,190,.05);
+  --z-sunken:inset 0 1px 2px rgba(0,0,0,.55),inset 0 0 0 1px rgba(0,0,0,.2);
+  /* no gold-filled primaries anywhere: re-point ui-luxe's primary token too */
+  --fx-pri-bg:#1D2025;--fx-pri-bg-hover:#262930;--fx-pri-ink:#EBD29A;
+  /* charts */
+  --z-ch-shadow:rgba(0,0,0,.55);--z-ch-sheen:rgba(255,255,255,.26);
+  --z-ring-hi:rgba(255,250,235,.38);--z-ring-lo:rgba(0,0,0,.42);
+  --z-dial-a:#22252B;--z-dial-b:#121418;--z-dial-line:rgba(226,194,126,.16);
+  --z-tip-bg:rgba(22,24,29,.86);--z-tip-ink:#F2EEE4;--z-tip-line:rgba(226,194,126,.26);
+}
+
+/* ================= 2 · BUTTONS — onyx, champagne hairline, raised (dark) ================= */
+/* primary everywhere: banners, sheets, cards, rows, chat Send, live class, Take attendance, Join, approve … */
+html[data-skin="midnight"][data-skin]:root:root:not([data-theme="light"]) body:not(#z1):not(#z2):not(#z3) .btn.p:not(#qab),
+html[data-skin="midnight"][data-skin]:root:root:not([data-theme="light"]) body:not(#z1):not(#z2):not(#z3) :is(#view,#sheet,#ov,body) .btn.p:not(#qab){
+  background:var(--z-btn)!important;background-color:var(--z-onyx-2)!important;
+  border:1px solid var(--z-champ-line)!important;color:var(--z-champ-hi)!important;
+  box-shadow:var(--z-btn-sh)!important;text-shadow:0 1px 0 rgba(0,0,0,.5)!important;
+  font-weight:650!important;letter-spacing:.01em!important;
+  transition:transform .16s cubic-bezier(.2,.7,.2,1),box-shadow .16s,border-color .16s,background .16s!important;
+}
+html[data-skin="midnight"][data-skin]:root:root:not([data-theme="light"]) body:not(#z1):not(#z2):not(#z3) :is(#view,#sheet,#ov,body) .btn.p:not(#qab):hover{
+  background:var(--z-btn-h)!important;border-color:var(--z-champ-line-hi)!important;color:#F4E2B4!important;
+  box-shadow:var(--z-btn-sh-h)!important;transform:translateY(-1px)!important;
+}
+html[data-skin="midnight"][data-skin]:root:root:not([data-theme="light"]) body:not(#z1):not(#z2):not(#z3) :is(#view,#sheet,#ov,body) .btn.p:not(#qab):active{
+  transform:translateY(0)!important;box-shadow:var(--z-btn-sh-a)!important;background:var(--z-onyx-3)!important;
+}
+html[data-skin="midnight"][data-skin]:root:root:not([data-theme="light"]) body:not(#z1):not(#z2):not(#z3) :is(#view,#sheet,#ov,body) .btn.p:not(#qab):focus-visible{outline:none!important;box-shadow:var(--z-btn-sh),0 0 0 2px #0A0B0D,0 0 0 4px rgba(226,194,126,.6)!important}
+html[data-skin="midnight"][data-skin]:root:root:not([data-theme="light"]) body:not(#z1):not(#z2):not(#z3) :is(#view,#sheet,#ov,body) .btn.p:not(#qab):disabled{opacity:.5!important;transform:none!important}
+html[data-skin="midnight"][data-skin]:root:root:not([data-theme="light"]) body:not(#z1):not(#z2):not(#z3) :is(#view,#sheet,#ov,body) .btn.p:not(#qab) svg.i{color:var(--z-champ)!important}
+
+/* Quick Add — stays a gold OUTLINE, now with the same onyx depth */
+html[data-skin="midnight"][data-skin]:root:root:not([data-theme="light"]) body:not(#z1):not(#z2):not(#z3) #qab{
+  background:rgba(217,185,112,.035)!important;background-image:none!important;border:1px solid var(--z-champ-line)!important;color:var(--z-champ-hi)!important;
+  box-shadow:var(--z-btn-sh)!important;text-shadow:0 1px 0 rgba(0,0,0,.5)!important;
+  transition:transform .16s cubic-bezier(.2,.7,.2,1),box-shadow .16s,border-color .16s!important;
+}
+html[data-skin="midnight"][data-skin]:root:root:not([data-theme="light"]) body:not(#z1):not(#z2):not(#z3) #qab:hover{background:rgba(217,185,112,.08)!important;background-image:none!important;border-color:var(--z-champ-line-hi)!important;box-shadow:var(--z-btn-sh-h)!important;transform:translateY(-1px)!important}
+html[data-skin="midnight"][data-skin]:root:root:not([data-theme="light"]) body:not(#z1):not(#z2):not(#z3) #qab svg.i{color:var(--z-champ)!important}
+
+/* secondary: transparent, hairline, faint top light */
+html[data-skin="midnight"][data-skin]:root:root:not([data-theme="light"]) body:not(#z1):not(#z2):not(#z3) .btn:not(.p):not(.d):not(.bad):not(.danger):not(.ok):not(.wa){
+  background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,0))!important;
+  border:1px solid rgba(226,194,126,.2)!important;color:var(--fx-ink-2)!important;
+  box-shadow:inset 0 1px 0 rgba(255,240,210,.05),0 1px 2px rgba(0,0,0,.35)!important;
+  transition:transform .16s cubic-bezier(.2,.7,.2,1),box-shadow .16s,border-color .16s,color .16s!important;
+}
+html[data-skin="midnight"][data-skin]:root:root:not([data-theme="light"]) body:not(#z1):not(#z2):not(#z3) .btn:not(.p):not(.d):not(.bad):not(.danger):not(.ok):not(.wa):hover{
+  border-color:rgba(226,194,126,.45)!important;color:var(--fx-ink)!important;background:linear-gradient(180deg,rgba(217,185,112,.07),rgba(217,185,112,.02))!important;
+  box-shadow:inset 0 1px 0 rgba(255,240,210,.07),0 4px 12px -6px rgba(0,0,0,.8)!important;transform:translateY(-1px)!important;
+}
+/* row ghosts stay borderless until hover (ui-luxe rule), keep that */
+html[data-skin="midnight"][data-skin]:root:root:not([data-theme="light"]) body:not(#z1):not(#z2):not(#z3) :is(#view td,#view .sc-li) .btn:not(.p):not(:hover){border-color:transparent!important;background:transparent!important;box-shadow:none!important}
+/* danger: muted ruby outline + text */
+html[data-skin="midnight"][data-skin]:root:root:not([data-theme="light"]) body:not(#z1):not(#z2):not(#z3) :is(.btn.d,.btn.bad,.btn.danger,.v9m-del){
+  background:transparent!important;color:#D99A8C!important;border:1px solid rgba(227,144,127,.32)!important;box-shadow:none!important;
+}
+html[data-skin="midnight"][data-skin]:root:root:not([data-theme="light"]) body:not(#z1):not(#z2):not(#z3) :is(.btn.d,.btn.bad,.btn.danger,.v9m-del):hover{background:rgba(227,144,127,.08)!important;color:#EBA898!important;border-color:rgba(227,144,127,.6)!important}
+html[data-skin="midnight"][data-skin]:root:root:not([data-theme="light"]) body:not(#z1):not(#z2):not(#z3) #view td .v9m-del:not(:hover){border-color:transparent!important}
+
+/* phone bottom-nav centre button: raised onyx disc, champagne ring */
+html[data-skin="midnight"][data-skin]:root:root:not([data-theme="light"]) body:not(#z1):not(#z2):not(#z3) #bnav > button.mn-qa .qa-c{
+  background:radial-gradient(120% 90% at 50% 0%,#353840 0%,#1D2025 55%,#141619 100%)!important;
+  border:1px solid var(--z-champ-line-hi)!important;color:var(--z-champ-hi)!important;
+  box-shadow:inset 0 1px 0 rgba(255,236,190,.2),inset 0 -2px 3px rgba(0,0,0,.5),0 6px 14px -4px rgba(0,0,0,.85),0 0 0 4px rgba(10,11,13,.9)!important;
+}
+html[data-skin="midnight"][data-skin]:root:root:not([data-theme="light"]) body:not(#z1):not(#z2):not(#z3) #bnav{box-shadow:inset 0 1px 0 rgba(255,240,210,.06),0 -1px 0 rgba(0,0,0,.4),0 18px 40px -12px rgba(0,0,0,.9)!important}
+
+/* other filled-gold controls → onyx + champagne */
+html[data-skin="midnight"][data-skin]:root:root:not([data-theme="light"]) body:not(#z1):not(#z2):not(#z3) :is(.cx-send,.cx-comp .btn.p,.v9j-bar .btn.p,.lv-join,.cx-join){background:var(--z-btn)!important;border:1px solid var(--z-champ-line)!important;color:var(--z-champ-hi)!important;box-shadow:var(--z-btn-sh)!important}
+
+/* top-bar icon buttons: small raised onyx keys */
+html[data-skin="midnight"][data-skin]:root:root:not([data-theme="light"]) body:not(#z1):not(#z2):not(#z3) #top .ib{
+  background:linear-gradient(180deg,#1E2126,#15171B)!important;border:1px solid rgba(226,194,126,.14)!important;color:var(--fx-ink-2)!important;
+  box-shadow:inset 0 1px 0 rgba(255,240,210,.07),0 1px 2px rgba(0,0,0,.5)!important;transition:transform .16s,border-color .16s,color .16s,box-shadow .16s!important;
+}
+html[data-skin="midnight"][data-skin]:root:root:not([data-theme="light"]) body:not(#z1):not(#z2):not(#z3) #top .ib:hover{border-color:rgba(226,194,126,.38)!important;color:var(--z-champ-hi)!important;transform:translateY(-1px)!important;box-shadow:inset 0 1px 0 rgba(255,240,210,.09),0 6px 14px -6px rgba(0,0,0,.9)!important}
+html[data-skin="midnight"][data-skin]:root:root:not([data-theme="light"]) body:not(#z1):not(#z2):not(#z3) #top #ndot{
+  background:linear-gradient(180deg,#2A2418,#1A160F)!important;color:var(--z-champ-hi)!important;border:1px solid rgba(226,194,126,.55)!important;
+  box-shadow:0 2px 6px rgba(0,0,0,.6),0 0 0 2px #0A0B0D!important;font-weight:700!important;
+}
+
+/* ================= 3 · ICONS — crisp, single weight (shape fixes: all midnight) ================= */
+/* (a) the root cause of the blurry "+" / muddy AI icon: duotone tone layers + ui-luxe fills every <path>, which turns
+       the new stroke icons (.ph2) into filled blobs. Kill tone layers; stroke icons stay stroke. */
+html[data-skin="midnight"][data-skin][data-skin]:root:root body:not(#z1):not(#z2):not(#z3) svg.i .ph .du{opacity:0!important;fill:none!important}
+html[data-skin="midnight"][data-skin][data-skin]:root:root body:not(#z1):not(#z2):not(#z3) svg.i .ph2 .du2{display:none!important}
+html[data-skin="midnight"][data-skin][data-skin]:root:root body:not(#z1):not(#z2):not(#z3) svg.i .ph2 path,
+html[data-skin="midnight"][data-skin][data-skin]:root:root body:not(#z1):not(#z2):not(#z3) svg.i .ph2 circle,
+html[data-skin="midnight"][data-skin][data-skin]:root:root body:not(#z1):not(#z2):not(#z3) svg.i .ph2 rect{fill:none!important;stroke:currentColor!important;stroke-width:2!important;stroke-linecap:round!important;stroke-linejoin:round!important;opacity:1!important}
+html[data-skin="midnight"][data-skin][data-skin]:root:root body:not(#z1):not(#z2):not(#z3) svg.i .ph path:not(.du){fill:currentColor!important;stroke:none!important}
+html[data-skin="midnight"][data-skin][data-skin]:root:root body:not(#z1):not(#z2):not(#z3) svg.i{shape-rendering:geometricPrecision;overflow:visible}
+/* (b) one colour source: currentColor (buttons/chips set colour on the svg) */
+html[data-skin="midnight"][data-skin][data-skin]:root:root body:not(#z1):not(#z2):not(#z3) .btn svg.i{width:18px!important;height:18px!important;flex:none}
+html[data-skin="midnight"][data-skin][data-skin]:root:root body:not(#z1):not(#z2):not(#z3) .btn.s svg.i{width:16px!important;height:16px!important}
+html[data-skin="midnight"][data-skin][data-skin]:root:root body:not(#z1):not(#z2):not(#z3) #top .ib > svg{width:20px!important;height:20px!important}
+/* the AI assistant key: clean sparkle (zz1-visual.js swaps the glyph), never filled */
+html[data-skin="midnight"][data-skin][data-skin]:root:root body:not(#z1):not(#z2):not(#z3) #fa-btn svg path{fill:none!important;stroke:currentColor!important;stroke-width:1.75!important;stroke-linejoin:round!important}
+html[data-skin="midnight"][data-skin]:root:root:not([data-theme="light"]) body:not(#z1):not(#z2):not(#z3) #fa-btn{color:var(--z-champ-hi)!important}
+
+/* ================= 1 · NOTIFICATION SHEET (dark) ================= */
+html[data-skin="midnight"][data-skin]:root:root:not([data-theme="light"]) body:not(#z1):not(#z2):not(#z3) #sheet.zz-notif{
+  background:linear-gradient(180deg,#16181D 0%,#101215 100%)!important;
+  box-shadow:inset 0 1px 0 rgba(255,240,210,.07),0 0 0 1px rgba(226,194,126,.2),0 40px 90px -30px rgba(0,0,0,1)!important;
+}
+html[data-skin="midnight"][data-skin]:root:root:not([data-theme="light"]) body:not(#z1):not(#z2):not(#z3) #sheet.zz-notif .sh{border-bottom:1px solid rgba(226,194,126,.1)!important;background:transparent!important}
+html[data-skin="midnight"][data-skin]:root:root:not([data-theme="light"]) body:not(#z1):not(#z2):not(#z3) #sheet.zz-notif .sh h2{font-family:var(--fx-display)!important;font-weight:600!important;color:var(--fx-ink)!important}
+html[data-skin="midnight"][data-skin]:root:root:not([data-theme="light"]) body:not(#z1):not(#z2):not(#z3) #sheet.zz-notif .sh small{color:var(--z-champ)!important;letter-spacing:.18em!important}
+html[data-skin="midnight"][data-skin]:root:root:not([data-theme="light"]) body:not(#z1):not(#z2):not(#z3) #sheet.zz-notif .zz-nh{
+  display:flex;align-items:center;gap:10px;margin:18px 2px 8px;font:700 10.5px/1 var(--fx-font);letter-spacing:.16em;text-transform:uppercase;color:var(--fx-muted);
+}
+html[data-skin="midnight"][data-skin]:root:root:not([data-theme="light"]) body:not(#z1):not(#z2):not(#z3) #sheet.zz-notif .zz-nh:first-of-type{margin-top:6px}
+html[data-skin="midnight"][data-skin]:root:root:not([data-theme="light"]) body:not(#z1):not(#z2):not(#z3) #sheet.zz-notif .zz-nh::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,rgba(226,194,126,.18),transparent)}
+html[data-skin="midnight"][data-skin]:root:root:not([data-theme="light"]) body:not(#z1):not(#z2):not(#z3) #sheet.zz-notif .zz-nh i{font-style:normal;color:var(--z-champ);background:rgba(217,185,112,.08);border:1px solid rgba(217,185,112,.22);border-radius:999px;padding:3px 7px;letter-spacing:.04em}
+html[data-skin="midnight"][data-skin]:root:root:not([data-theme="light"]) body:not(#z1):not(#z2):not(#z3) #sheet .alert.v8-al,
+html[data-skin="midnight"][data-skin]:root:root:not([data-theme="light"]) body:not(#z1):not(#z2):not(#z3) #sheet .alert.fp-foot{
+  -webkit-appearance:none;appearance:none;position:relative;
+  display:flex!important;align-items:center;gap:14px;width:100%;margin:0 0 8px!important;padding:13px 14px 13px 14px!important;
+  background:var(--z-card-2)!important;color:var(--fx-ink)!important;
+  border:1px solid rgba(226,194,126,.1)!important;border-radius:14px!important;
+  box-shadow:inset 0 1px 0 rgba(255,240,210,.055),0 1px 1px rgba(0,0,0,.45),0 10px 22px -16px rgba(0,0,0,.95)!important;
+  transition:transform .16s cubic-bezier(.2,.7,.2,1),border-color .16s,box-shadow .16s,background .16s!important;text-align:left;
+}
+html[data-skin="midnight"][data-skin]:root:root:not([data-theme="light"]) body:not(#z1):not(#z2):not(#z3) #sheet .alert.v8-al:hover,
+html[data-skin="midnight"][data-skin]:root:root:not([data-theme="light"]) body:not(#z1):not(#z2):not(#z3) #sheet .alert.fp-foot:hover{
+  background:linear-gradient(180deg,#22252B 0%,#1A1C21 100%)!important;border-color:rgba(226,194,126,.3)!important;transform:translateY(-1px)!important;
+  box-shadow:inset 0 1px 0 rgba(255,240,210,.08),0 2px 2px rgba(0,0,0,.4),0 16px 30px -16px rgba(0,0,0,1)!important;
+}
+html[data-skin="midnight"][data-skin]:root:root:not([data-theme="light"]) body:not(#z1):not(#z2):not(#z3) #sheet .alert.v8-al:focus-visible{outline:none!important;box-shadow:0 0 0 2px #0A0B0D,0 0 0 4px rgba(226,194,126,.55)!important}
+/* icon chip: tinted glass tile in the item's tone (inline colour = tone) */
+html[data-skin="midnight"][data-skin]:root:root:not([data-theme="light"]) body:not(#z1):not(#z2):not(#z3) #sheet :is(.v8-al,.fp-foot) > .ic{
+  position:relative;flex:none;display:grid!important;place-items:center;width:40px!important;height:40px!important;border-radius:12px!important;
+  background:linear-gradient(180deg,color-mix(in srgb,currentColor 18%,#1A1C21),color-mix(in srgb,currentColor 7%,#121418))!important;
+  border:1px solid color-mix(in srgb,currentColor 30%,transparent)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.1),inset 0 -1px 0 rgba(0,0,0,.4),0 4px 10px -4px rgba(0,0,0,.8)!important;
+}
+html[data-skin="midnight"][data-skin]:root:root:not([data-theme="light"]) body:not(#z1):not(#z2):not(#z3) #sheet .fp-foot > .ic{color:var(--z-champ)!important}
+html[data-skin="midnight"][data-skin]:root:root:not([data-theme="light"]) body:not(#z1):not(#z2):not(#z3) #sheet :is(.v8-al,.fp-foot) > .ic svg{width:20px!important;height:20px!important}
+/* unread dot (every item in this sheet still needs action) */
+html[data-skin="midnight"][data-skin]:root:root:not([data-theme="light"]) body:not(#z1):not(#z2):not(#z3) #sheet .v8-al > .ic::after{
+  content:"";position:absolute;top:-3px;right:-3px;width:9px;height:9px;border-radius:50%;
+  background:radial-gradient(circle at 35% 30%,#F7E3AE,#D9B970 55%,#A8873E);box-shadow:0 0 0 2px #17191E,0 0 8px rgba(217,185,112,.55);
+}
+html[data-skin="midnight"][data-skin]:root:root:not([data-theme="light"]) body:not(#z1):not(#z2):not(#z3) #sheet :is(.v8-al,.fp-foot) > div{min-width:0;flex:1}
+html[data-skin="midnight"][data-skin]:root:root:not([data-theme="light"]) body:not(#z1):not(#z2):not(#z3) #sheet :is(.v8-al,.fp-foot) b{display:block;font-size:14px!important;font-weight:650!important;color:var(--fx-ink)!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+html[data-skin="midnight"][data-skin]:root:root:not([data-theme="light"]) body:not(#z1):not(#z2):not(#z3) #sheet :is(.v8-al,.fp-foot) .sub,
+html[data-skin="midnight"][data-skin]:root:root:not([data-theme="light"]) body:not(#z1):not(#z2):not(#z3) #sheet :is(.v8-al,.fp-foot) b + *{display:block;margin-top:3px;font-size:12.5px!important;color:var(--fx-muted)!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* chevron: hairline circle, moves + turns gold on hover */
+html[data-skin="midnight"][data-skin]:root:root:not([data-theme="light"]) body:not(#z1):not(#z2):not(#z3) #sheet .v8-al > svg.i:last-child{
+  flex:none;margin-left:auto;width:30px!important;height:30px!important;padding:7px;border-radius:50%;
+  border:1px solid rgba(226,194,126,.12);color:var(--fx-faint)!important;transition:transform .16s,color .16s,border-color .16s;
+}
+html[data-skin="midnight"][data-skin]:root:root:not([data-theme="light"]) body:not(#z1):not(#z2):not(#z3) #sheet .v8-al:hover > svg.i:last-child{transform:translateX(2px);color:var(--z-champ)!important;border-color:rgba(226,194,126,.4)}
+/* push-notification row = a quieter footer card */
+html[data-skin="midnight"][data-skin]:root:root:not([data-theme="light"]) body:not(#z1):not(#z2):not(#z3) #sheet .alert.fp-foot{background:transparent!important;border-style:dashed!important;border-color:rgba(226,194,126,.2)!important;box-shadow:none!important;margin-top:4px!important}
+/* empty state */
+html[data-skin="midnight"][data-skin]:root:root:not([data-theme="light"]) body:not(#z1):not(#z2):not(#z3) #sheet.zz-notif .empty{
+  display:flex!important;flex-direction:column;align-items:center;gap:10px;text-align:center;padding:36px 20px!important;
+  background:radial-gradient(120% 100% at 50% 0%,rgba(217,185,112,.07),transparent 60%),var(--z-card-2)!important;
+  border:1px solid rgba(226,194,126,.12)!important;border-radius:16px!important;color:var(--fx-muted)!important;font-size:13.5px;
+  box-shadow:inset 0 1px 0 rgba(255,240,210,.05)!important;
+}
+html[data-skin="midnight"][data-skin]:root:root:not([data-theme="light"]) body:not(#z1):not(#z2):not(#z3) #sheet.zz-notif .empty svg.i{
+  width:52px!important;height:52px!important;padding:13px;border-radius:50%;color:var(--z-champ)!important;
+  background:linear-gradient(180deg,#25282E,#16181C);border:1px solid rgba(226,194,126,.35);
+  box-shadow:inset 0 1px 0 rgba(255,236,190,.15),0 10px 22px -10px rgba(0,0,0,.9),0 0 24px rgba(217,185,112,.12);
+}
+html[data-skin="midnight"][data-skin]:root:root:not([data-theme="light"]) body:not(#z1):not(#z2):not(#z3) #sheet.zz-notif .empty .zz-et{font:600 20px/1.2 var(--fx-display);color:var(--fx-ink)}
+
+/* ================= 5 · DEPTH LANGUAGE (dark) ================= */
+/* cards, KPI tiles, chart cards: layered elevation + soft top light */
+html[data-skin="midnight"][data-skin]:root:root:not([data-theme="light"]) body:not(#z1):not(#z2):not(#z3) #view :is(.card,.cck,.qc,.xcard,.cc-chart,.cx-lc,.mz-card){
+  background:var(--z-card)!important;border:1px solid rgba(226,194,126,.1)!important;box-shadow:var(--z-raise-1)!important;
+}
+html[data-skin="midnight"][data-skin]:root:root:not([data-theme="light"]) body:not(#z1):not(#z2):not(#z3) #view .kpi{
+  background:radial-gradient(140% 90% at 0% 0%,rgba(217,185,112,.055),transparent 55%),linear-gradient(180deg,#1A1C21 0%,#131519 60%,#111316 100%)!important;
+  border:1px solid rgba(226,194,126,.12)!important;box-shadow:var(--z-raise-1)!important;
+  transition:transform .18s cubic-bezier(.2,.7,.2,1),box-shadow .18s,border-color .18s!important;
+}
+html[data-skin="midnight"][data-skin]:root:root:not([data-theme="light"]) body:not(#z1):not(#z2):not(#z3) #view :is(button.kpi,.kpi[onclick],.sc-tile,.cck[onclick]):hover{
+  transform:translateY(-2px)!important;border-color:rgba(226,194,126,.26)!important;box-shadow:var(--z-raise-2)!important;
+}
+/* KPI icon chip: raised onyx coin with a champagne hairline (.kpi: the svg is the chip; .cck: the .sc-ic span is the chip) */
+html[data-skin="midnight"][data-skin]:root:root:not([data-theme="light"]) body:not(#z1):not(#z2):not(#z3) #view .cck .sc-ic{display:grid!important;place-items:center!important;padding:0!important;background:linear-gradient(180deg,#272A30,#17191D)!important;border:1px solid rgba(226,194,126,.26)!important;box-shadow:inset 0 1px 0 rgba(255,236,190,.12),0 3px 8px -3px rgba(0,0,0,.8)!important;color:var(--z-champ)!important}
+html[data-skin="midnight"][data-skin]:root:root:not([data-theme="light"]) body:not(#z1):not(#z2):not(#z3) #view .cck .sc-ic svg.i{color:var(--z-champ)!important;background:none!important;border:0!important;box-shadow:none!important;padding:0!important;width:18px!important;height:18px!important;margin:0!important;position:static!important;transform:none!important}
+html[data-skin="midnight"][data-skin]:root:root:not([data-theme="light"]) body:not(#z1):not(#z2):not(#z3) #view .kpi .kh svg.i{
+  width:30px!important;height:30px!important;padding:6px!important;border-radius:9px!important;color:var(--z-champ)!important;
+  background:linear-gradient(180deg,#272A30,#17191D)!important;border:1px solid rgba(226,194,126,.26)!important;
+  box-shadow:inset 0 1px 0 rgba(255,236,190,.12),0 3px 8px -3px rgba(0,0,0,.8)!important;
+}
+html[data-skin="midnight"][data-skin]:root:root:not([data-theme="light"]) body:not(#z1):not(#z2):not(#z3) #view .kpi .kv{text-shadow:0 1px 0 rgba(0,0,0,.6),0 8px 24px rgba(0,0,0,.4)}
+html[data-skin="midnight"][data-skin]:root:root:not([data-theme="light"]) body:not(#z1):not(#z2):not(#z3) #view .sc-tile{
+  background:linear-gradient(180deg,#1A1C21,#131519)!important;border:1px solid rgba(226,194,126,.1)!important;box-shadow:inset 0 1px 0 rgba(255,240,210,.05),0 6px 14px -10px rgba(0,0,0,.9)!important;
+}
+/* inner stat boxes = sunken wells (not boxes-in-boxes) */
+html[data-skin="midnight"][data-skin]:root:root:not([data-theme="light"]) body:not(#z1):not(#z2):not(#z3) #view :is(.xstat3 > *,.qbx,.cc-mini,.v8-ps){box-shadow:var(--z-sunken)!important;background:rgba(8,9,11,.45)!important;border-color:rgba(226,194,126,.07)!important}
+/* page banner: deeper, lit from above */
+html[data-skin="midnight"][data-skin]:root:root:not([data-theme="light"]) body:not(#z1):not(#z2):not(#z3) #view section.banner{
+  background:radial-gradient(90% 140% at 100% 0%,rgba(217,185,112,.07),transparent 55%),linear-gradient(180deg,#1A1C21 0%,#121418 70%,#101215 100%)!important;
+  border:1px solid rgba(226,194,126,.14)!important;
+  box-shadow:inset 0 1px 0 rgba(255,240,210,.08),inset 0 -1px 0 rgba(0,0,0,.4),0 2px 4px rgba(0,0,0,.4),0 26px 50px -30px rgba(0,0,0,1)!important;
+}
+html[data-skin="midnight"][data-skin]:root:root:not([data-theme="light"]) body:not(#z1):not(#z2):not(#z3) #view section.banner .bn-ic{
+  background:linear-gradient(180deg,#272A30,#16181C)!important;border:1px solid rgba(226,194,126,.3)!important;
+  box-shadow:inset 0 1px 0 rgba(255,236,190,.14),0 8px 18px -8px rgba(0,0,0,.95)!important;
+}
+/* sheets / dialogs */
+html[data-skin="midnight"][data-skin]:root:root:not([data-theme="light"]) body:not(#z1):not(#z2):not(#z3) #sheet{
+  background:linear-gradient(180deg,#17191E 0%,#111316 100%)!important;
+  box-shadow:inset 0 1px 0 rgba(255,240,210,.07),0 0 0 1px rgba(226,194,126,.2),0 40px 90px -30px rgba(0,0,0,1)!important;
+}
+/* inputs: sunken wells */
+html[data-skin="midnight"][data-skin]:root:root:not([data-theme="light"]) body:not(#z1):not(#z2):not(#z3) :is(#view,#sheet) :is(input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=color]),select,textarea){
+  background:#0C0D10!important;box-shadow:inset 0 1px 2px rgba(0,0,0,.6),inset 0 0 0 1px rgba(0,0,0,.25),0 1px 0 rgba(255,240,210,.035)!important;
+}
+html[data-skin="midnight"][data-skin]:root:root:not([data-theme="light"]) body:not(#z1):not(#z2):not(#z3) :is(#view,#sheet) :is(input,select,textarea):focus{border-color:rgba(226,194,126,.6)!important;box-shadow:inset 0 1px 2px rgba(0,0,0,.6),0 0 0 3px rgba(217,185,112,.14)!important}
+/* segmented tabs: the active key is raised */
+html[data-skin="midnight"][data-skin]:root:root:not([data-theme="light"]) body:not(#z1):not(#z2):not(#z3) #view :is(.chips,.seg,.cx-tabs){background:#0D0E11!important;box-shadow:var(--z-sunken)!important}
+html[data-skin="midnight"][data-skin]:root:root:not([data-theme="light"]) body:not(#z1):not(#z2):not(#z3) #view :is(.chips,.seg,.cx-tabs) > button.on{
+  background:linear-gradient(180deg,#25282E,#1A1C21)!important;color:var(--z-champ-hi)!important;
+  box-shadow:inset 0 1px 0 rgba(255,236,190,.1),0 0 0 1px rgba(226,194,126,.26),0 3px 8px -3px rgba(0,0,0,.85)!important;
+}
+/* sidebar: keep icon decisions; active row gets a faint raised plate */
+html[data-skin="midnight"][data-skin]:root:root:not([data-theme="light"]) body:not(#z1):not(#z2):not(#z3) #side .nav.on{
+  background:linear-gradient(180deg,rgba(217,185,112,.085),rgba(217,185,112,.03))!important;
+  box-shadow:inset 0 1px 0 rgba(255,236,190,.06),0 6px 14px -10px rgba(0,0,0,.9)!important;
+}
+/* sticky top bar: glass with a hairline of light */
+html[data-skin="midnight"][data-skin]:root:root:not([data-theme="light"]) body:not(#z1):not(#z2):not(#z3) #top{box-shadow:inset 0 -1px 0 rgba(226,194,126,.1),0 10px 30px -18px rgba(0,0,0,.9)!important}
+/* status pills: tiny bevel */
+html[data-skin="midnight"][data-skin]:root:root:not([data-theme="light"]) body:not(#z1):not(#z2):not(#z3) #view .pill{box-shadow:inset 0 1px 0 rgba(255,255,255,.05)!important}
+@media (prefers-reduced-motion:reduce){
+  html[data-skin="midnight"][data-skin]:root:root body:not(#z1):not(#z2):not(#z3) :is(.btn,.kpi,#sheet .alert,#top .ib,#qab){transition:none!important;transform:none!important}
+}
+
+/* ================= 5b · CHARTS — 3D level (structure: all midnight; colours via variables) ================= */
+/* bars: gradient body (app) + soft cast shadow + cylindrical sheen overlay (zz1-visual.js) + crisp top highlight */
+html[data-skin="midnight"][data-skin][data-skin]:root:root body:not(#z1):not(#z2):not(#z3) .xc .xb{filter:drop-shadow(0 3px 4px var(--z-ch-shadow)) drop-shadow(0 1px 1px var(--z-ch-shadow))!important}
+html[data-skin="midnight"][data-skin][data-skin]:root:root body:not(#z1):not(#z2):not(#z3) .xc .xcol:hover .xb{filter:drop-shadow(0 5px 8px var(--z-ch-shadow)) brightness(1.1)!important}
+html[data-skin="midnight"][data-skin][data-skin]:root:root body:not(#z1):not(#z2):not(#z3) .xc .zz-sheen{pointer-events:none;mix-blend-mode:normal}
+html[data-skin="midnight"][data-skin][data-skin]:root:root body:not(#z1):not(#z2):not(#z3) .xc .xbhl{stroke:var(--z-ch-sheen)!important;stroke-width:1.2!important;stroke-linecap:round}
+html[data-skin="midnight"][data-skin][data-skin]:root:root body:not(#z1):not(#z2):not(#z3) .xc .xband{fill:color-mix(in srgb,var(--fx-gold,#D9B970) 9%,transparent)!important}
+html[data-skin="midnight"][data-skin][data-skin]:root:root body:not(#z1):not(#z2):not(#z3) .xc .xg line{stroke-dasharray:2 4;opacity:.8}
+html[data-skin="midnight"][data-skin][data-skin]:root:root body:not(#z1):not(#z2):not(#z3) .xc .xg line.base{stroke-dasharray:none;opacity:1}
+/* area / line: lifted line with a soft cast shadow, glowing end point */
+html[data-skin="midnight"][data-skin][data-skin]:root:root body:not(#z1):not(#z2):not(#z3) .xc .xl{stroke-width:2.6!important;filter:drop-shadow(0 4px 4px var(--z-ch-shadow))}
+html[data-skin="midnight"][data-skin][data-skin]:root:root body:not(#z1):not(#z2):not(#z3) .xc .xglow{stroke-width:12!important;stroke-opacity:.16!important;filter:blur(5px)!important}
+html[data-skin="midnight"][data-skin][data-skin]:root:root body:not(#z1):not(#z2):not(#z3) .xc .xd{stroke-width:2!important;filter:drop-shadow(0 2px 2px var(--z-ch-shadow))}
+html[data-skin="midnight"][data-skin][data-skin]:root:root body:not(#z1):not(#z2):not(#z3) .xc .xd.last{stroke:var(--fx-surface,#121418)!important;stroke-width:2.5!important;filter:drop-shadow(0 0 5px var(--c)) drop-shadow(0 0 12px color-mix(in srgb,var(--c) 55%,transparent))!important}
+html[data-skin="midnight"][data-skin][data-skin]:root:root body:not(#z1):not(#z2):not(#z3) .xc .zz-halo{fill:var(--c);opacity:.18;pointer-events:none;transform-box:fill-box;transform-origin:center;animation:zz-halo 2.6s ease-out infinite}
+@keyframes zz-halo{0%{opacity:.28;transform:scale(.6)}70%{opacity:0;transform:scale(1.5)}100%{opacity:0;transform:scale(1.5)}}
+/* last-value badge: dark glass pill, not a gold slab */
+html[data-skin="midnight"][data-skin][data-skin]:root:root body:not(#z1):not(#z2):not(#z3) .xc .xbadge rect{fill:var(--z-tip-bg)!important;stroke:var(--z-tip-line);stroke-width:1;filter:drop-shadow(0 6px 10px var(--z-ch-shadow))!important}
+html[data-skin="midnight"][data-skin][data-skin]:root:root body:not(#z1):not(#z2):not(#z3) .xc .xbadge text{fill:var(--z-tip-ink)!important;font-weight:700!important}
+/* donut + gauge: sunken track, bevel-lit ring (overlay from zz1-visual.js), raised dial in the centre */
+html[data-skin="midnight"][data-skin][data-skin]:root:root body:not(#z1):not(#z2):not(#z3) :is(.xdn-r,.xg-g) svg{overflow:visible;filter:drop-shadow(0 8px 12px color-mix(in srgb,var(--z-ch-shadow) 70%,transparent))!important}
+html[data-skin="midnight"][data-skin][data-skin]:root:root body:not(#z1):not(#z2):not(#z3) :is(.xdn-r,.xg-g) .xtrack{stroke:var(--fx-sunken,#0E1013)!important}
+html[data-skin="midnight"][data-skin][data-skin]:root:root body:not(#z1):not(#z2):not(#z3) .xdn-r .xseg{stroke-linecap:butt!important}
+html[data-skin="midnight"][data-skin][data-skin]:root:root body:not(#z1):not(#z2):not(#z3) :is(.xdn-r,.xg-g) .zz-ring,
+html[data-skin="midnight"][data-skin][data-skin]:root:root body:not(#z1):not(#z2):not(#z3) :is(.xdn-r,.xg-g) .zz-dial,
+html[data-skin="midnight"][data-skin][data-skin]:root:root body:not(#z1):not(#z2):not(#z3) :is(.xdn-r,.xg-g) .zz-in{pointer-events:none}
+html[data-skin="midnight"][data-skin][data-skin]:root:root body:not(#z1):not(#z2):not(#z3) :is(.xdn-r,.xg-g) .zz-dial{filter:drop-shadow(0 4px 6px var(--z-ch-shadow))}
+html[data-skin="midnight"][data-skin][data-skin]:root:root body:not(#z1):not(#z2):not(#z3) :is(.xdn-r,.xg-g) .xdn-c{z-index:1}
+/* horizontal meters + legend chips: rounded, lit from above */
+html[data-skin="midnight"][data-skin][data-skin]:root:root body:not(#z1):not(#z2):not(#z3) :is(.hb .track,.xbar,.xdn-l u){box-shadow:inset 0 1px 2px var(--z-ch-shadow)!important;border-radius:99px!important}
+html[data-skin="midnight"][data-skin][data-skin]:root:root body:not(#z1):not(#z2):not(#z3) :is(.hb .track i,.xbar i,.xdn-l u s){
+  border-radius:99px!important;background-image:linear-gradient(180deg,var(--z-ch-sheen),transparent 55%,rgba(0,0,0,.18))!important;box-shadow:0 1px 3px var(--z-ch-shadow)!important;
+}
+html[data-skin="midnight"][data-skin][data-skin]:root:root body:not(#z1):not(#z2):not(#z3) :is(.xc-lg i,.xdn-l li > i,.lgd i,.dl i){
+  background-image:linear-gradient(180deg,var(--z-ch-sheen),transparent 70%)!important;box-shadow:0 1px 2px var(--z-ch-shadow),inset 0 0 0 .5px rgba(0,0,0,.2)!important;border-radius:4px!important;
+}
+/* sparkline end dot */
+html[data-skin="midnight"][data-skin][data-skin]:root:root body:not(#z1):not(#z2):not(#z3) svg.sp path[stroke-width]{filter:drop-shadow(0 3px 3px var(--z-ch-shadow))}
+/* one consistent tooltip: glass card */
+html[data-skin="midnight"][data-skin][data-skin]:root:root body:not(#z1):not(#z2):not(#z3) :is(#xtip,.chart .tip){
+  background:var(--z-tip-bg)!important;color:var(--z-tip-ink)!important;border:1px solid var(--z-tip-line)!important;border-radius:12px!important;
+  -webkit-backdrop-filter:blur(14px) saturate(1.2);backdrop-filter:blur(14px) saturate(1.2);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 18px 40px -14px var(--z-ch-shadow),0 2px 6px var(--z-ch-shadow)!important;padding:10px 12px!important;
+}
+html[data-skin="midnight"][data-skin][data-skin]:root:root body:not(#z1):not(#z2):not(#z3) #xtip .xt-r i{box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 1px 2px var(--z-ch-shadow);border-radius:3px}
+
+/* payroll stepper: current step was a gold slab → onyx key with champagne ring (dark) */
+html[data-skin="midnight"][data-skin]:root:root:not([data-theme="light"]) body:not(#z1):not(#z2):not(#z3) .stepper span.cur{
+  background:var(--z-btn)!important;border-color:var(--z-champ-line-hi)!important;color:var(--z-champ-hi)!important;box-shadow:var(--z-btn-sh)!important;
+}

@@ -1,0 +1,634 @@
+/* FTA · UI LUXE — premium redesign layer (demo proposal, teammate #3)
+   Scope: only the premium themes. Dark = skin midnight, not light (FTA Premium + Premium Dark).
+   Light = skin midnight + light (Premium Light: navy sidebar, ivory pages). lux / qit are never touched.
+   Spec: ui-audit/report.md (tokens, component rules, P1/P2/P3/PH/FM findings). */
+
+/* ================= 0 · TOKENS ================= */
+$HD{
+  --fx-bg:#0A0B0D;--fx-surface:#121418;--fx-surface-2:#171A1F;--fx-surface-3:#1E2228;--fx-sunken:#0E1013;
+  --fx-ink:#F2EEE4;--fx-ink-2:#CFC9BB;--fx-muted:#9A9486;--fx-faint:#6E695F;
+  --fx-gold:#D9B970;--fx-gold-ink:#E2C27E;--fx-gold-hi:#EBD29A;--fx-gold-deep:#A8873E;
+  --fx-gold-soft:rgba(217,185,112,.12);--fx-gold-faint:rgba(217,185,112,.06);
+  --fx-line:rgba(226,194,126,.11);--fx-line-strong:rgba(226,194,126,.24);--fx-hair-hi:rgba(255,240,205,.05);
+  --fx-ok:#86C3A0;--fx-ok-wash:rgba(134,195,160,.10);--fx-warn:#D8B56E;--fx-warn-wash:rgba(216,181,110,.10);
+  --fx-bad:#E3907F;--fx-bad-wash:rgba(227,144,127,.10);--fx-info:#A7B9D6;--fx-info-wash:rgba(167,185,214,.10);
+  --fx-pri-bg:#D9B970;--fx-pri-bg-hover:#E4C88A;--fx-pri-ink:#17130B;
+  --fx-e1:inset 0 1px 0 var(--fx-hair-hi),0 1px 2px rgba(0,0,0,.35);
+  --fx-e2:inset 0 1px 0 var(--fx-hair-hi),0 1px 2px rgba(0,0,0,.35),0 14px 32px -20px rgba(0,0,0,.85);
+  --fx-e3:0 0 0 1px var(--fx-line-strong),0 32px 80px -28px rgba(0,0,0,.92);
+  --fx-focus:0 0 0 2px var(--fx-bg),0 0 0 4px rgba(226,194,126,.55);
+  --fx-c1:#D9B970;--fx-c2:#A7B9D6;--fx-c3:#86C3A0;--fx-c4:#E3907F;--fx-c5:#B9A6D9;
+  --fx-scrim:rgba(5,6,8,.66);
+  /* the app's own variables, re-pointed at the tokens (kills bevels, foil and glows everywhere they are used) */
+  --bg:#0A0B0D;--mn-0:#0A0B0D;--mn-1:#0E1013;--mn-2:#121418;--mn-3:#171A1F;--mn-4:#1E2228;
+  --lnc:rgba(226,194,126,.11);--line-soft:rgba(226,194,126,.08);--line-strong:rgba(226,194,126,.24);
+  --ivory:#F2EEE4;--ivory-2:#CFC9BB;--ivory-3:#9A9486;
+  --gold:#D9B970;--gold-hi:#EBD29A;--gold-lo:#A8873E;--gink:#17130B;
+  --foil:linear-gradient(#D9B970,#D9B970);
+  --surface:#121418;--surface-2:#171A1F;--line:rgba(226,194,126,.11);--line-2:rgba(226,194,126,.24);
+  --ink:#F2EEE4;--ink-2:#CFC9BB;--muted:#9A9486;
+  --gold-ink:#E2C27E;--gold-l:#E2C27E;--gold-d:#A8873E;--gold-soft:rgba(217,185,112,.12);--gold-faint:rgba(217,185,112,.06);--on-gold:#17130B;
+  --ok:#86C3A0;--ok-bg:rgba(134,195,160,.10);--warn:#D8B56E;--warn-bg:rgba(216,181,110,.10);--bad:#E3907F;--bad-bg:rgba(227,144,127,.10);--info:#A7B9D6;--info-bg:rgba(167,185,214,.10);
+  --emerald:#86C3A0;--ruby:#E3907F;--amber:#D8B56E;--sapphire:#A7B9D6;--amethyst:#B9A6D9;--ruby-amber:#DDA27F;
+  --c1:#D9B970;--c2:#A7B9D6;--c3:#86C3A0;--c4:#E3907F;--c5:#B9A6D9;--c6:#C9A86A;--c7:#8FBDBF;--c8:#C9A3B8;
+  --pm-elev:#171A1F;--pm-input:#0E1013;--pm-b:rgba(226,194,126,.11);--pm-bc:rgba(226,194,126,.24);--pm-bh:rgba(226,194,126,.42);--pm-bs:rgba(226,194,126,.6);
+  --pm-hi:0 0 0 0 transparent;--pm-halo:0 0 0 0 transparent;
+  --d-bg:#0A0B0D;--d-surface:#121418;--d-surface-2:#171A1F;--d-line:rgba(226,194,126,.11);--d-hl:transparent;
+  --d-accent:#D9B970;--d-accent-ink:#17130B;
+  --d-sheen:none;--d-sh-1:var(--fx-e1);--d-sh-2:var(--fx-e2);--d-sh-ctl:none;--d-sh-float:var(--fx-e3);--d-sh-in:none;
+  --d-foil:linear-gradient(#D9B970,#D9B970);--d-foil-sh:var(--fx-e1);
+  color-scheme:dark;
+}
+$HL{
+  --fx-bg:#F4F1EA;--fx-surface:#FFFFFF;--fx-surface-2:#FAF8F3;--fx-surface-3:#F3EFE6;--fx-sunken:#EFEBE2;
+  --fx-ink:#0F172A;--fx-ink-2:#334155;--fx-muted:#5F6878;--fx-faint:#8A90A0;
+  --fx-gold:#C9A659;--fx-gold-ink:#7A5717;--fx-gold-hi:#8C6720;--fx-gold-deep:#5E430F;
+  --fx-gold-soft:rgba(201,166,89,.14);--fx-gold-faint:rgba(201,166,89,.07);
+  --fx-line:#E7E1D4;--fx-line-strong:#D6CCB6;--fx-hair-hi:rgba(255,255,255,.9);
+  --fx-ok:#1F7A52;--fx-ok-wash:#E9F4EE;--fx-warn:#8A6418;--fx-warn-wash:#F7F0DF;
+  --fx-bad:#A8322B;--fx-bad-wash:#F9ECEA;--fx-info:#2F4D7A;--fx-info-wash:#EEF2F8;
+  --fx-navy:#0E1A2F;--fx-navy-2:#16243D;--fx-navy-ink:#F3E3B5;
+  --fx-pri-bg:#0E1A2F;--fx-pri-bg-hover:#16243D;--fx-pri-ink:#F3E3B5;
+  --fx-e1:0 1px 2px rgba(15,23,42,.05);--fx-e2:0 1px 2px rgba(15,23,42,.05),0 12px 28px -18px rgba(15,23,42,.22);
+  --fx-e3:0 0 0 1px var(--fx-line),0 30px 70px -30px rgba(15,23,42,.35);--fx-focus:0 0 0 2px #fff,0 0 0 4px rgba(201,166,89,.65);
+  --fx-c1:#B08A3A;--fx-c2:#3F5F8F;--fx-c3:#2E8A62;--fx-c4:#B4483E;--fx-c5:#7A68A8;
+  --fx-scrim:rgba(15,23,42,.28);
+  --bg:#F4F1EA;--mn-0:#F4F1EA;--mn-1:#FFFFFF;--mn-2:#FFFFFF;--mn-3:#FAF8F3;--mn-4:#F3EFE6;
+  --lnc:#E7E1D4;--line-soft:#EFEAE0;--line-strong:#D6CCB6;
+  --ivory:#0F172A;--ivory-2:#334155;--ivory-3:#5F6878;
+  --gold:#7A5717;--gold-hi:#8C6720;--gold-lo:#C9A659;--gink:#F3E3B5;--gold-bg:#D9B970;--gold-wash:rgba(201,166,89,.10);
+  --foil:linear-gradient(#0E1A2F,#0E1A2F);
+  --surface:#FFFFFF;--surface-2:#FAF8F3;--line:#E7E1D4;--line-2:#D6CCB6;
+  --ink:#0F172A;--ink-2:#334155;--muted:#5F6878;
+  --gold-ink:#7A5717;--gold-l:#7A5717;--gold-d:#5E430F;--gold-soft:rgba(201,166,89,.14);--gold-faint:rgba(201,166,89,.07);--on-gold:#F3E3B5;
+  --ok:#1F7A52;--ok-bg:#E9F4EE;--warn:#8A6418;--warn-bg:#F7F0DF;--bad:#A8322B;--bad-bg:#F9ECEA;--info:#2F4D7A;--info-bg:#EEF2F8;
+  --emerald:#1F7A52;--ruby:#A8322B;--amber:#8A6418;--sapphire:#2F4D7A;--amethyst:#6A5A98;--ruby-amber:#9A4E22;
+  --c1:#B08A3A;--c2:#3F5F8F;--c3:#2E8A62;--c4:#B4483E;--c5:#7A68A8;--c6:#A07A2E;--c7:#2F7F86;--c8:#9A5A7E;
+  --pm-elev:#FFFFFF;--pm-input:#FFFFFF;--pm-b:#E7E1D4;--pm-bc:#D6CCB6;--pm-bh:#C9A659;--pm-bs:#B08A3A;
+  --pm-hi:0 0 0 0 transparent;--pm-halo:0 0 0 0 transparent;
+  --d-bg:#F4F1EA;--d-surface:#FFFFFF;--d-surface-2:#FAF8F3;--d-line:#E7E1D4;--d-hl:transparent;
+  --d-accent:#0E1A2F;--d-accent-ink:#F3E3B5;
+  --d-sheen:none;--d-sh-1:var(--fx-e1);--d-sh-2:var(--fx-e2);--d-sh-ctl:none;--d-sh-float:var(--fx-e3);--d-sh-in:none;
+  --d-foil:linear-gradient(#0E1A2F,#0E1A2F);--d-foil-sh:var(--fx-e1);
+  --cx-shadow:var(--fx-e1);
+  color-scheme:light;
+}
+$HM{
+  --fx-r-xs:6px;--fx-r-sm:8px;--fx-r-md:10px;--fx-r-lg:14px;--fx-r-xl:18px;
+  --fx-font:"Manrope","Hind Siliguri","Noto Sans Bengali",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --fx-display:"Cormorant Garamond","Cormorant","Noto Serif Bengali","Hind Siliguri",Georgia,serif;
+  --fx-wordmark:"Cinzel","Cormorant Garamond","Hind Siliguri",Georgia,serif;
+  --fx-ease:cubic-bezier(.2,.7,.2,1);--fx-t:160ms;
+  --f-ui:var(--fx-font);--ff-ui:var(--fx-font);--f-display:var(--fx-display);--ff-disp:var(--fx-display);--f-brand:var(--fx-wordmark);--ff-brand:var(--fx-wordmark);
+}
+
+/* ================= 1 · BASE ================= */
+$M{background:var(--fx-bg)!important;color:var(--fx-ink);font-family:var(--fx-font)!important;-webkit-font-smoothing:antialiased;font-feature-settings:"cv11","ss01"}
+$M :is(button,input,select,textarea){font-family:inherit}
+$M .num,$M .kv,$M .fg,$M td.r,$M .rs-fig{font-variant-numeric:tabular-nums}
+$M ::selection{background:var(--fx-gold-soft)}
+$M :focus-visible{outline:none!important;box-shadow:var(--fx-focus)!important}
+$M .pm-atmo::before,$M .pm-atmo::after{display:none!important}
+
+/* ================= 2 · SURFACES: cards, tiles — flat, hairline, one soft shadow ================= */
+$M :is(.card,.tw,.ph-card,.ncard,.sc-tile,.kpi,.cck,.qc,.xcard,.cc-chart,.cc-hero,.lg-card){background:var(--fx-surface)!important;background-image:none!important;border:1px solid var(--fx-line)!important;box-shadow:var(--fx-e1)!important;border-radius:var(--fx-r-lg)!important}
+$M .card.flat{box-shadow:none!important}
+$M #view .card .card{background:var(--fx-surface-2)!important;box-shadow:none!important}
+$M #view .tw{padding:0!important;overflow:auto}
+$M :is(button.kpi:not([disabled]),.cck,.sc-tile,.ph-card,.ncard){transition:border-color var(--fx-t) var(--fx-ease),box-shadow var(--fx-t) var(--fx-ease),transform var(--fx-t) var(--fx-ease)!important}
+$M :is(button.kpi:not([disabled]),.cck,.sc-tile,.ph-card,.ncard):hover{transform:translateY(-1px)!important;border-color:var(--fx-line-strong)!important;box-shadow:var(--fx-e2)!important;background:var(--fx-surface)!important}
+$M :is(.card,.kpi,.cck,.qc,.sc-tile)::after{opacity:0!important}
+/* card header */
+$M #view .ch{gap:12px}
+$M #view .ch h2,$M #view .ch h3,$M #view .ch b:first-child{font-size:15px!important;font-weight:700!important;letter-spacing:0!important;color:var(--fx-ink)!important;font-family:var(--fx-font)!important}
+$M #view .ch p,$M #view .ch small,$M #view .ch .sub{color:var(--fx-muted)!important;font-size:13px!important}
+$M #view p.sub{color:var(--fx-muted)!important;font-size:13.5px}
+
+/* ================= 3 · BUTTONS (P1-01, P1-02, P1-10, FM-03) ================= */
+$M .btn{background:transparent!important;background-image:none!important;border:1px solid var(--fx-line-strong)!important;color:var(--fx-ink-2)!important;box-shadow:none!important;text-shadow:none!important;border-radius:var(--fx-r-md)!important;font-weight:600!important;letter-spacing:0!important;filter:none!important;transition:background-color var(--fx-t) var(--fx-ease),border-color var(--fx-t) var(--fx-ease),color var(--fx-t) var(--fx-ease),transform var(--fx-t) var(--fx-ease)!important}
+$M .btn:hover{border-color:color-mix(in srgb,var(--fx-gold) 55%,transparent)!important;color:var(--fx-ink)!important;background:var(--fx-gold-faint)!important;transform:none!important}
+$M .btn:active{transform:scale(.99)!important}
+$M .btn svg.i{color:currentColor!important}
+$L .btn:not(.p){background:#FFFFFF!important}
+$L .btn:not(.p):hover{background:var(--fx-surface-2)!important}
+/* primary (flat): one per view — banner, sheets, calendar bar */
+$M .btn.p:not(#qab){background:var(--fx-pri-bg)!important;background-image:none!important;color:var(--fx-pri-ink)!important;border:1px solid var(--fx-pri-bg)!important;box-shadow:var(--fx-e1)!important;font-weight:700!important}
+$M .btn.p:not(#qab):hover{background:var(--fx-pri-bg-hover)!important;border-color:var(--fx-pri-bg-hover)!important;color:var(--fx-pri-ink)!important;transform:translateY(-1px)!important}
+$M .btn.p:not(#qab) svg.i{color:var(--fx-pri-ink)!important;stroke:none!important}
+$M .btn.p:not(#qab) svg.i path{fill:var(--fx-pri-ink)!important}
+$M .btn.p:not(#qab) svg.i path.du{opacity:.35}
+$L .btn.p:not(#qab) svg.i path{fill:var(--fx-navy-ink)!important}
+$M :is(#view .banner .bn-acts,#sheet .acts,#sheet > .row:last-child,#view .v8-cal-bar) .btn{min-height:38px;padding-inline:16px!important}
+/* primaries repeated inside content → the Quick Add gold outline */
+$M :is(#view .card,#view .qc,#view td,#view .sc-li,#view .sc-tile,#view .cx-lc,#view .mz-card,#view .tw) .btn.p:not(#qab){background:var(--fx-gold-faint)!important;color:var(--fx-gold-ink)!important;border:1px solid color-mix(in srgb,var(--fx-gold-ink) 60%,transparent)!important;box-shadow:none!important;font-weight:600!important}
+$M :is(#view .card,#view .qc,#view td,#view .sc-li,#view .sc-tile,#view .cx-lc,#view .mz-card,#view .tw) .btn.p:not(#qab):hover{background:var(--fx-gold-soft)!important;border-color:var(--fx-gold-ink)!important;transform:none!important}
+$M :is(#view .card,#view .qc,#view td,#view .sc-li,#view .sc-tile,#view .cx-lc,#view .mz-card,#view .tw) .btn.p:not(#qab) svg.i path{fill:var(--fx-gold-ink)!important}
+/* a card that is itself a form footer keeps the flat primary */
+$M #view .card .acts .btn.p:not(#qab){background:var(--fx-pri-bg)!important;color:var(--fx-pri-ink)!important;border-color:var(--fx-pri-bg)!important}
+$M #view .card .acts .btn.p:not(#qab) svg.i path{fill:var(--fx-pri-ink)!important}
+/* danger: quiet until hover */
+$M :is(.btn.d,.btn.bad,.btn.danger,.v9m-del){background:transparent!important;color:var(--fx-muted)!important;border-color:var(--fx-line)!important}
+$M :is(.btn.d,.btn.bad,.btn.danger,.v9m-del):hover{background:var(--fx-bad-wash)!important;color:var(--fx-bad)!important;border-color:color-mix(in srgb,var(--fx-bad) 45%,transparent)!important}
+$M .btn.ok{background:transparent!important;border-color:color-mix(in srgb,var(--fx-ok) 45%,transparent)!important;color:var(--fx-ok)!important}
+/* ghost buttons in rows */
+$M :is(#view td,#view .sc-li) .btn:not(.p){border-color:transparent!important;background:transparent!important}
+$M :is(#view td,#view .sc-li) .btn:not(.p):hover{border-color:var(--fx-line-strong)!important;background:var(--fx-gold-faint)!important}
+/* links */
+$M :is(.cc-link,.lk){color:var(--fx-gold-ink)!important;background:none!important;border:0!important;box-shadow:none!important}
+
+/* ================= 4 · SIDEBAR (P1-11, P2-27) — icons untouched (demo decision) ================= */
+$D #side{background:#0C0D10!important;border-right:1px solid var(--fx-line)!important;box-shadow:none!important}
+$M #side .brand{min-width:0}
+$M #side .brand > div:not(.logo){min-width:0;flex:1 1 auto;overflow:hidden}
+$M #side .brand b{display:block!important;font-family:var(--fx-wordmark)!important;font-size:15px!important;font-weight:600!important;letter-spacing:.06em!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;background:none!important;-webkit-text-fill-color:currentColor!important}
+$D #side .brand b{color:var(--fx-gold-ink)!important}
+$M #side .brand span{display:block;font-size:12px!important;letter-spacing:.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+$D #side .brand span{color:var(--fx-muted)!important}
+$M #side .navg h6{font-size:11px!important;font-weight:700!important;letter-spacing:.14em!important}
+$D #side .navg h6{color:var(--fx-faint)!important}
+$D #side .navg h6::after{background:var(--fx-line)!important}
+$M #side button.nav{min-height:44px!important;height:auto!important;padding-top:5px!important;padding-bottom:5px!important;border-radius:var(--fx-r-md)!important;border:1px solid transparent!important;background:transparent!important;background-image:none!important;box-shadow:none!important;font-weight:500!important;margin-bottom:2px!important;transition:background-color var(--fx-t),color var(--fx-t),border-color var(--fx-t)!important}
+$D #side button.nav{color:var(--fx-ink-2)!important}
+$D #side button.nav:hover{background:rgba(255,240,205,.03)!important;color:var(--fx-ink)!important}
+$D #side button.nav.on{background:var(--fx-gold-faint)!important;border-color:var(--fx-line-strong)!important;box-shadow:inset 2px 0 0 var(--fx-gold)!important;color:var(--fx-ink)!important;font-weight:600!important}
+$L #side button.nav.on{background:rgba(227,199,127,.10)!important;border-color:rgba(227,199,127,.28)!important;box-shadow:inset 2px 0 0 #E3C77F!important;font-weight:600!important}
+$M #side button.nav .cnt{background:var(--fx-gold-soft)!important;color:var(--fx-gold-ink)!important;border:0!important;box-shadow:none!important;font-weight:700!important;min-width:20px;height:20px;line-height:20px;font-size:11px!important}
+$L #side button.nav .cnt{background:rgba(227,199,127,.16)!important;color:#E3C77F!important}
+$D #side .pinb{background:transparent!important;border:1px solid var(--fx-line)!important;box-shadow:none!important;color:var(--fx-muted)!important}
+$D #side .logo{background:var(--fx-surface)!important;border:1px solid var(--fx-line-strong)!important;box-shadow:none!important}
+
+/* ================= 5 · TOP BAR (P2-28, P2-29, P3-07, PH-03) ================= */
+$D #top{background:rgba(10,11,13,.82)!important;backdrop-filter:saturate(1.1) blur(14px);border-bottom:1px solid var(--fx-line)!important;box-shadow:none!important}
+$L #top{background:rgba(255,255,255,.88)!important;border-bottom:1px solid var(--fx-line)!important;box-shadow:none!important;background-image:linear-gradient(90deg,transparent,rgba(201,166,89,.45),transparent)!important;background-size:30% 1px!important;background-repeat:no-repeat!important;background-position:50% 100%!important}
+$M #top #ttl{font-family:var(--fx-display)!important;font-size:24px!important;font-weight:600!important;letter-spacing:.01em!important;color:var(--fx-ink)!important;background:none!important;-webkit-text-fill-color:currentColor!important}
+$M #top .ib{background:transparent!important;background-image:none!important;border:1px solid var(--fx-line)!important;box-shadow:none!important;height:38px!important;min-width:38px;border-radius:var(--fx-r-md)!important;color:var(--fx-ink-2)!important}
+$L #top .ib{background:#FFFFFF!important}
+$M #top .ib:hover{border-color:var(--fx-line-strong)!important;color:var(--fx-ink)!important;background:var(--fx-gold-faint)!important}
+$M #top .ib .dot,$M #top #ndot{background:var(--fx-gold-soft)!important;color:var(--fx-gold-ink)!important;border:1px solid var(--fx-bg)!important;box-shadow:none!important;font-weight:700!important}
+$L #top #ndot{background:#0E1A2F!important;color:#F3E3B5!important;border-color:#fff!important}
+$M .gsearch{background:var(--fx-sunken)!important;border:1px solid var(--fx-line)!important;box-shadow:none!important;height:38px!important;border-radius:var(--fx-r-md)!important}
+$L .gsearch{background:#FFFFFF!important}
+$M .gsearch:focus-within{border-color:color-mix(in srgb,var(--fx-gold) 60%,transparent)!important;box-shadow:var(--fx-focus)!important}
+$M .gsearch input{background:transparent!important;border:0!important;box-shadow:none!important}
+$M #top .who{background:transparent!important;border:1px solid var(--fx-line)!important;box-shadow:none!important;border-radius:var(--fx-r-md)!important}
+$M #top .who .av{background:var(--fx-gold-faint)!important;color:var(--fx-gold-ink)!important;border:1px solid var(--fx-line-strong)!important;box-shadow:none!important}
+$M #top #langsw{background:var(--fx-surface-2)!important;border:1px solid var(--fx-line)!important;box-shadow:none!important}
+/* P2-23: Quick Add is office-only (role flag from ui-luxe.js) */
+$HM[data-lx-role="Mentor"] body #top #qab,$HM[data-lx-role="Student"] body #top #qab{display:none!important}
+$HM[data-lx-role="Mentor"] body #bnav .mn-qa,$HM[data-lx-role="Student"] body #bnav .mn-qa{display:none!important}
+
+/* ================= 6 · PAGE BANNER (P1-04, P1-05, P1-15, P3-05) ================= */
+$M #view section.banner{background:var(--fx-surface)!important;background-image:none!important;border:1px solid var(--fx-line)!important;border-radius:var(--fx-r-xl)!important;box-shadow:var(--fx-e1)!important;color:var(--fx-ink)!important;padding:24px 28px!important;min-height:0!important;overflow:hidden}
+$D #view section.banner{background:linear-gradient(115deg,rgba(217,185,112,.055),transparent 46%),var(--fx-surface)!important}
+$L #view section.banner{background:linear-gradient(115deg,rgba(201,166,89,.09),transparent 50%),#FFFFFF!important}
+$M #view section.banner::before,$M #view section.banner::after{display:none!important}
+$M #view section.banner .bn-emb{opacity:.035!important;filter:grayscale(1)!important}
+$M #view section.banner .bn-top{align-items:center!important;gap:18px!important;margin:0!important;padding:0!important;border:0!important}
+$M #view section.banner .bn-ic{width:44px!important;height:44px!important;min-width:44px;border-radius:var(--fx-r-md)!important;background:var(--fx-gold-faint)!important;background-image:none!important;border:1px solid var(--fx-line-strong)!important;box-shadow:none!important;color:var(--fx-gold-ink)!important}
+$M #view section.banner .bn-ic svg.i{color:var(--fx-gold-ink)!important}
+$M #view section.banner .bn-ic svg.i path{fill:var(--fx-gold-ink)!important}
+$M #view section.banner .bn-eye{font-size:11px!important;font-weight:700!important;letter-spacing:.14em!important;color:var(--fx-gold-ink)!important;margin-bottom:6px!important}
+$M #view section.banner .bn-eye::after{background:var(--fx-line-strong)!important}
+$M :is(#view section.banner .bn-h,#view .cc-hero h1){font-family:var(--fx-display)!important;font-size:34px!important;font-weight:600!important;line-height:1.1!important;letter-spacing:.005em!important;color:var(--fx-ink)!important;background:none!important;-webkit-text-fill-color:currentColor!important;text-shadow:none!important}
+$M #view section.banner .bn-sub{color:var(--fx-muted)!important;font-size:14px!important;margin-top:4px!important}
+$M #view section.banner .bn-logo{display:none!important}
+$M #view section.banner .bn-acts{gap:10px!important;align-self:center}
+/* compact banner everywhere: the rotating figure strip repeated the KPI row beneath it (P1-04, P3-05).
+   Home pages (flag from ui-luxe.js) keep a taller hero with the faint crest. */
+$M #view .page > section.banner .rs{display:none!important}
+$M #view .page > section.banner .bn-emb{display:none!important}
+$HM[data-lx-page$="-home"] body #view .page > section.banner{padding:34px 32px!important}
+$HM[data-lx-page$="-home"] body #view .page > section.banner{background:radial-gradient(600px 220px at 85% 0%,var(--fx-gold-soft),transparent 70%),var(--fx-surface)!important}
+$HM[data-lx-page$="-home"] body #view .page > section.banner .bn-h{font-size:38px!important}
+/* home banner figure strip: solid numbers, quiet tabs */
+$M #view section.banner .rs{margin-top:18px!important;padding-top:16px!important;border-top:1px solid var(--fx-line)!important;min-height:0!important;background:none!important}
+$M #view section.banner .rs-fig{font-family:var(--fx-display)!important;font-size:32px!important;font-weight:600!important;color:var(--fx-gold-ink)!important;background:none!important;-webkit-text-fill-color:currentColor!important;text-shadow:none!important}
+$M #view section.banner .rs-cap{border-color:var(--fx-line)!important}
+$M #view section.banner .rs-cap b{font-family:var(--fx-display)!important;font-size:20px!important;font-weight:600!important;color:var(--fx-ink)!important}
+$M #view section.banner .rs-tab{background:transparent!important;color:var(--fx-muted)!important;border-radius:var(--fx-r-sm)!important;min-height:30px!important;padding-block:4px!important}
+$M #view section.banner .rs-tab.on{background:var(--fx-gold-faint)!important;color:var(--fx-ink)!important}
+$M #view section.banner .rs-tab::before{background:var(--fx-line)!important}
+$M #view section.banner .rs-btn{background:transparent!important;border:1px solid var(--fx-line)!important;box-shadow:none!important;color:var(--fx-ink-2)!important}
+/* dashboard hero */
+$M #view .cc-hero{padding:26px 28px!important;border-radius:var(--fx-r-xl)!important;color:var(--fx-ink)!important;min-height:0!important}
+$D #view .cc-hero{background:linear-gradient(115deg,rgba(217,185,112,.06),transparent 50%),var(--fx-surface)!important}
+$L #view .cc-hero{background:linear-gradient(115deg,rgba(201,166,89,.10),transparent 55%),#FFFFFF!important}
+$M #view .cc-hero > svg{opacity:.05!important}
+$M #view .cc-hero .cc-eye{font-size:11px!important;font-weight:700!important;letter-spacing:.14em!important;color:var(--fx-gold-ink)!important}
+$M #view .cc-hero p{color:var(--fx-muted)!important}
+$M #view .cc-hero .cc-fig small{font-size:11px!important;letter-spacing:.14em!important;color:var(--fx-muted)!important;font-weight:700!important}
+$M #view .cc-hero .cc-fig b{font-family:var(--fx-display)!important;font-size:44px!important;font-weight:600!important;color:var(--fx-gold-ink)!important;background:none!important;-webkit-text-fill-color:currentColor!important;letter-spacing:0!important}
+$M #view .cc-hero .cc-fig span{color:var(--fx-muted)!important}
+$M #view .cc-hero .cc-fig a{color:var(--fx-gold-ink)!important}
+/* P2-04: the quote band becomes a quiet line */
+$M #view p.cc-quote{opacity:.75;margin-block:2px 4px!important;font-size:13px!important}
+$M #view p.cc-quote span{font-size:16px!important;color:var(--fx-ink-2)!important}
+$M #view p.cc-quote cite{color:var(--fx-faint)!important;font-size:10.5px!important}
+/* P1-15 guard: premium palette that kept light mode — no black banner on ivory */
+$HL[data-palette="premium"] body :is(#view section.banner,#view .cc-hero){color:var(--fx-ink)!important}
+$HL[data-palette="premium"] body :is(#view section.banner,#view .cc-hero) :is(.btn:not(.p)){background:#fff!important;color:var(--fx-ink-2)!important;border-color:var(--fx-line-strong)!important}
+$HL[data-palette="premium"] body :is(#view section.banner,#view .cc-hero) :is(.rs-fig,.cc-fig b){color:var(--fx-gold-ink)!important}
+$HL[data-palette="premium"] body :is(#view section.banner .bn-eye,#view .cc-hero .cc-eye,#view .cc-hero .cc-fig a){color:var(--fx-gold-ink)!important}
+$HL[data-palette="premium"] body #view section.banner .rs-tab.on{background:var(--fx-gold-faint)!important;color:var(--fx-ink)!important}
+$HL[data-palette="premium"] body #view section.banner .rs-tab{color:var(--fx-muted)!important}
+$HL[data-palette="premium"] body #view section.banner .rs-btn{background:#fff!important;color:var(--fx-ink-2)!important;border-color:var(--fx-line)!important}
+
+/* ================= 7 · KPI TILES (P1-13, P2-01, P3-06) ================= */
+$M #view .kpi{height:auto!important;min-height:0!important;padding:18px 20px!important;gap:6px!important}
+$M #view .kpi .kh{white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;font-size:12.5px!important;font-weight:600!important;color:var(--fx-muted)!important;letter-spacing:.01em!important;min-width:0;max-width:100%}
+$M #view .kpi .kh svg.i{width:28px!important;height:28px!important;padding:6px!important;border-radius:var(--fx-r-sm)!important;background:var(--fx-gold-faint)!important;border:1px solid var(--fx-line)!important;color:var(--fx-gold-ink)!important;box-shadow:none!important}
+$M #view .kpi .kh svg.i path{fill:var(--fx-gold-ink)!important}
+$M #view .kpi .kv{font-family:var(--fx-font)!important;font-size:28px!important;font-weight:600!important;letter-spacing:-.01em!important;color:var(--fx-ink)!important;background:none!important;-webkit-text-fill-color:currentColor!important;line-height:1.15!important}
+$M #view .kpi .kf{color:var(--fx-muted)!important;font-size:12.5px!important}
+$M #view .kpi.lead{border-color:var(--fx-line-strong)!important}
+$M #view .kpi.lead .kv{color:var(--fx-gold-ink)!important}
+$M #view .kpi .pm-tag{display:none!important}
+$M #view :is(.cck .tg){background:none!important;border:0!important;box-shadow:none!important;padding:0!important;font-size:10.5px!important;font-weight:600!important;letter-spacing:.1em!important;color:var(--fx-faint)!important;margin-left:auto}
+/* dashboard KPI cards */
+$M #view .cck{height:auto!important;min-height:0!important;padding:18px 20px!important;gap:10px!important;position:relative;overflow:hidden}
+$M #view .cck .top{align-items:center!important;gap:10px!important;min-width:0}
+$M #view .cck .lb{font-size:12.5px!important;font-weight:600!important;color:var(--fx-muted)!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+$M #view .cck .sc-ic{background:var(--fx-gold-faint)!important;border:1px solid var(--fx-line)!important;box-shadow:none!important;color:var(--fx-gold-ink)!important;width:32px!important;height:32px!important;min-width:32px;border-radius:var(--fx-r-sm)!important}
+$M #view .cck .sc-ic svg.i{color:var(--fx-gold-ink)!important}
+$M #view .cck .sc-ic svg.i path{fill:var(--fx-gold-ink)!important}
+$M #view .cck .fg{font-family:var(--fx-font)!important;font-size:28px!important;font-weight:600!important;letter-spacing:-.01em!important;color:var(--fx-ink)!important;background:none!important;-webkit-text-fill-color:currentColor!important;line-height:1.15!important}
+$M #view .cck .bt{display:grid!important;grid-template-columns:minmax(0,1fr) 88px!important;align-items:end!important;gap:12px!important}
+$M #view .cck .bt .sb{color:var(--fx-muted)!important;font-size:12.5px!important;min-width:0}
+$M #view .cck .bt > svg{width:88px!important;max-width:88px;height:32px!important;opacity:.9}
+$M #view .cck .bt .ch{display:inline-block!important;max-width:100%!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;vertical-align:bottom;background:none!important;border:0!important;box-shadow:none!important;padding:0!important;margin-top:4px!important;font-size:12px!important;font-weight:600!important}
+$M #view .cck .bt .ch.dn{color:var(--fx-bad)!important}
+$M #view .cck .bt .ch.up{color:var(--fx-ok)!important}
+$M #view .cck::before{content:"";position:absolute;left:20px;top:0;width:24px;height:2px;background:var(--fx-gold)!important;inset:0 auto auto 20px!important;opacity:.9}
+/* stat icons inside tiles (sc-ic) everywhere: gold-ink on gold-faint, no rainbow */
+$M #view .sc-ic{background:var(--fx-gold-faint)!important;border:1px solid var(--fx-line)!important;box-shadow:none!important;color:var(--fx-gold-ink)!important}
+$M #view .sc-ic svg.i{color:var(--fx-gold-ink)!important}
+
+/* ================= 8 · TABLES (P1-08, P1-09) ================= */
+$M #view :is(table.t,.cx-tbl,.sc-marks,.cc-tbl) th{font-size:11px!important;font-weight:700!important;letter-spacing:.08em!important;text-transform:uppercase!important;color:var(--fx-muted)!important;background:var(--fx-surface)!important;border-bottom:1px solid var(--fx-line-strong)!important;height:40px;padding:10px 12px!important;box-shadow:none!important}
+$L #view :is(table.t,.cx-tbl,.sc-marks,.cc-tbl) th{background:var(--fx-surface-2)!important}
+$M #view :is(table.t,.cx-tbl,.sc-marks,.cc-tbl) td{border-bottom:1px solid var(--fx-line)!important;border-top:0!important;padding:14px 12px!important;background:transparent!important}
+$M #view :is(table.t,.cx-tbl,.sc-marks) tr:last-child td{border-bottom:0!important}
+$M #view :is(table.t,.cx-tbl,.sc-marks) tbody tr{transition:background-color var(--fx-t)!important;background:transparent!important}
+$M #view :is(table.t,.cx-tbl,.sc-marks) tbody tr:hover td{background:var(--fx-gold-faint)!important}
+$M #view table.t td.r,$M #view table.t td.num{font-variant-numeric:tabular-nums;font-weight:600!important;color:var(--fx-ink)!important}
+$M #view table.t td .sub{color:var(--fx-muted)!important;font-size:12.5px!important}
+$M #view table.t td.ttl b{font-weight:600!important}
+/* row delete: ghost, separated, revealed on hover/focus */
+$M #view td .v9m-del{margin-left:12px!important;width:30px!important;height:30px!important;min-height:30px!important;padding:0!important;border-color:transparent!important;color:var(--fx-faint)!important}
+$M #view td .v9m-del:hover{border-color:color-mix(in srgb,var(--fx-bad) 45%,transparent)!important;color:var(--fx-bad)!important}
+@media (hover:hover){
+  $M #view tr td .v9m-del{opacity:0;transition:opacity var(--fx-t)!important}
+  $M #view tr:hover td .v9m-del,$M #view tr:focus-within td .v9m-del{opacity:1}
+}
+
+/* ================= 9 · BADGES (P1-07, P3-04) ================= */
+$M #view .pill{display:inline-flex!important;align-items:center!important;gap:6px!important;height:22px!important;padding:0 9px 0 8px!important;border-radius:999px!important;border:0!important;box-shadow:none!important;background:var(--fx-surface-3)!important;background-image:none!important;color:var(--fx-ink-2)!important;font-size:11.5px!important;font-weight:600!important;letter-spacing:.01em!important;text-transform:none!important;white-space:nowrap;line-height:1!important}
+$M #view .pill svg{display:none!important}
+$M #view .pill::before{content:""!important;display:block!important;width:6px!important;height:6px!important;border-radius:50%!important;background:currentColor!important;flex:none;opacity:.9;position:static!important;margin:0!important;box-shadow:none!important;border:0!important}
+$M #view .pill.p-ok{background:var(--fx-ok-wash)!important;color:var(--fx-ok)!important}
+$M #view .pill:is(.p-bad,.p-err){background:var(--fx-bad-wash)!important;color:var(--fx-bad)!important}
+$M #view .pill.p-warn{background:var(--fx-warn-wash)!important;color:var(--fx-warn)!important}
+$M #view .pill:is(.p-info,.p-blue){background:var(--fx-info-wash)!important;color:var(--fx-info)!important}
+$M #view .pill:is(.p-gold,.p-gd){background:var(--fx-gold-soft)!important;color:var(--fx-gold-ink)!important}
+$M #view .pill:is(.p-n,.p-mute,.p-off){background:var(--fx-surface-3)!important;color:var(--fx-muted)!important}
+$L #view .pill:is(.p-n,.p-mute,.p-off){background:#F1EEE7!important}
+$M #view .idc{background:none!important;border:0!important;box-shadow:none!important;padding:0!important;color:var(--fx-faint)!important;font-family:ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace!important;font-size:11.5px!important;font-weight:500!important;letter-spacing:.02em!important}
+$M #view .tagd{background:transparent!important;border:1px solid var(--fx-line-strong)!important;color:var(--fx-ink-2)!important;box-shadow:none!important;border-radius:var(--fx-r-xs)!important;height:22px;display:inline-flex!important;align-items:center;padding:0 8px!important;font-size:11.5px!important;font-weight:600!important}
+$M :is(#view .cnt,.cx-badge){background:var(--fx-gold-soft)!important;color:var(--fx-gold-ink)!important;border:0!important;box-shadow:none!important;min-width:18px;height:18px;line-height:18px!important;padding:0 6px!important;border-radius:999px!important;font-size:11px!important;font-weight:700!important;display:inline-grid!important;place-items:center}
+
+/* ================= 10 · TABS: chips + seg become a segmented control (P1-14) ================= */
+$M #view :is(.chips,.seg,.v8-seg){display:inline-flex!important;flex-wrap:nowrap!important;gap:2px!important;padding:3px!important;border:1px solid var(--fx-line)!important;border-radius:var(--fx-r-md)!important;background:var(--fx-surface-2)!important;box-shadow:none!important;width:auto!important;max-width:100%;overflow-x:auto;scrollbar-width:none;grid-template-columns:none!important;vertical-align:middle;align-self:flex-start!important;justify-self:start!important;width:fit-content!important}
+$L #view :is(.chips,.seg,.v8-seg){background:#F1EEE7!important}
+$M #view :is(.chips,.seg,.v8-seg)::-webkit-scrollbar{display:none}
+$M #view :is(.chips,.seg,.v8-seg) > button{flex:0 0 auto!important;height:34px!important;min-height:34px!important;padding:0 14px!important;border:0!important;border-radius:calc(var(--fx-r-md) - 3px)!important;background:transparent!important;background-image:none!important;box-shadow:none!important;color:var(--fx-muted)!important;font-size:13px!important;font-weight:600!important;display:inline-flex!important;align-items:center!important;gap:7px!important;white-space:nowrap!important;width:auto!important;transform:none!important}
+$M #view :is(.chips,.seg,.v8-seg) > button:hover{color:var(--fx-ink)!important;background:transparent!important}
+$M #view :is(.chips,.seg,.v8-seg) > button.on{background:var(--fx-surface)!important;color:var(--fx-gold-ink)!important;box-shadow:inset 0 0 0 1px var(--fx-line-strong)!important}
+$L #view :is(.chips,.seg,.v8-seg) > button.on{background:#FFFFFF!important;box-shadow:inset 0 0 0 1px var(--fx-line-strong),0 1px 2px rgba(15,23,42,.06)!important}
+$M #view .chips > button i{width:6px!important;height:6px!important;border-radius:50%;box-shadow:none!important}
+$M #view :is(.chips,.seg,.v8-seg) > button .n{background:transparent!important;color:inherit!important;opacity:.7;padding:0 2px!important;min-width:0}
+$M #view :is(.chips,.seg,.v8-seg) > button.on .n{background:var(--fx-gold-soft)!important;opacity:1;padding:0 6px!important}
+$M #view :is(.chips,.seg,.v8-seg){margin-bottom:14px!important}
+
+/* ================= 11 · INPUTS & FORMS (FM-01, FM-05, FM-07, FM-09, FM-10) ================= */
+$M :is(input:where(:not([type=checkbox],[type=radio],[type=range],[type=file],[type=color])),select,textarea),$M :is(#sheet,#view) :is(input:where(:not([type=checkbox],[type=radio],[type=range],[type=file],[type=color])),select,textarea){background:var(--fx-sunken)!important;background-image:none!important;border:1px solid var(--fx-line-strong)!important;border-radius:var(--fx-r-md)!important;box-shadow:none!important;color:var(--fx-ink)!important;transition:border-color var(--fx-t),box-shadow var(--fx-t)!important}
+$L :is(input:where(:not([type=checkbox],[type=radio],[type=range],[type=file],[type=color])),select,textarea),$L :is(#sheet,#view) :is(input:where(:not([type=checkbox],[type=radio],[type=range],[type=file],[type=color])),select,textarea){background:#FFFFFF!important}
+$M select,$M :is(#sheet,#view) select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239A9486' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")!important;background-repeat:no-repeat!important;background-position:right 12px center!important;background-size:12px!important;padding-right:32px!important;-webkit-appearance:none;appearance:none}
+$M :is(input,select,textarea):focus,$M :is(#sheet,#view) :is(input,select,textarea):focus{border-color:color-mix(in srgb,var(--fx-gold) 70%,transparent)!important;box-shadow:var(--fx-focus)!important;outline:none!important}
+$M :is(input,textarea)::placeholder{color:var(--fx-faint)!important;opacity:1}
+$M :is(#sheet,#view .fbar,#view .fld) :is(input:where(:not([type=checkbox],[type=radio],[type=range],[type=file],[type=color])),select){min-height:40px}
+$M :is(#sheet,#view) .fld > label,$M #sheet label:not(:has(input[type=checkbox])):not(:has(input[type=radio])){font-size:12px!important;font-weight:600!important;color:var(--fx-ink-2)!important;letter-spacing:.01em!important;text-transform:none!important}
+$M .hint,$M #sheet .hint{color:var(--fx-muted)!important;font-size:12px!important}
+$D ::-webkit-calendar-picker-indicator{filter:invert(.78) sepia(.35) saturate(2.2) hue-rotate(5deg);opacity:.75;cursor:pointer}
+$L ::-webkit-calendar-picker-indicator{filter:sepia(.6) saturate(2) hue-rotate(5deg) brightness(.7);opacity:.7;cursor:pointer}
+$M input[type=month],$M input[type=date]{color-scheme:inherit}
+/* file input → dashed drop zone */
+$M input[type=file]{width:100%;padding:14px!important;border:1.5px dashed var(--fx-line-strong)!important;border-radius:var(--fx-r-md)!important;background:var(--fx-gold-faint)!important;color:var(--fx-muted)!important;font-size:13px!important;cursor:pointer;box-shadow:none!important;min-height:0!important;height:auto!important}
+$M input[type=file]:hover{border-color:color-mix(in srgb,var(--fx-gold) 60%,transparent)!important}
+$M input[type=file]::file-selector-button{font:inherit;font-weight:600;font-size:13px;margin-right:12px;padding:7px 14px;border-radius:var(--fx-r-sm);border:1px solid var(--fx-line-strong);background:var(--fx-surface);color:var(--fx-ink);cursor:pointer}
+$M input[type=file]::-webkit-file-upload-button{font:inherit;font-weight:600;font-size:13px;margin-right:12px;padding:7px 14px;border-radius:8px;border:1px solid var(--fx-line-strong);background:var(--fx-surface);color:var(--fx-ink);cursor:pointer}
+$M :is(input[type=checkbox],input[type=radio],input[type=range]){accent-color:var(--fx-gold)}
+/* "+" add buttons next to selects */
+$M .v9h-add{background:transparent!important;background-image:none!important;border:1px dashed var(--fx-line-strong)!important;border-radius:var(--fx-r-md)!important;box-shadow:none!important;color:var(--fx-gold-ink)!important;width:auto!important;min-height:32px;padding:4px 12px!important;white-space:nowrap!important;display:inline-flex!important;align-items:center!important;gap:6px!important;font-size:12.5px!important;font-weight:600!important}
+$M .v9h-plus{width:40px!important;height:40px!important;min-width:40px;border-radius:var(--fx-r-md)!important;background:transparent!important;background-image:none!important;border:1px solid var(--fx-line-strong)!important;box-shadow:none!important;color:var(--fx-gold-ink)!important}
+$M :is(.v9h-plus,.v9h-add):hover{background:var(--fx-gold-faint)!important}
+$M :is(.v9h-plus,.v9h-add) svg.i path{fill:var(--fx-gold-ink)!important}
+
+/* ================= 12 · SHEETS / DIALOGS (FM-02, FM-04, FM-08, FM-11) ================= */
+$M #ov{background:var(--fx-scrim)!important;backdrop-filter:blur(6px)!important;-webkit-backdrop-filter:blur(6px)!important}
+$M #sheet{background:var(--fx-surface)!important;background-image:none!important;border:1px solid var(--fx-line)!important;border-radius:var(--fx-r-xl)!important;box-shadow:var(--fx-e3)!important;padding:0 24px!important;width:min(560px,100%)!important;margin-inline:auto!important}
+$M #sheet.wide{width:min(1040px,100%)!important}
+$M #sheet:has(.v8-form){width:min(760px,100%)!important}
+$M #sheet > .sh{position:sticky!important;top:0!important;z-index:6;background:var(--fx-surface)!important;margin:0 -24px 16px!important;padding:20px 24px 14px!important;border-bottom:1px solid var(--fx-line)!important}
+$M #sheet > .sh small{font-size:11px!important;font-weight:700!important;letter-spacing:.14em!important;color:var(--fx-gold-ink)!important}
+$M #sheet > .sh h2{font-family:var(--fx-display)!important;font-size:26px!important;font-weight:600!important;color:var(--fx-ink)!important;background:none!important;-webkit-text-fill-color:currentColor!important;letter-spacing:.005em!important;margin-top:2px!important}
+$M #sheet > .sh .x,$M #sheet .x{width:36px!important;height:36px!important;border-radius:var(--fx-r-md)!important;background:transparent!important;background-image:none!important;border:1px solid var(--fx-line)!important;box-shadow:none!important;color:var(--fx-ink-2)!important}
+$M #sheet .x:hover{border-color:var(--fx-line-strong)!important;background:var(--fx-gold-faint)!important}
+$M #sheet > :is(.acts,.row:last-child){position:sticky!important;bottom:0!important;z-index:6;background:var(--fx-surface)!important;margin:20px -24px 0!important;padding:14px 24px!important;border-top:1px solid var(--fx-line)!important;display:flex!important;justify-content:flex-end!important;gap:10px!important;flex-wrap:wrap}
+$M #sheet h3{font-size:11px!important;font-weight:700!important;letter-spacing:.14em!important;text-transform:uppercase!important;color:var(--fx-gold-ink)!important;display:flex!important;align-items:center!important;gap:10px!important;margin:22px 0 12px!important;font-family:var(--fx-font)!important}
+$M #sheet h3::after{content:"";flex:1;height:1px;background:var(--fx-line)}
+$M #sheet h3 .sub{text-transform:none!important;letter-spacing:0!important;color:var(--fx-muted)!important;font-weight:500!important}
+$M #sheet .card{background:var(--fx-surface-2)!important;box-shadow:none!important}
+/* payForm tiles (FM-06) */
+$M #sheet .pf-guide{background:var(--fx-gold-faint)!important;border:1px solid var(--fx-line)!important;border-left:2px solid var(--fx-gold)!important;border-radius:var(--fx-r-md)!important;box-shadow:none!important}
+$M #sheet .pf-how{background:transparent!important;border:0!important;box-shadow:none!important}
+$M #sheet .pf-q{background:none!important;border:0!important;box-shadow:none!important;padding:0!important}
+$M #sheet .pf-qb{display:inline-flex!important;flex-direction:row!important;justify-self:start!important;align-self:start!important;align-items:baseline!important;gap:10px!important;width:auto!important;background:var(--fx-surface)!important;background-image:none!important;border:1px solid var(--fx-line-strong)!important;border-radius:var(--fx-r-md)!important;box-shadow:none!important;padding:8px 14px!important;min-height:0!important}
+$M #sheet .pf-qb b{font-size:13px!important;color:var(--fx-ink)!important}
+$M #sheet .pf-qb span{font-size:13px!important;color:var(--fx-gold-ink)!important;font-weight:600!important}
+$M #sheet .pf-qb small{display:none!important}
+$M #sheet .pf-s3 > div{background:transparent!important;border:0!important;border-left:1px solid var(--fx-line)!important;border-radius:0!important;box-shadow:none!important}
+$M #sheet .pf-s3 > div:first-child{border-left:0!important}
+$M #sheet .pf-s3 > .ok b{color:var(--fx-ok)!important}
+$M #sheet .pf-s3 > .warn b{color:var(--fx-warn)!important}
+$M #sheet .pf-s3 > .bad b{color:var(--fx-bad)!important}
+$M #sheet :is(.pf-t){border-radius:999px!important;box-shadow:none!important}
+/* input groups with a currency prefix */
+$M :is(#sheet,#view) .v9-in{display:inline-flex!important;align-items:center!important;gap:6px!important;background:var(--fx-sunken)!important;border:1px solid var(--fx-line-strong)!important;border-radius:var(--fx-r-md)!important;padding-left:10px!important;box-shadow:none!important;overflow:hidden}
+$L :is(#sheet,#view) .v9-in{background:#FFFFFF!important}
+$M :is(#sheet,#view) .v9-in:focus-within{border-color:color-mix(in srgb,var(--fx-gold) 70%,transparent)!important;box-shadow:var(--fx-focus)!important}
+$M :is(#sheet,#view) .v9-in i{font-style:normal!important;font-size:11px!important;font-weight:700!important;letter-spacing:.06em;color:var(--fx-faint)!important;background:none!important;border:0!important}
+$M :is(#sheet,#view) .v9-in input{border:0!important;background:transparent!important;box-shadow:none!important;padding-left:2px!important;min-width:0}
+/* student form fee table (FM-07) */
+$M #sheet .pu-mt select{min-width:120px}
+$M #sheet .pu-mt td{padding-top:8px!important;padding-bottom:8px!important;height:48px}
+$M #sheet .pu-mt :is(table,.tw){border-radius:var(--fx-r-md)!important}
+/* phone sheet */
+@media (max-width:760px){
+  $M #sheet{padding:0 16px!important;border-radius:var(--fx-r-xl) var(--fx-r-xl) 0 0!important}
+  $M #sheet > .sh{margin:0 -16px 14px!important;padding:18px 16px 12px!important}
+  $M #sheet > :is(.acts,.row:last-child){margin:16px -16px 0!important;padding:12px 16px calc(12px + env(safe-area-inset-bottom))!important}
+  $M #sheet::before{background:var(--fx-line-strong)!important;width:36px!important;height:4px!important}
+  $M #sheet > .sh h2{font-size:22px!important}
+}
+
+/* ================= 13 · STUDENT CARDS (P1-06, P1-07, P2-31, P2-30) ================= */
+$M #view .qc{padding:0!important;overflow:hidden}
+$M #view .qc::before{display:none!important}
+$M #view .qc:hover{border-color:var(--fx-line-strong)!important}
+$M #view .qc .qc-h{padding:14px 20px 0!important;gap:8px!important;align-items:center!important;flex-wrap:wrap}
+$M #view .qc .qc-n{font-size:16px!important;font-weight:700!important;color:var(--fx-ink)!important;text-decoration:none!important;border:0!important;background:none!important;-webkit-text-fill-color:currentColor!important;margin-right:4px}
+$M #view .qc .qc-n:hover{color:var(--fx-gold-ink)!important}
+$M #view .qc .v9l-ssw{margin-left:auto}
+$M #view .qc .v9l-ssel{height:30px!important;min-height:30px!important;padding:0 28px 0 10px!important;font-size:12.5px!important;background-color:transparent!important;border-color:var(--fx-line)!important;color:var(--fx-ink-2)!important;background-position:right 9px center!important}
+$M #view .qc .qc-b{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr)) auto!important;gap:0!important;padding:12px 20px 14px!important;align-items:center!important}
+$M #view .qc .qbx{background:none!important;background-image:none!important;border:0!important;border-left:1px solid var(--fx-line)!important;border-radius:0!important;box-shadow:none!important;height:auto!important;min-height:0!important;padding:2px 18px!important;display:flex!important;flex-direction:column!important;align-items:flex-start!important;justify-content:center!important;gap:3px!important;text-align:left!important}
+$M #view .qc .qbx:first-child{border-left:0!important;padding-left:0!important}
+$M #view .qc .qbx b{font-size:18px!important;font-weight:600!important;color:var(--fx-ink)!important;font-variant-numeric:tabular-nums;letter-spacing:-.005em!important;order:2}
+$M #view .qc .qbx small{font-size:10.5px!important;font-weight:700!important;letter-spacing:.1em!important;text-transform:uppercase!important;color:var(--fx-faint)!important;order:1}
+$M #view .qc .qbx.ok b{color:var(--fx-ok)!important}
+$M #view .qc .qbx.bad b{color:var(--fx-bad)!important}
+$M #view .qc .qbx.warn b{color:var(--fx-warn)!important}
+$M #view .qc .qbx.gold b{color:var(--fx-gold-ink)!important}
+$M #view .qc .qc-a{display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;width:auto!important;gap:4px!important;align-items:center!important;justify-content:flex-end!important;padding-left:18px!important;border-left:1px solid var(--fx-line)!important;grid-template-columns:none!important}
+$M #view .qc .qc-a .btn{height:32px!important;min-height:32px!important;padding:0 10px!important;font-size:12.5px!important;width:auto!important;border-color:transparent!important;background:transparent!important;gap:6px!important;white-space:nowrap!important;grid-column:auto!important;flex:0 0 auto!important;order:0!important;margin:0!important}
+$M #view .qc .qc-a .btn:hover{border-color:var(--fx-line-strong)!important;background:var(--fx-gold-faint)!important}
+$M #view .qc .qc-a .btn.p:not(#qab){border-color:color-mix(in srgb,var(--fx-gold-ink) 60%,transparent)!important;background:var(--fx-gold-faint)!important;color:var(--fx-gold-ink)!important}
+$M #view .qc .qc-a .btn.ic,$M #view .qc .qc-a .v9m-del{width:32px!important;padding:0!important;justify-content:center!important;color:var(--fx-faint)!important}
+$M #view .qc .qc-a .v9m-del:hover{color:var(--fx-bad)!important;background:var(--fx-bad-wash)!important;border-color:transparent!important}
+$M #view .qc .qc-f{padding:10px 20px 12px!important;border-top:1px solid var(--fx-line)!important;background:transparent!important;font-size:12.5px!important;color:var(--fx-muted)!important;gap:6px 16px!important}
+$M #view .qc .qc-f :is(span,small,a,b){font-size:12.5px!important}
+$M #view .qc .qc-f .sub{color:var(--fx-muted)!important}
+$M #view .qc .qc-f b{color:var(--fx-ink-2)!important;font-weight:600!important}
+$M #view .qc .qc-f .wa-n{color:var(--fx-ok)!important;font-weight:600!important}
+$M #view .qcs{gap:12px!important}
+@media (max-width:1180px){
+  $M #view .qc .qc-b{grid-template-columns:repeat(3,minmax(0,1fr))!important;row-gap:12px!important}
+  $M #view .qc .qc-a{grid-column:1 / -1!important;border-left:0!important;padding-left:0!important;justify-content:flex-start!important;flex-wrap:wrap!important;border-top:1px solid var(--fx-line)!important;padding-top:10px!important}
+}
+@media (max-width:600px){
+  $M #view .qc .qc-h,$M #view .qc .qc-b,$M #view .qc .qc-f{padding-left:16px!important;padding-right:16px!important}
+  $M #view .qc .qbx{padding:2px 10px!important}
+  $M #view .qc .qbx b{font-size:15px!important}
+  $M #view .qc .qbx small{font-size:9.5px!important;letter-spacing:.05em!important;word-break:keep-all!important;overflow-wrap:normal!important;hyphens:none}
+  $M #view .qc .qbx{padding:2px 8px!important}
+  $M #view .qc .v9l-ssw{margin-left:0}
+}
+/* filter bar: an even grid, nothing clipped (P2-31) */
+$M #view .card.flat:has(> .fbar){padding:16px 20px!important;background:var(--fx-surface)!important}
+$M #view .fbar{display:grid!important;grid-template-columns:repeat(auto-fit,minmax(170px,1fr))!important;gap:12px 14px!important;align-items:end!important}
+$M #view .fbar .fld{min-width:0!important;width:auto!important;grid-column:auto!important}
+$M #view .fbar .fld.w{grid-column:span 2!important}
+$M #view .fbar .fld > label{font-size:11px!important;font-weight:700!important;letter-spacing:.08em!important;text-transform:uppercase!important;color:var(--fx-muted)!important}
+$M #view .fbar :is(select,input){width:100%!important;min-width:0!important;text-overflow:ellipsis}
+@media (max-width:600px){$M #view .fbar .fld.w{grid-column:1 / -1!important}}
+
+/* "Search this list": a slim inline toolbar (P2-30) */
+$M #view .v8-ps{align-self:flex-start!important;width:100%!important;max-width:360px!important;min-height:40px!important;padding:0 6px 0 12px!important;border-radius:var(--fx-r-md)!important;border:1px solid var(--fx-line-strong)!important;background:var(--fx-sunken)!important;box-shadow:none!important}
+$L #view .v8-ps{background:#FFFFFF!important}
+$M #view .v8-ps:focus-within{border-color:color-mix(in srgb,var(--fx-gold) 70%,transparent)!important;box-shadow:var(--fx-focus)!important}
+$M #view .v8-ps .v8-ps-i{border:0!important;background:transparent!important;box-shadow:none!important;min-height:38px!important;padding:0!important;font-size:13.5px!important}
+$M #view .v8-ps .v8-ps-ic svg.i{color:var(--fx-muted)!important}
+$M #view .v8-ps .v8-ps-n{color:var(--fx-faint)!important;font-size:12px!important}
+$M #top .gsearch input{border:0!important;background:transparent!important;box-shadow:none!important;min-height:0!important}
+
+/* settings shortcut bar + view toggle + month picker */
+$M #view .v9j-bar{background:var(--fx-surface)!important;background-image:none!important;border:1px solid var(--fx-line)!important;border-left:2px solid var(--fx-gold)!important;border-radius:var(--fx-r-lg)!important;box-shadow:var(--fx-e1)!important}
+$M #view .v9j-bar .btn.p:not(#qab){background:var(--fx-gold-faint)!important;color:var(--fx-gold-ink)!important;border:1px solid color-mix(in srgb,var(--fx-gold-ink) 60%,transparent)!important;box-shadow:none!important}
+$M #view .v9j-bar .btn.p:not(#qab) svg.i path{fill:var(--fx-gold-ink)!important}
+$M #view .vt{display:inline-flex!important;gap:2px!important;padding:3px!important;border:1px solid var(--fx-line)!important;border-radius:var(--fx-r-md)!important;background:var(--fx-surface-2)!important;box-shadow:none!important;min-height:40px;width:100%}
+$L #view .vt{background:#F1EEE7!important}
+$M #view .vt > button{flex:1 1 0!important;border:0!important;border-radius:calc(var(--fx-r-md) - 3px)!important;background:transparent!important;background-image:none!important;box-shadow:none!important;color:var(--fx-muted)!important;font-weight:600!important;font-size:13px!important;min-height:32px!important}
+$M #view .vt > button.on{background:var(--fx-surface)!important;color:var(--fx-gold-ink)!important;box-shadow:inset 0 0 0 1px var(--fx-line-strong)!important}
+$L #view .vt > button.on{background:#FFFFFF!important}
+$M #view .v8-mp-b{background:var(--fx-sunken)!important;background-image:none!important;border:1px solid var(--fx-line-strong)!important;border-radius:var(--fx-r-md)!important;box-shadow:none!important;min-height:40px!important;width:100%;color:var(--fx-ink)!important}
+$L #view .v8-mp-b{background:#FFFFFF!important}
+$M #view .v8-mp-ic{background:transparent!important;border:0!important;box-shadow:none!important;color:var(--fx-gold-ink)!important}
+/* back-to-top: a quiet round control, not a gold coin */
+$M #totop{background:color-mix(in srgb,var(--fx-surface-3) 92%,transparent)!important;background-image:none!important;border:1px solid var(--fx-line-strong)!important;box-shadow:var(--fx-e2)!important;color:var(--fx-gold-ink)!important;backdrop-filter:blur(8px)}
+$L #totop{background:rgba(255,255,255,.94)!important}
+
+/* ================= 14 · DASHBOARD (P2-01..P2-05) ================= */
+$M #view .cc-mid{align-items:start!important}
+$M #view .cc-tl .it{border-color:var(--fx-line)!important}
+$M #view .cc-tl .it{grid-template-columns:132px 12px minmax(0,1fr) auto!important;column-gap:12px!important}
+$M #view .cc-tl .it .tm{white-space:nowrap;color:var(--fx-muted)!important;font-size:13px!important;font-variant-numeric:tabular-nums}
+$M #view .cc-tl .it .dot{box-shadow:none!important;border-color:var(--fx-line-strong)!important}
+@media (max-width:600px){$M #view .cc-tl .it{grid-template-columns:74px 10px minmax(0,1fr)!important}$M #view .cc-tl .it .tm{white-space:normal;min-width:72px;font-size:12.5px!important;line-height:1.35}$M #view .cc-tl .it .pill{grid-column:3!important;justify-self:start}}
+$M #view .cc-at .sc-list{max-height:520px;overflow:auto;scrollbar-width:thin}
+$M #view .xstat3 > button{background:var(--fx-surface-2)!important;background-image:none!important;border:1px solid var(--fx-line)!important;box-shadow:none!important;color:var(--fx-ink-2)!important}
+$M #view .xstat3 > button b{color:var(--fx-ink)!important}
+$M #view .xstat3 > button:nth-child(1) b{color:var(--fx-ok)!important}
+$M #view .xstat3 > button:nth-child(3) b{color:var(--fx-bad)!important}
+$M #view .xstat3 > button:hover{border-color:var(--fx-line-strong)!important}
+
+/* ================= 15 · LISTS: Needs attention / mentor home (P1-10, P2-03, P2-14, P2-15) ================= */
+$M #view .sc-list{gap:0!important}
+$M #view .sc-li{background:transparent!important;background-image:none!important;border:0!important;border-bottom:1px solid var(--fx-line)!important;border-radius:0!important;box-shadow:none!important;padding:12px 2px!important;margin:0!important;transform:none!important}
+$M #view .sc-li:last-child{border-bottom:0!important}
+$M #view .sc-li::before{display:none!important}
+$M #view .sc-li:hover{background:var(--fx-gold-faint)!important}
+$M #view .sc-li .sc-ic{width:32px!important;height:32px!important;min-width:32px;border-radius:50%!important}
+$M #view .sc-li b{font-weight:600!important;color:var(--fx-ink)!important}
+$M #view .sc-li :is(small,.sub,span){color:var(--fx-muted)}
+$M #view .sc-grid.sc-g4{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))!important}
+$M #view .sc-tile{padding:16px!important;text-align:left}
+$M #view .card .sc-tile{background:var(--fx-surface-2)!important;box-shadow:none!important}
+$L #view .card .sc-tile{background:#FBFAF6!important}
+$M #view .sc-tile b{color:var(--fx-ink)!important}
+$M #view :is(.empty,.cx-empty){border:1px dashed var(--fx-line-strong)!important;background:var(--fx-gold-faint)!important;border-radius:var(--fx-r-lg)!important;padding:32px 24px!important;color:var(--fx-muted)!important;text-align:center;box-shadow:none!important}
+$M #view .empty svg.i{width:40px!important;height:40px!important;color:var(--fx-gold-ink)!important;opacity:.9}
+
+$M #view .sc-att{display:inline-flex!important;gap:2px!important;padding:3px!important;border:1px solid var(--fx-line)!important;border-radius:var(--fx-r-md)!important;background:var(--fx-surface-2)!important}
+$L #view .sc-att{background:#F1EEE7!important}
+$M #view .sc-att button{min-width:44px!important;min-height:36px!important;padding:0 12px!important;border:1px solid transparent!important;border-radius:calc(var(--fx-r-md) - 3px)!important;background:transparent!important;background-image:none!important;box-shadow:none!important;color:var(--fx-muted)!important;font-weight:700!important;font-size:13px!important}
+$M #view .sc-att button:hover{color:var(--fx-ink)!important}
+$M #view .sc-att button[aria-pressed="true"][data-v="P"]{background:var(--fx-ok-wash)!important;border-color:color-mix(in srgb,var(--fx-ok) 50%,transparent)!important;color:var(--fx-ok)!important}
+$M #view .sc-att button[aria-pressed="true"][data-v="A"]{background:var(--fx-bad-wash)!important;border-color:color-mix(in srgb,var(--fx-bad) 50%,transparent)!important;color:var(--fx-bad)!important}
+$M #view .sc-att button[aria-pressed="true"][data-v="L"]{background:var(--fx-warn-wash)!important;border-color:color-mix(in srgb,var(--fx-warn) 50%,transparent)!important;color:var(--fx-warn)!important}
+$M #view .sc-att button[aria-pressed="true"][data-v="E"]{background:var(--fx-info-wash)!important;border-color:color-mix(in srgb,var(--fx-info) 50%,transparent)!important;color:var(--fx-info)!important}
+$L #view .sc-att button[aria-pressed="true"]{background-color:#FFFFFF!important}
+@media (max-width:600px){$M #view .sc-att{display:flex!important;width:100%}$M #view .sc-att button{flex:1 1 0;min-height:44px!important}}
+/* "Needs attention" titles stay on one line (P2-03) */
+$M #view .cc-at .sc-li .grow{min-width:0}
+$M #view .cc-at .sc-li .grow > b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* teacher cards: a definition grid instead of six boxed mini-stats (P2-09) */
+$M #view .sc-tile .ts-n{background:transparent!important;background-image:none!important;border:0!important;border-top:1px solid var(--fx-line)!important;border-radius:0!important;box-shadow:none!important;padding:8px 0 2px!important}
+$M #view .sc-tile .sc-grid.sc-g3:has(> .ts-n){column-gap:16px!important;row-gap:4px!important}
+$M #view .sc-tile .ts-n :is(small,span){font-size:11px!important;color:var(--fx-faint)!important;letter-spacing:.04em}
+$M #view .sc-tile .ts-n b{font-size:16px!important;font-weight:600!important;color:var(--fx-ink)!important}
+$M #view .sc-eyebrow{font-size:11px!important;letter-spacing:.14em!important;color:var(--fx-gold-ink)!important}
+$M #view .mono-s{background:var(--fx-gold-faint)!important;border:1px solid var(--fx-line-strong)!important;color:var(--fx-gold-ink)!important;box-shadow:none!important}
+
+/* calendars: hairline cells, gold ring for today (P2-11) */
+$M #view .cal-d{background:var(--fx-surface)!important;background-image:none!important;border:1px solid var(--fx-line)!important;border-radius:var(--fx-r-md)!important;box-shadow:none!important}
+$M #view .cal-d:hover{border-color:var(--fx-line-strong)!important;background:var(--fx-gold-faint)!important}
+$M #view .cal-d .n{background:none!important;border:0!important;box-shadow:none!important;color:var(--fx-ink-2)!important;font-size:12.5px!important;font-weight:600!important;padding:0!important}
+$M #view .cal-d small{color:var(--fx-muted)!important;font-size:12px!important}
+$M #view .cal-d.is-today{border-color:var(--fx-gold)!important;box-shadow:inset 0 0 0 1px var(--fx-gold)!important}
+$M #view .cal-d.is-today .n{color:var(--fx-gold-ink)!important}
+
+/* ================= 16 · CHARTS & LEGENDS (P1-12, P2-06) ================= */
+$M #view .card:has(> .xc-lg) > .lgd,$M #view .card:has(.xc-lg) .lgd{display:none!important}
+$M #view :is(.xc-lg,.lgd){color:var(--fx-muted)!important;font-size:12px!important}
+$M #view .hb .track{background:var(--fx-surface-3)!important;height:6px!important;border-radius:3px!important;box-shadow:none!important}
+$L #view .hb .track{background:#EEEAE1!important}
+$M #view .hb .track > *{border-radius:3px!important;box-shadow:none!important;background-image:none!important}
+$M #view :is(.xc,.xc-lg) text{fill:var(--fx-muted)}
+$M #view .xdn-r b{font-family:var(--fx-display);font-weight:600}
+
+/* ================= 17 · CALLOUTS (P2-08, FM-12) ================= */
+$M #view :is(.easy,.note),$M #sheet :is(.note,.easy){background:var(--fx-gold-faint)!important;background-image:none!important;border:1px solid var(--fx-line)!important;border-left:2px solid var(--fx-gold)!important;border-radius:var(--fx-r-md)!important;box-shadow:none!important;color:var(--fx-ink-2)!important}
+$L #view :is(.easy,.note),$L #sheet :is(.note,.easy){background:#FBF8F1!important}
+$M #view .easy .ei{background:transparent!important;border:0!important;box-shadow:none!important;color:var(--fx-gold-ink)!important}
+$M #view .easy b{color:var(--fx-ink)!important}
+
+/* ================= 17b · CONNECT SCREENS: messages, live, watch, people (P2-17..P2-20, P3-01, P3-02) ================= */
+$M #view{overflow-x:clip}
+$M #view .page{min-width:0}
+$HM[data-lx-page="ac-att"] body #view .sc-grid.sc-side{grid-template-columns:minmax(0,1fr)!important}
+$M .cx-dot.on{background:var(--fx-ok)!important;box-shadow:0 0 0 2px color-mix(in srgb,var(--fx-ok) 25%,transparent)!important}
+$M :is(.cx-on,.cx-rt em,.cx-ch small em,.cx-st.ok){color:var(--fx-ok)!important}
+$M .cx-tick.seen{color:var(--fx-info)!important}
+$M .cx-chat{border-radius:var(--fx-r-lg)!important}
+$M .cx-ri{border-radius:var(--fx-r-md)!important}
+$M .cx-ri.on{background:var(--fx-gold-faint)!important;box-shadow:inset 2px 0 0 var(--fx-gold)!important}
+$M .cx-ra{background:var(--fx-surface-2)!important;border-color:var(--fx-line-strong)!important;color:var(--fx-gold-ink)!important}
+$M .cx-bub{border-color:var(--fx-line)!important;background:var(--fx-surface-2)!important;border-radius:14px 14px 14px 4px!important}
+$M .cx-m.me .cx-bub{background:var(--fx-gold-faint)!important;border-color:color-mix(in srgb,var(--fx-gold) 26%,transparent)!important;border-radius:14px 14px 4px 14px!important}
+$M .cx-ml{background:transparent!important}
+$M .cx-day span{background:var(--fx-surface-2)!important;border-color:var(--fx-line)!important}
+$M .cx-mon{background:var(--fx-gold-faint)!important;color:var(--fx-muted)!important}
+$M .cx-ib{background:transparent!important;border-color:transparent!important;color:var(--fx-muted)!important;border-radius:var(--fx-r-md)!important;width:36px!important;height:36px!important}
+$M .cx-ib:hover{border-color:var(--fx-line-strong)!important;color:var(--fx-gold-ink)!important;background:var(--fx-gold-faint)!important}
+$M .cx-ib.rec{background:var(--fx-bad)!important;color:#fff!important}
+$M .cx-cr{align-items:center!important}
+$M #view .cx-comp .btn.p:not(#qab){background:var(--fx-pri-bg)!important;color:var(--fx-pri-ink)!important;border-color:var(--fx-pri-bg)!important;min-height:36px!important;height:36px}
+$M #view .cx-comp .btn.p:not(#qab) svg.i path{fill:var(--fx-pri-ink)!important}
+$M .cx-kpis div{background:transparent!important;border:0!important;border-left:1px solid var(--fx-line)!important;border-radius:0!important;padding:4px 14px!important}
+$M .cx-kpis div:first-child{border-left:0!important;padding-left:0!important}
+$M .cx-kpis b{font-weight:600!important}
+$M .cx-lc .btn{justify-self:start!important;width:auto!important}
+$M .cx-live{color:var(--fx-bad)!important}
+$M .cx-wthumb{background-color:var(--fx-surface-3)!important;position:relative;border:1px solid var(--fx-line)}
+$M .cx-wthumb:not([style*="url"])::after{content:"";position:absolute;left:50%;top:50%;margin:-8px 0 0 -5px;border-style:solid;border-width:8px 0 8px 13px;border-color:transparent transparent transparent var(--fx-gold-ink);opacity:.8}
+$M .cx-ws{border-color:var(--fx-line)!important;background:var(--fx-surface)!important;border-radius:var(--fx-r-md)!important}
+$M .cx-ws:hover{border-color:var(--fx-line-strong)!important}
+$M .cx-ts{border-radius:var(--fx-r-sm)!important}
+
+/* ================= 18 · TOAST, SYNC CHIP, DEMO chrome (P1-03, PH-05) ================= */
+$M #toast{background:var(--fx-surface-3)!important;color:var(--fx-ink)!important;border:1px solid var(--fx-line-strong)!important;border-left:3px solid var(--fx-gold)!important;border-radius:var(--fx-r-md)!important;box-shadow:var(--fx-e3)!important}
+$L #toast{background:#FFFFFF!important}
+$M #fta-sync{background:color-mix(in srgb,var(--fx-surface-3) 92%,transparent)!important;color:var(--fx-ink-2)!important;border:1px solid var(--fx-line)!important;box-shadow:var(--fx-e1)!important;backdrop-filter:blur(10px);transition:opacity .4s var(--fx-ease),transform .4s var(--fx-ease)!important;font-size:12px!important}
+$L #fta-sync{background:rgba(255,255,255,.94)!important}
+$M #fta-sync:not([data-s=error]):not([data-s=offline]){pointer-events:none!important}
+$M #fta-sync[data-lx-hide]{opacity:0!important;transform:translateY(6px)!important}
+@media (max-width:760px){$M #fta-sync{bottom:calc(88px + env(safe-area-inset-bottom))!important}}
+
+/* ================= 19 · PHONE (PH-01..PH-10) ================= */
+/* bottom nav */
+$M #bnav{background:color-mix(in srgb,var(--fx-surface) 92%,transparent)!important;background-image:none!important;backdrop-filter:blur(14px) saturate(1.1)!important;-webkit-backdrop-filter:blur(14px)!important;border:1px solid var(--fx-line-strong)!important;box-shadow:var(--fx-e2)!important}
+$L #bnav{background:rgba(255,255,255,.92)!important}
+$M #bnav > button{background:transparent!important;background-image:none!important;box-shadow:none!important;border:0!important;color:var(--fx-muted)!important;position:relative}
+$M #bnav > button svg.i{color:currentColor!important}
+$M #bnav > button.on{color:var(--fx-gold-ink)!important;background:transparent!important}
+$M #bnav > button.on::after{content:"";position:absolute;left:50%;top:2px;width:4px;height:4px;margin-left:-2px;border-radius:50%;background:var(--fx-gold-ink)}
+$M #bnav > button.mn-qa .qa-c{width:48px!important;height:48px!important;background:var(--fx-surface-3)!important;background-image:none!important;border:1.5px solid var(--fx-gold-ink)!important;box-shadow:var(--fx-e1)!important;color:var(--fx-gold-ink)!important}
+$L #bnav > button.mn-qa .qa-c{background:#FFFFFF!important}
+$M #bnav > button.mn-qa .qa-c svg.i{color:var(--fx-gold-ink)!important}
+$M #bnav > button.mn-qa .qa-c svg.i path{fill:var(--fx-gold-ink)!important}
+$M #bnav > button.mn-qa::after{display:none}
+@media (max-width:760px){
+  /* PH-03 page title back in the top bar */
+  $M #top #ttl{display:block!important;font-size:19px!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;flex:1 1 auto;margin:0 4px!important}
+  $M #top .top-r{gap:6px!important}
+  $M #top .top-r > .sp{display:none!important}
+  $M #top .ib{height:36px!important;min-width:36px!important;width:36px!important;padding:0!important}
+  $M #top .who{padding:0!important;height:36px;min-width:36px}
+  $M #top #mlogo{width:34px!important;height:34px!important;min-width:34px}
+  /* PH-01 messages: one column */
+  $M .cx-chat{grid-template-columns:minmax(0,1fr)!important}
+  $M .cx-cl,$M .cx-cv{min-width:0!important}
+  /* cards & banners tighter */
+}
+@media (max-width:600px){
+  /* PH-06 banner */
+  $M #view section.banner{padding:16px!important}
+  $M #view section.banner .bn-ic{display:none!important}
+  $M #view section.banner .rs{display:none!important}
+  $M #view section.banner .bn-h,$M #view .cc-hero h1{font-size:26px!important}
+  $M #view section.banner .bn-top{flex-wrap:wrap!important;gap:12px!important}
+  $M #view section.banner .bn-acts{width:100%;justify-content:flex-start!important}
+  $M #view .cc-hero{padding:18px!important}
+  $M #view .cc-hero .cc-fig b{font-size:34px!important}
+  /* PH-08 glance tiles two per row */
+  $M #view .sc-grid.sc-g4{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  /* tables scroll inside their card with a right fade */
+  $M #view .tw{overflow-x:auto!important;-webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 28px),transparent);mask-image:linear-gradient(90deg,#000 calc(100% - 28px),transparent)}
+  /* PH-02 marks table */
+  $M #view .sc-scroll{-webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 28px),transparent);mask-image:linear-gradient(90deg,#000 calc(100% - 28px),transparent)}
+  $M #view table.sc-marks :is(th,td){padding-left:8px!important;padding-right:8px!important}
+  $M #view table.sc-marks input{max-width:72px}
+  $M #view :has(> table.sc-marks){overflow-x:auto!important;max-width:100%}
+  $M #view .kpi .kv,$M #view .cck .fg{font-size:22px!important}
+  $M #view .cck .bt{grid-template-columns:minmax(0,1fr)!important}
+  $M #view .cck .bt > svg{display:none!important}
+  $M #view .cck .lb{white-space:normal!important;line-height:1.25;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+  $M #view .cck .tg{display:none!important}
+}
+
+/* ================= 20 · MOTION ================= */
+@media (prefers-reduced-motion:reduce){
+  $M *{transition:none!important;animation:none!important}
+  $M :is(.btn,.kpi,.cck,.sc-tile):hover{transform:none!important}
+}

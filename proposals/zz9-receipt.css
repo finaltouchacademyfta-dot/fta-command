@@ -1,0 +1,67 @@
+/* =====================================================================
+   FTA · Receipt Maker v2 (demo layer). The receipt paper itself lives in a
+   Shadow DOM with its own styles; this file only styles the page around it
+   using the app's colour variables, so it follows the active theme.
+   ===================================================================== */
+#rm-root{display:grid;gap:16px;min-width:0}
+#rm-root .rm-topbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+#rm-root .rm-topbar .chips{max-width:100%;overflow-x:auto}
+#rm-root .rm-grid{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:18px;align-items:start}
+#rm-root .rm-stage{min-width:0}
+#rm-root #rm-paper-host{display:block;min-width:0}
+#rm-root .rm-errs{margin:10px 0 0;padding:10px 14px;border-radius:10px;border:1px solid #F0C4BC;background:#FDF1EE;color:#8F2A1F;font-size:13px;font-weight:600}
+#rm-root .rm-side{position:sticky;top:84px;display:grid;gap:12px;min-width:0;max-height:calc(100vh - 100px);overflow:auto;padding-bottom:4px}
+#rm-root .rm-box{padding:14px 14px 16px;display:grid;gap:10px;min-width:0}
+#rm-root .rm-box h4{margin:0;font-size:13px;font-weight:750;letter-spacing:.02em;color:var(--ink)}
+#rm-root .rm-box h4 small{font-weight:500;color:var(--muted)}
+#rm-root .rm-box fieldset{border:0;margin:0;padding:0;display:grid;gap:10px;min-width:0}
+#rm-root .rm-box fieldset:disabled{opacity:.6}
+#rm-root .rm-l{display:grid;gap:5px;font-size:12px;font-weight:700;color:var(--ink-2,var(--ink));min-width:0;margin:0}
+#rm-root .rm-l input,#rm-root .rm-l select,#rm-root .rm-l textarea{width:100%;min-width:0;box-sizing:border-box;height:38px;padding:0 10px;border-radius:10px;border:1px solid var(--line-2,var(--line));background:var(--surface);color:var(--ink);font:inherit;font-size:13.5px;font-weight:500}
+#rm-root .rm-l textarea{height:auto;padding:8px 10px}
+#rm-root .rm-l input:focus-visible,#rm-root .rm-l select:focus-visible{outline:none;border-color:var(--gold,#C9A24D);box-shadow:0 0 0 3px rgba(201,162,77,.2)}
+#rm-root .rm-2{display:grid;grid-template-columns:90px minmax(0,1fr);gap:8px}
+#rm-root .rm-seg{display:flex;flex-wrap:wrap;gap:6px}
+#rm-root .rm-seg button{flex:1 1 auto;min-height:34px;padding:0 10px;border-radius:999px;border:1px solid var(--line-2,var(--line));background:var(--surface);color:var(--ink);font:inherit;font-size:12.5px;font-weight:600;cursor:pointer}
+#rm-root .rm-seg button.on{border-color:var(--gold,#C9A24D);color:var(--gold-ink,#7A5A12);box-shadow:inset 0 0 0 1px var(--gold,#C9A24D);font-weight:750}
+#rm-root .rm-themes{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+#rm-root .rm-themes button{display:flex;align-items:center;gap:8px;min-height:38px;padding:4px 8px;border-radius:10px;border:1px solid var(--line-2,var(--line));background:var(--surface);color:var(--ink);font:inherit;font-size:12px;font-weight:600;text-align:left;cursor:pointer}
+#rm-root .rm-themes button.on{border-color:var(--gold,#C9A24D);box-shadow:inset 0 0 0 1px var(--gold,#C9A24D)}
+#rm-root .rm-themes i,#rm-root .rm-tgrid i{flex:none;width:22px;height:22px;border-radius:6px;border:2px solid}
+#rm-root .rm-tg{display:grid;gap:6px}
+#rm-root .rm-tg label{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--ink);cursor:pointer}
+#rm-root .rm-tg input{width:17px;height:17px;accent-color:#111}
+#rm-root .rm-row{display:flex;flex-wrap:wrap;gap:6px}
+#rm-root .rm-file{cursor:pointer}
+#rm-root .rm-hint{margin:0;font-size:12px;line-height:1.45;color:var(--muted)}
+#rm-root .rm-hint b{color:var(--ink)}
+#rm-root .rm-acts .btn{justify-content:center}
+#rm-root .rm-acts > .btn.p{height:44px;font-size:15px}
+#rm-root .rm-msg{margin:0;min-height:16px;font-size:12.5px;line-height:1.45;color:var(--muted)}
+#rm-root .rm-msg.err{color:#B42318;font-weight:600}
+#rm-root .rm-legal{margin:0;font-size:11.5px;line-height:1.5;color:var(--muted)}
+#rm-root .rm-legal a{color:var(--gold-ink,#7A5A12);font-weight:700}
+#rm-root .rm-pack{display:grid;gap:8px;padding:10px;border:1px dashed var(--gold,#C9A24D);border-radius:10px}
+#rm-root .rm-hist{padding:16px;display:grid;gap:12px;min-width:0}
+#rm-root .rm-tools{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+#rm-root .rm-tools input{flex:1 1 260px;max-width:440px;height:40px;padding:0 14px;border-radius:999px;border:1px solid var(--line-2,var(--line));background:var(--surface);color:var(--ink);font:inherit;font-size:14px}
+#rm-root .rm-tab td{vertical-align:middle}
+#rm-root .rm-tab tr.is-void td{opacity:.62}
+#rm-root .rm-tab tr.is-void td:first-child b{text-decoration:line-through}
+#rm-root .rm-bad{color:#B42318;font-weight:600}
+#rm-root .rm-ok{color:#0F5E3B;font-weight:600}
+#rm-root .rm-ra{display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end}
+#rm-root .rm-empty{display:grid;justify-items:center;gap:6px;padding:38px 16px;text-align:center;color:var(--muted)}
+#rm-root .rm-empty svg{width:34px;height:34px;color:var(--gold,#C9A24D)}
+#rm-root .rm-empty b{font-size:16px;color:var(--ink)}
+#rm-root .rm-empty p{margin:0 0 6px;max-width:440px}
+#rm-root .rm-tpl{padding:18px;display:grid;gap:14px}
+#rm-root .rm-tpl > header{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+#rm-root .rm-tpl h3{margin:0;font-size:16px;font-weight:750;color:var(--ink)}
+#rm-root .rm-tpl header p{margin:2px 0 0;font-size:13px;color:var(--muted)}
+#rm-root .rm-tgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px}
+#rm-root .rm-tgrid article{display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+#rm-root .rm-tgrid article > div:nth-child(2){flex:1;min-width:0;display:grid}
+#rm-root .rm-tgrid small{color:var(--muted);font-size:12.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+@media (max-width:1180px){#rm-root .rm-grid{grid-template-columns:minmax(0,1fr)}#rm-root .rm-side{position:static;max-height:none;overflow:visible;grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}#rm-root .rm-acts{order:-1}}
+@media (max-width:760px){#rm-root .rm-side{grid-template-columns:minmax(0,1fr)}#rm-root .rm-ra{justify-content:flex-start}#rm-root .rm-topbar{align-items:stretch}}

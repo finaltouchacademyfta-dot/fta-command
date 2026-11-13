@@ -1,0 +1,115 @@
+/* =====================================================================
+   FTA · Premium Light v4: "Onyx & Gold" (demo layer only)
+   Owner, 8 Nov: colour combination still not right; every slider in the app
+   must look the same and premium, with no logo behind it.
+   Palette: onyx black (sidebar and every slider), clean white pages and cards,
+   gold used only as an accent. Green and red appear only for status.
+   Scope: Premium Light (midnight + light). Loads last.
+   ===================================================================== */
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7){
+  --ox-0:#060606; --ox-1:#0E0E0E; --ox-2:#161616; --ox-3:#1F1F1F; --ox-4:#2A2A2A;
+  --ox-page:#F4F4F2; --ox-card:#FFFFFF; --ox-line:#E5E4E0; --ox-line-2:#D4D2CC;
+  --ox-ink:#111111; --ox-ink-2:#2B2B2B; --ox-muted:#555555;
+  --ox-gold:#C9A24D; --ox-gold-hi:#E7C77F; --ox-gold-lo:#9A7428; --ox-gold-ink:#7A5A12;
+  --ox-raise:0 1px 0 #FFFFFF inset,0 1px 2px rgba(0,0,0,.05),0 3px 0 #E4E2DC,0 14px 28px -18px rgba(0,0,0,.28);
+  --ox-raise-hi:0 1px 0 #FFFFFF inset,0 1px 2px rgba(0,0,0,.05),0 4px 0 #DAD7CF,0 20px 34px -18px rgba(0,0,0,.32);
+  --bg:var(--ox-page); --surface:#FFFFFF; --surface-2:#FAFAF8; --line:var(--ox-line); --line-2:var(--ox-line-2);
+  --fx-bg:var(--ox-page); --fx-surface:#FFFFFF; --fx-surface-2:#FAFAF8; --fx-line:var(--ox-line); --fx-line-strong:var(--ox-line-2);
+  --gold-ink:var(--ox-gold-ink); --fx-gold-ink:var(--ox-gold-ink);
+}
+
+/* ---------- page canvas: clean white-grey, one soft gold glow, no pattern ---------- */
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7) body{background:radial-gradient(900px 480px at 100% 0%,rgba(231,199,127,.12),transparent 70%) fixed,linear-gradient(180deg,#F7F7F5,#F1F1EE) fixed!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7) body #top{background:rgba(250,250,248,.9)!important;border-bottom:1px solid var(--ox-line)!important}
+
+/* ---------- cards: pure white, crisp 3D ---------- */
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7) body #view :is(.card,.qc,.kpi,.xcard){background:#FFFFFF!important;border:1px solid var(--ox-line)!important;box-shadow:var(--ox-raise)!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7) body #view :is(button.kpi,.qc):hover{box-shadow:var(--ox-raise-hi)!important}
+
+/* ---------- ONE premium slider for the whole app ----------
+   dashboard hero (.cc-hero), every page header (section.banner, incl. the
+   tutor/student home hero-sl) and the new pages' headers share this look. */
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7) body #view :is(.cc-hero,.page > section.banner){
+  position:relative;overflow:hidden;isolation:isolate;color:#F2F2F2!important;
+  background:
+    radial-gradient(55% 140% at 100% 0%,rgba(231,199,127,.20),transparent 60%),
+    radial-gradient(40% 120% at 0% 100%,rgba(231,199,127,.08),transparent 65%),
+    linear-gradient(160deg,#222222 0%,#121212 48%,#070707 100%)!important;
+  border:1px solid rgba(231,199,127,.38)!important;border-radius:20px!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.10),inset 0 -1px 0 rgba(0,0,0,.6),0 4px 0 #4A3A14,0 24px 44px -20px rgba(0,0,0,.55)!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7) body #view :is(.cc-hero,.page > section.banner)::before{content:""!important;display:block!important;position:absolute!important;left:0;right:0;top:0;height:2px!important;width:auto!important;background:linear-gradient(90deg,transparent,#9A7428 15%,#F1D79B 50%,#9A7428 85%,transparent)!important;opacity:1!important;pointer-events:none;z-index:2}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7) body #view :is(.cc-hero,.page > section.banner)::after{content:""!important;display:block!important;position:absolute!important;inset:0!important;height:auto!important;background:radial-gradient(rgba(255,255,255,.035) 1px,transparent 1.2px) 0 0/18px 18px!important;-webkit-mask:linear-gradient(120deg,#000,transparent 60%);mask:linear-gradient(120deg,#000,transparent 60%);opacity:1!important;pointer-events:none;z-index:0}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7) body #view :is(.cc-hero,.page > section.banner) > *{position:relative;z-index:1}
+/* no logo or crest behind any slider */
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7) body #view :is(.cc-hero > svg,section.banner .bn-emb){display:none!important}
+/* slider words */
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7) body #view :is(.cc-hero,.page > section.banner) :is(h1,h2,.bn-h){color:#FFFFFF!important;-webkit-text-fill-color:#FFFFFF!important;background:none!important;text-shadow:0 1px 0 rgba(0,0,0,.5)}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7) body #view :is(.cc-hero,.page > section.banner) :is(.bn-eye,.cc-eye,[class*="eye"]){color:#E7C77F!important;-webkit-text-fill-color:#E7C77F!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7) body #view .page > section.banner .bn-eye::after{background:linear-gradient(90deg,rgba(231,199,127,.7),transparent)!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7) body #view :is(.cc-hero,.page > section.banner) :is(p,.bn-sub,small,span:not(.n):not(.t):not(.rs-fig)){color:#CFCFCF!important;-webkit-text-fill-color:#CFCFCF!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7) body #view .cc-hero .cc-fig :is(b,strong,.num){color:#E7C77F!important;-webkit-text-fill-color:#E7C77F!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7) body #view .cc-hero :is(a,button){color:#E7C77F!important;-webkit-text-fill-color:#E7C77F!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7) body #view .page > section.banner .bn-ic{background:linear-gradient(180deg,#2A2A2A,#0E0E0E)!important;border:1px solid rgba(231,199,127,.6)!important;color:#E7C77F!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 0 0 3px rgba(231,199,127,.08),0 8px 16px -8px rgba(0,0,0,.7)!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7) body #view .page > section.banner .bn-ic svg{color:#E7C77F!important}
+/* slider buttons: ghost and gold-rim keys on black */
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7) body #view .page > section.banner .btn:not(.p){background:rgba(255,255,255,.06)!important;border:1px solid rgba(255,255,255,.22)!important;color:#F2F2F2!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.08)!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7) body #view .page > section.banner .btn:not(.p) *{color:#F2F2F2!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7) body #view .page > section.banner .btn:not(.p):hover{border-color:#E7C77F!important;color:#F1D79B!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7) body #view .page > section.banner .btn.p{background:linear-gradient(180deg,#2E2E2E,#141414)!important;border:1px solid #E7C77F!important;color:#F1D79B!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 0 0 3px rgba(231,199,127,.10),0 0 22px -6px rgba(231,199,127,.55)!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7) body #view .page > section.banner .btn.p *{color:#F1D79B!important}
+/* the rotating highlights inside the slider */
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7) body #view .page > section.banner .rs{background:linear-gradient(90deg,transparent,rgba(231,199,127,.45),transparent) top/100% 1px no-repeat!important;border-top:0!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7) body #view .page > section.banner .rs-fig{color:#E7C77F!important;-webkit-text-fill-color:#E7C77F!important;text-shadow:0 0 24px rgba(231,199,127,.25)}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7) body #view .page > section.banner .rs-cap{border-color:rgba(231,199,127,.25)!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7) body #view .page > section.banner .rs-cap b{color:#FFFFFF!important;-webkit-text-fill-color:#FFFFFF!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7) body #view .page > section.banner .rs-cap :is(small,span){color:#BDBDBD!important;-webkit-text-fill-color:#BDBDBD!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7) body #view .page > section.banner .rs-q{color:#EDEDED!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7) body #view .page > section.banner .rs-tabs{background:transparent!important;border:0!important;box-shadow:none!important;padding:0!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7) body #view .page > section.banner .rs-tab{background:transparent!important;color:#C8C8C8!important;font-weight:500!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7) body #view .page > section.banner .rs-tab .t{color:inherit!important;-webkit-text-fill-color:currentColor!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7) body #view .page > section.banner .rs-tab .n{background:transparent!important;border:0!important;padding:0!important;color:#8E8E8E!important;-webkit-text-fill-color:#8E8E8E!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7) body #view .page > section.banner .rs-tab:hover{color:#FFFFFF!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7) body #view .page > section.banner .rs-tab.on{background:linear-gradient(90deg,rgba(231,199,127,.16),rgba(231,199,127,.03))!important;color:#FFFFFF!important;font-weight:650!important;box-shadow:inset 0 0 0 1px rgba(231,199,127,.22)!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7) body #view .page > section.banner .rs-tab.on .n{color:#E7C77F!important;-webkit-text-fill-color:#E7C77F!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7) body #view .page > section.banner .rs-tab::before{background:rgba(255,255,255,.08)!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7) body #view .page > section.banner .rs-tab.on::after{background:#E7C77F!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7) body #view .page > section.banner .rs-btn{background:rgba(255,255,255,.05)!important;border:1px solid rgba(255,255,255,.2)!important;color:#EDEDED!important;box-shadow:none!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7) body #view .page > section.banner .rs-btn:hover{border-color:#E7C77F!important;color:#F1D79B!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7) body #view .page > section.banner :is(.rs-c,.rs-c *,.rs-ctl b){color:#EDEDED!important;-webkit-text-fill-color:#EDEDED!important}
+
+/* ---------- dashboard figure tiles: white 3D tiles, gold foil, onyx icon coin ---------- */
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7) body #view .cc-k > .cck{background:#FFFFFF!important;color:#111111!important;border:1px solid var(--ox-line)!important;box-shadow:var(--ox-raise)!important;position:relative;overflow:hidden}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7) body #view .cc-k > .cck:hover{box-shadow:var(--ox-raise-hi)!important;transform:translateY(-2px)}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7) body #view .cc-k > .cck::before{content:""!important;position:absolute!important;left:0!important;right:0!important;top:0!important;height:3px!important;width:auto!important;inset:0 0 auto 0!important;background:linear-gradient(90deg,#9A7428,#F1D79B 50%,#9A7428)!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7) body #view .cc-k > .cck *{color:#111111!important;-webkit-text-fill-color:currentColor!important;text-shadow:none!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7) body #view .cc-k > .cck :is(.lb){color:#2B2B2B!important;font-weight:700!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7) body #view .cc-k > .cck :is(.sb,small){color:#555555!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7) body #view .cc-k > .cck .tg{color:#7A5A12!important;opacity:1!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7) body #view .cc-k > .cck .fg{color:#111111!important;font-weight:800!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7) body #view .cc-k > .cck :is(.dn,.ch.dn){color:#94261C!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7) body #view .cc-k > .cck :is(.up,.ch.up){color:#0F5E3B!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7) body #view .cc-k > .cck :is(svg.i,.sc-ic){background:linear-gradient(180deg,#2A2A2A,#0E0E0E)!important;border:1px solid rgba(231,199,127,.55)!important;border-radius:11px!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 3px 0 rgba(0,0,0,.18),0 8px 14px -8px rgba(0,0,0,.45)!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7) body #view .cc-k > .cck .sc-ic :is(svg,svg *){color:#E7C77F!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7) body #view .cc-k > .cck svg:not(.i) :is(path,polyline){stroke:#B8893A!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7) body #view .cc-k > .cck svg:not(.i) path[fill]:not([fill="none"]){fill:rgba(201,162,77,.14)!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7) body #view .cc-k > .cck svg:not(.i) circle{fill:#B8893A!important;stroke:#FFFFFF!important}
+
+/* page KPI tiles: same family */
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7) body #view .kpis > .kpi::after{background:linear-gradient(90deg,#9A7428,#F1D79B 50%,#9A7428)!important;height:3px!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7) body #view :is(.kpis > .kpi svg.i,.card .ch > svg.i,.card .ttl > svg.i,.xcard .xc-h svg.i){background:linear-gradient(180deg,#2A2A2A,#0E0E0E)!important;color:#E7C77F!important;border:1px solid rgba(231,199,127,.5)!important;border-radius:11px!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 3px 0 rgba(0,0,0,.14),0 8px 14px -8px rgba(0,0,0,.4)!important}
+
+/* ---------- buttons on white: onyx keys with gold words (no gold fills) ---------- */
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7) body .btn.p:not(#qab):not(:disabled){background:linear-gradient(180deg,#2E2E2E,#121212)!important;color:#F1D79B!important;border:1px solid rgba(231,199,127,.55)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 3px 0 #000000,0 10px 18px -10px rgba(0,0,0,.5)!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7) body .btn.p:not(#qab):not(:disabled) :is(svg,svg *){color:#E7C77F!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7) body .btn:not(.p):not(:disabled){background:linear-gradient(180deg,#FFFFFF,#F6F6F4)!important;border:1px solid var(--ox-line-2)!important;color:#111111!important;box-shadow:inset 0 1px 0 #fff,0 2px 0 #DDDBD5,0 6px 12px -10px rgba(0,0,0,.3)!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7) body #top #qab.btn.p{background:#FFFFFF!important;color:#7A5A12!important;border:1.5px solid #C9A24D!important;box-shadow:inset 0 1px 0 #fff,0 2px 0 #DDDBD5,0 8px 14px -10px rgba(0,0,0,.3)!important}
+
+/* ---------- tables, tabs and pills on white ---------- */
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7) body #view table th{background:#F6F6F4!important;color:#555555!important;border-bottom:1px solid var(--ox-line-2)!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7) body #view tbody tr:hover td{background:rgba(201,162,77,.07)!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7) body #view :is(.chips,.seg){background:#EFEFEC!important;border:1px solid var(--ox-line)!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7) body #view :is(.chips,.seg) > button.on{background:#FFFFFF!important;color:#111111!important;box-shadow:0 1px 0 #fff inset,0 2px 0 #DDDBD5,0 4px 8px -6px rgba(0,0,0,.3)!important}
+
+/* ---------- phone ---------- */
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7) body #bnav{background:rgba(252,252,250,.95)!important;border:1px solid var(--ox-line)!important}
+@media (max-width:760px){html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7) body #view :is(.cc-hero,.page > section.banner){border-radius:16px!important}}
