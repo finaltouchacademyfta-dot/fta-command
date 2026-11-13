@@ -117,6 +117,15 @@
 
   /* titles, aria-labels and placeholders (also on the root containers, which the main pass skips) */
   const ATTRS = ['title', 'aria-label', 'placeholder'];
+  const touched = new Set();
+  /* back to English: put every attribute we translated back to its original text */
+  function restoreAttrs() {
+    touched.forEach(el => {
+      for (const a of ATTRS) { const r = el['__bx_' + a]; if (r && el.getAttribute(a) === r.out) el.setAttribute(a, r.o); }
+      if (el.__phO != null && el.getAttribute('placeholder') !== el.__phO) el.setAttribute('placeholder', el.__phO);
+    });
+    touched.clear();
+  }
   function fixAttrs() {
     document.querySelectorAll('[title],[aria-label],[placeholder]').forEach(el => {
       if (el.closest('[data-notx]')) return;
@@ -126,7 +135,7 @@
         const orig = rec && rec.out === v ? rec.o : v;
         const out = tr(orig);
         if (out !== v) el.setAttribute(a, out);
-        el[K] = { o: orig, out };
+        el[K] = { o: orig, out }; touched.add(el);
       }
     });
   }
@@ -138,7 +147,8 @@
     const _txAll2 = txAll;
     txAll = function () {
       const r = _txAll2.apply(this, arguments);
-      if (LANG !== 'bn' || TX_BUSY) return r;
+      if (LANG !== 'bn') { try { restoreAttrs(); } catch (e) { } return r; }
+      if (TX_BUSY) return r;
       try { MO.disconnect(); fixAttrs(); } catch (e) { } finally { try { MO.observe(document.body, { childList: true, subtree: true }); } catch (e) { } }
       const panel = document.getElementById('fa-panel') || document.body;
       const mine = [...document.querySelectorAll('#fa-panel .ag-u')];
@@ -146,7 +156,7 @@
         MO.disconnect();
         mine.forEach(e => e.setAttribute('data-notx', ''));
         applyTx(document.body);
-        panel.querySelectorAll('[placeholder]').forEach(el => { const v = el.getAttribute('placeholder'); if (!el.__phO) el.__phO = v; const o = tr(el.__phO); if (o !== v) el.setAttribute('placeholder', o); });
+        panel.querySelectorAll('[placeholder]').forEach(el => { const v = el.getAttribute('placeholder'); if (el.__phO == null) el.__phO = v; touched.add(el); const o = tr(el.__phO); if (o !== v) el.setAttribute('placeholder', o); });
       } catch (e) { }
       finally { mine.forEach(e => e.removeAttribute('data-notx')); try { MO.observe(document.body, { childList: true, subtree: true }); } catch (e) { } }
       return r;

@@ -21644,6 +21644,42 @@ html:root:root:root :is(button,a,input,select,textarea,[tabindex]):focus-visible
 /* modal: dim + soft blur behind the card */
 html:root:root:root #ov:not([hidden]){backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
 
+/* =====================================================================
+   Collapsed rail (menu unpinned): icons centred and whole, no cut labels
+   ===================================================================== */
+@media (min-width:821px){
+  html:root:root:root:root:root body:not(.side-pin):not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #side:not(:hover) #sidenav{padding:8px 6px 12px!important;gap:8px!important;align-items:stretch!important}
+  html:root:root:root:root:root body:not(.side-pin):not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #side:not(:hover) #sidenav .navg{padding:6px 0!important;margin:0!important;display:flex!important;flex-direction:column!important;align-items:center!important;width:100%!important;box-sizing:border-box!important;overflow:visible!important}
+  html:root:root:root:root:root body:not(.side-pin):not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #side:not(:hover):not(#q1):not(#q2):not(#q3) #sidenav .navg > h6{font-size:0!important;line-height:0!important;letter-spacing:0!important;height:2px!important;width:22px!important;margin:2px auto 6px!important;padding:0!important;border-radius:2px!important;background:linear-gradient(90deg,transparent,rgba(201,166,89,.7),transparent)!important;overflow:hidden!important;color:transparent!important}
+  html:root:root:root:root:root body:not(.side-pin):not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #side:not(:hover) #sidenav .navg > h6 *{display:none!important}
+  html:root:root:root:root:root body:not(.side-pin):not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #side:not(:hover) #sidenav .navg .nav{width:100%!important;max-width:none!important;min-width:0!important;padding:4px 0!important;margin:1px 0!important;display:flex!important;justify-content:center!important;align-items:center!important;gap:0!important;box-sizing:border-box!important;min-height:44px!important;height:auto!important}
+  html:root:root:root:root:root body:not(.side-pin):not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #side:not(:hover) #sidenav .nav > svg.i{margin:0!important;flex:0 0 36px!important}
+  html:root:root:root:root:root body:not(.side-pin):not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #side:not(:hover) #sidenav .nav > .l,html:root:root:root:root:root body:not(.side-pin):not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #side:not(:hover) #sidenav .nav > .bdg,html:root:root:root:root:root body:not(.side-pin):not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #side:not(:hover) #sidenav .nav > .b,html:root:root:root:root:root body:not(.side-pin):not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #side:not(:hover) #sidenav .nav > em{display:none!important}
+  html:root:root:root:root:root body:not(.side-pin):not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #side:not(:hover) #sidenav .nav{position:relative!important}
+  html:root:root:root:root:root body:not(.side-pin):not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #side:not(:hover) #sidenav .nav.on{background:transparent!important;box-shadow:none!important}
+  html:root:root:root:root:root body:not(.side-pin):not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #side:not(:hover) #sidenav .nav.on > svg.i{box-shadow:0 0 0 2px rgba(201,166,89,.85),0 6px 14px -4px rgba(0,0,0,.45)!important}
+}
+
+/* =====================================================================
+   Premium motion on the menu (transform/opacity only, colours untouched)
+   ===================================================================== */
+@media (hover:hover) and (pointer:fine){
+  html:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #side #sidenav .nav > svg.i{transition:transform .32s cubic-bezier(.34,1.56,.64,1),box-shadow .25s ease!important}
+  html:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #side #sidenav .nav:hover > svg.i{transform:scale(1.1) rotate(-3deg)}
+  html:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #side #sidenav .nav > .l{transition:transform .3s cubic-bezier(.22,.8,.24,1)}
+  html:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #side #sidenav .nav:hover > .l{transform:translateX(3px)}
+  html:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #top button:hover svg,html:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #top button:hover .ic{transform:scale(1.08)}
+  html:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #top button svg{transition:transform .28s cubic-bezier(.34,1.56,.64,1)}
+}
+@keyframes pmLabelIn{from{opacity:0;transform:translateX(-6px)}to{opacity:1;transform:none}}
+html:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #side:hover #sidenav .nav > .l{animation:pmLabelIn .32s cubic-bezier(.22,.8,.24,1) both}
+@keyframes pmDot{0%,100%{transform:scale(1)}50%{transform:scale(1.35)}}
+html:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #top .dot,html:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #top .cnt{animation:pmDot 2.6s ease-in-out infinite}
+@media (prefers-reduced-motion:reduce){html:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #side #sidenav .nav > .l{animation:none!important}html:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #top .dot,html:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #top .cnt{animation:none!important}}
+
+/* the little name tooltip is only for the collapsed rail; hide it when the menu is already open */
+html:root:root body.side-pin #v8-tip,html:root:root #side:hover ~ #v8-tip{display:none!important}
+
 </style>
 <script data-ui="portal.js">
 /* =====================================================================
@@ -25041,6 +25077,15 @@ td.qty{width:80px}td.rate{width:120px}
 
   /* titles, aria-labels and placeholders (also on the root containers, which the main pass skips) */
   const ATTRS = ['title', 'aria-label', 'placeholder'];
+  const touched = new Set();
+  /* back to English: put every attribute we translated back to its original text */
+  function restoreAttrs() {
+    touched.forEach(el => {
+      for (const a of ATTRS) { const r = el['__bx_' + a]; if (r && el.getAttribute(a) === r.out) el.setAttribute(a, r.o); }
+      if (el.__phO != null && el.getAttribute('placeholder') !== el.__phO) el.setAttribute('placeholder', el.__phO);
+    });
+    touched.clear();
+  }
   function fixAttrs() {
     document.querySelectorAll('[title],[aria-label],[placeholder]').forEach(el => {
       if (el.closest('[data-notx]')) return;
@@ -25050,7 +25095,7 @@ td.qty{width:80px}td.rate{width:120px}
         const orig = rec && rec.out === v ? rec.o : v;
         const out = tr(orig);
         if (out !== v) el.setAttribute(a, out);
-        el[K] = { o: orig, out };
+        el[K] = { o: orig, out }; touched.add(el);
       }
     });
   }
@@ -25062,7 +25107,8 @@ td.qty{width:80px}td.rate{width:120px}
     const _txAll2 = txAll;
     txAll = function () {
       const r = _txAll2.apply(this, arguments);
-      if (LANG !== 'bn' || TX_BUSY) return r;
+      if (LANG !== 'bn') { try { restoreAttrs(); } catch (e) { } return r; }
+      if (TX_BUSY) return r;
       try { MO.disconnect(); fixAttrs(); } catch (e) { } finally { try { MO.observe(document.body, { childList: true, subtree: true }); } catch (e) { } }
       const panel = document.getElementById('fa-panel') || document.body;
       const mine = [...document.querySelectorAll('#fa-panel .ag-u')];
@@ -25070,7 +25116,7 @@ td.qty{width:80px}td.rate{width:120px}
         MO.disconnect();
         mine.forEach(e => e.setAttribute('data-notx', ''));
         applyTx(document.body);
-        panel.querySelectorAll('[placeholder]').forEach(el => { const v = el.getAttribute('placeholder'); if (!el.__phO) el.__phO = v; const o = tr(el.__phO); if (o !== v) el.setAttribute('placeholder', o); });
+        panel.querySelectorAll('[placeholder]').forEach(el => { const v = el.getAttribute('placeholder'); if (el.__phO == null) el.__phO = v; touched.add(el); const o = tr(el.__phO); if (o !== v) el.setAttribute('placeholder', o); });
       } catch (e) { }
       finally { mine.forEach(e => e.removeAttribute('data-notx')); try { MO.observe(document.body, { childList: true, subtree: true }); } catch (e) { } }
       return r;
