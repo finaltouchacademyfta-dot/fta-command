@@ -60,6 +60,8 @@ if MODE != 'demo':
     assert src.count(t0) >= 1
     src = src.replace(t0, '<title>Final Touch Academy · FTA</title>', 1)
 if MODE != 'demo': head_inject += '<script src="config.js"></script>\n<script src="vendor/supabase.js"></script>\n'
+VP = 'width=device-width,initial-scale=1,viewport-fit=cover'
+src = src.replace('content="' + VP + '"', 'content="' + VP + ',maximum-scale=1,minimum-scale=1,user-scalable=no"').replace('content=' + VP, 'content="' + VP + ',maximum-scale=1,minimum-scale=1,user-scalable=no"')
 src = src.replace('<head>', '<head>\n' + head_inject, 1) if '<head>' in src else head_inject + src
 end = '\n<style id="prod-theme">\n' + tcss + '\n</style>\n<script>\n' + rd('prod-fix.js') + '\n;\n' + rd('prod-theme.js') + '\n</script>\n'
 if MODE != 'demo': end += '<script>\n' + rd('prod-data.js') + '\n</script>\n<style id="prod-push">\n' + rd('prod-push.css') + '\n</style>\n<script>\n' + rd('prod-push.js') + '\n</script>\n' + '<style id="prod-agent">\n' + rd('prod-agent.css') + '\n</style>\n<script>\n' + rd('prod-agent.js') + '\n</script>\n'

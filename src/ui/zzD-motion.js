@@ -92,3 +92,9 @@
   function boot() { wrapGo(); watchModal(); }
   boot(); document.addEventListener('DOMContentLoaded', boot); addEventListener('load', boot);
 })();
+
+/* fixed size like a native app: block pinch-zoom (iOS Safari ignores user-scalable); double-tap zoom is off via touch-action */
+(function () {
+  ['gesturestart', 'gesturechange', 'gestureend'].forEach(t => document.addEventListener(t, e => e.preventDefault(), { passive: false }));
+  document.addEventListener('touchmove', e => { if (e.touches && e.touches.length > 1) e.preventDefault(); }, { passive: false });
+})();

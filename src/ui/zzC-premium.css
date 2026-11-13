@@ -91,3 +91,10 @@ html:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#
 
 /* the little name tooltip is only for the collapsed rail; hide it when the menu is already open */
 html:root:root body.side-pin #v8-tip,html:root:root #side:hover ~ #v8-tip{display:none!important}
+
+/* app-like: no pinch / double-tap zoom, no rubber-band, no text-size jumps; fields stay 16px so iOS never zooms on focus */
+html:root:root{touch-action:manipulation;-webkit-text-size-adjust:100%;text-size-adjust:100%}
+html:root:root body{overscroll-behavior-y:none}
+@media (pointer:coarse){
+  html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]),html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) select,html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) textarea{font-size:16px!important}
+}
