@@ -21699,6 +21699,13 @@ html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):
 html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) .cx-tree button,html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) .tabs > button,html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) [role="tablist"] > *,html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) .v8-tabs > button,html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) .rs-tab{flex:0 0 auto}
 @media (max-width:760px){html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) .cx-tree button{white-space:nowrap!important;overflow-wrap:normal!important;word-break:normal!important}}
 
+/* notice letterhead on very narrow phones: the name block keeps room, the notice number drops under it */
+@media (max-width:400px){
+  html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) .v8-paper header{flex-wrap:wrap!important}
+  html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) .v8-paper header > div:not(.v8-paper-no){min-width:min(150px,100%)!important;flex:1 1 150px!important}
+  html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) .v8-paper header .v8-paper-no{flex:1 1 100%!important;text-align:left!important}
+}
+
 </style>
 <script data-ui="portal.js">
 /* =====================================================================
