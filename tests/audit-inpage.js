@@ -25,6 +25,11 @@
       if (!vis(el)) return;
       ['placeholder', 'title', 'aria-label'].forEach(a => { const v = el.getAttribute(a); if (v && BN.test(v)) out.push({ where, kind: a, text: v.slice(0, 300), at: path(el) }); });
     });
+    document.querySelectorAll('[data-l],[data-n],[data-label],[data-tip],[data-s],[data-c],img[alt]').forEach(el => {
+      if (!vis(el)) return;
+      ['data-l', 'data-n', 'data-label', 'data-tip', 'data-s', 'data-c', 'alt'].forEach(a => { const v = el.getAttribute(a); if (v && BN.test(v)) out.push({ where, kind: a, text: v.slice(0, 300), at: path(el) }); });
+      ['::before', '::after'].forEach(ps => { const c = getComputedStyle(el, ps).content; if (c && BN.test(c)) out.push({ where, kind: 'pseudo' + ps, text: c.slice(0, 200), at: path(el) }); });
+    });
     document.querySelectorAll('select').forEach(s => { if (!vis(s)) return; [...s.options].forEach(o => { if (BN.test(o.textContent)) out.push({ where, kind: 'option', text: o.textContent.trim().slice(0, 300), at: path(s), user: isUser(o.textContent.trim()) }); }); });
     if (BN.test(document.title)) out.push({ where, kind: 'doc-title', text: document.title, at: 'title' });
     return out;

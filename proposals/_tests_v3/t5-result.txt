@@ -1,0 +1,77 @@
+✓ mentor, student and office can all write in the class group
+✓ @mention suggestions appear
+✓ mention stored on the message
+✓ Ayaan sees the group message live
+✓ Raisa sees the group message live
+✓ owner sees the group message live
+✓ Ayaan: mention notification / highlight
+✓ Ayaan: his @name is highlighted in the bubble
+✓ group message read by Ayaan, Raisa and the office
+✓ mentor sees read ticks
+✓ message info: read by whom + time (Sent Today at 20:06 / READ BY 3 OF 5)
+✓ reply from student (button), student (double-click), office (menu) and mentor: STU-1001>MEN-01, STU-1004>MEN-01, U:office>MEN-01, MEN-01>STU-1001
+✓ quoted reply bubbles shown
+✓ tapping a quote jumps to and highlights the original
+✓ reaction from Ayaan shows on the mentor’s screen
+✓ pinned message bar visible to the student
+✓ starred messages list
+✓ search inside the chat highlights matches
+✓ group info: members with online state + roles, media tabs, mute
+✓ forward to a private chat
+✓ edited label reaches the student
+✓ delete for everyone
+✓ sender names in colour in groups
+✓ scroll-to-newest button when scrolled up
+✓ Chat Monitor is read-only
+✓ monitor opening logged
+✓ phone: chat list first
+✓ phone: chat full screen with back button
+✓ phone: swipe right on a message starts a reply
+✓ phone: back to the list
+✓ mentor started the live class (lobby → join)
+✓ student: “Live now” in the bell
+✓ student: live-started notification + toast
+✓ student: Join bar + pinned live card in the class chat
+✓ student dashboard: Live-now strip with Join
+✓ mentor grid shows both student tabs
+✓ grid adapts to 3 people
+✓ raised hand shows on the mentor’s grid
+✓ reaction floats up for everyone
+✓ in-call chat message is in the class group chat
+✓ mentor’s in-call chat = group chat history
+✓ people panel: hand queue + who has not joined
+✓ host lowered the student’s hand
+✓ whiteboard opened by host for everyone
+✓ whiteboard stroke synced to the student
+✓ poll: student vote counted live
+✓ REC indicator visible to the student
+✓ SCH.ATT for G1 today: joined = P, others = A, by mentor, lesson = title
+✓ attendance write logged
+✓ system message “Class ended · 2 present · recording saved” in the group chat
+✓ recording saved: 808 KB
+✓ recording card posted in the class chat
+✓ student sees “The host ended the class”
+✓ owner tab: the attendance arrived (Attendance pages)
+✓ attendance page opens
+✓ absent students get a “you missed it · recording ready” notification
+✓ recording listed in Recordings with attendance
+✓ student profile shows the live class + recording
+✓ homework set by the mentor is posted into the class group chat
+✓ students notified about the homework
+✓ payment verified → receipt message to the student
+✓ student bell: Payment received
+✓ marks published → private result message to the student
+✓ class note sent by the mentor → private message to the student
+✓ Watch Together started → Join card in the class chat
+✓ student question with timestamp appears in the chat thread
+✓ profile tree: Message · Call · Watch together actions
+✓ profile → Message opens the private chat
+✓ AI tool who_missed_live_class → ["Mehnaz Sultana","Yusuf Chowdhury"]
+✓ AI can read messages (recent_messages + DEMO.CHAT collection)
+✓ AI live_status tool
+✓ sidebar Messages badge with @ for mentions
+✓ bell sheet lists mentions + unread messages
+✓ My Day: today’s classes get a “Go live” action
+✓ no page errors []
+
+75/75 passed

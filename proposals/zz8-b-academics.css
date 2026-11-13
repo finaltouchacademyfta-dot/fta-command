@@ -1,0 +1,163 @@
+/* =====================================================================
+   FTA · Premium Light "Onyx & Gold" · reviewer B polish (demo layer only)
+   Pages: Academics (classes, attendance, exams, online exams, routine,
+   teachers, progress, calendar, reports), Notices, Expenses, Accounts,
+   Loans, Reports, Activity, Notes, Settings, Approvals, Logins, Roles,
+   Data safety, and the forms/sheets opened from them.
+   Removes cream/beige/navy/purple leftovers, unifies inputs, tables,
+   pills, tiles, charts and sheets. Scope: Premium Light only. Loads after zz7.
+   ===================================================================== */
+
+/* ---------- 1. ink: navy text leftovers (#0E1A2F) -> near-black ---------- */
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view :is(.kpi,.kpi .kh,.kpi b,.kpi strong){color:#111111!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view .kpi :is(small,.sub){color:#555555!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #sheet{color:#111111!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #sheet :is(h1,h2,h3,h4,b,strong,label,.fld > label){color:#111111!important;-webkit-text-fill-color:currentColor!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #sheet :is(small,.sub,.hint,.help,p){color:#555555!important}
+
+/* ---------- 2. KPI tiles: the 30px gold stub becomes a centred foil tab ---------- */
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view .kpis > .kpi::before{left:18px!important;right:18px!important;width:auto!important;top:0!important;height:2px!important;border-radius:0 0 2px 2px!important;background:linear-gradient(90deg,transparent,#B8893A 18%,#F1D79B 50%,#B8893A 82%,transparent)!important;opacity:1!important}
+
+/* ---------- 3. tables: pure white rows, neutral head, crisp lines ---------- */
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view :is(.tw,.tw.cards,.tbl-wrap){background:#FFFFFF!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view :is(table tbody tr,table tbody tr.click){background:#FFFFFF!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view table tbody td{background:transparent!important;border-bottom-color:#ECEBE7!important;color:#111111}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view table tbody tr:hover td{background:#FBF8F0!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view table th{background:#F7F7F5!important;color:#555555!important;letter-spacing:.08em}
+
+/* ---------- 4. inputs, selects, textareas (pages and sheets) ---------- */
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body :is(#view,#sheet) :is(input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]):not([type=color]):not(.v8-ps-i):not(.v8-ps input),select,textarea){background:#FFFFFF!important;background-image:none!important;border:1px solid #D4D2CC!important;color:#111111!important;box-shadow:inset 0 1px 2px rgba(0,0,0,.04),0 1px 0 rgba(255,255,255,.9)!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body :is(#view,#sheet) select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%237A5A12' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E")!important;background-repeat:no-repeat!important;background-position:right 12px center!important;padding-right:34px!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body :is(#view,#sheet) select[multiple]{background-image:none!important;padding-right:12px!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body :is(#view,#sheet) :is(input,select,textarea)::placeholder{color:#8A8984!important;opacity:1}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body :is(#view,#sheet) :is(input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]):not(.v8-ps-i):not(.v8-ps input),select,textarea):hover{border-color:#C4C1B9!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body :is(#view,#sheet) :is(input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]):not(.v8-ps-i):not(.v8-ps input),select,textarea):focus{border-color:#C9A24D!important;box-shadow:0 0 0 3px rgba(201,162,77,.18),inset 0 1px 2px rgba(0,0,0,.03)!important;outline:none!important}
+/* list search pill */
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view .v8-ps{background:#FFFFFF!important;border:1px solid #D4D2CC!important;box-shadow:inset 0 1px 2px rgba(0,0,0,.04)!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view .v8-ps:focus-within{border-color:#C9A24D!important;box-shadow:0 0 0 3px rgba(201,162,77,.18)!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view .v8-ps :is(svg,svg *){color:#7A5A12!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view#view .v8-ps :is(input,.v8-ps-i),html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view#view .v8-ps :is(input,.v8-ps-i):is(:hover,:focus){background:transparent!important;border:0!important;box-shadow:none!important;color:#111111!important;outline:none!important}
+/* month picker trigger */
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body :is(#view,#sheet) .v8-mp-b{background:#FFFFFF!important;border:1px solid #D4D2CC!important;box-shadow:inset 0 1px 2px rgba(0,0,0,.04)!important;color:#111111!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body :is(#view,#sheet) .v8-mp-ic{background:linear-gradient(180deg,#2A2A2A,#0E0E0E)!important;border:1px solid rgba(231,199,127,.5)!important;color:#E7C77F!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body :is(#view,#sheet) .v8-mp-ic :is(svg,svg *){color:#E7C77F!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body :is(#view,#sheet) .v8-mp-t small{color:#555555!important}
+/* reconciliation row: input no longer slides under the Match key */
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view .alloc > input{min-width:0!important;width:100%!important;box-sizing:border-box!important}
+
+/* ---------- 5. info / "in plain words" notes: white card with a gold rule ---------- */
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view :is(.note,.note.info,.easy){background:#FFFFFF!important;background-image:none!important;border:1px solid #E5E4E0!important;border-left:3px solid #C9A24D!important;color:#2B2B2B!important;box-shadow:0 1px 2px rgba(0,0,0,.04),0 8px 18px -14px rgba(0,0,0,.25)!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view :is(.note,.easy) :is(b,strong,h3,h4){color:#111111!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view :is(.note,.easy) > svg.i,html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view :is(.note,.easy) svg.i{color:#9A7428!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #sheet :is(.note,.note.info,.easy){background:#FFFFFF!important;background-image:none!important;border:1px solid #E5E4E0!important;border-left:3px solid #C9A24D!important;color:#2B2B2B!important}
+
+/* ---------- 6. status pills: green/red stay; blue info becomes neutral ink; amber becomes gold ---------- */
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body :is(#view,#sheet) .pill.p-info{background:#F0EFEC!important;color:#2B2B2B!important;border-color:#DCDAD4!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body :is(#view,#sheet) .pill.p-info::before{background:#555555!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body :is(#view,#sheet) .pill.p-warn{background:#F7EFD9!important;color:#6E500E!important;border-color:#E6D3A2!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body :is(#view,#sheet) .pill.p-warn::before{background:#B8893A!important}
+
+/* ---------- 7. tab counts and calendar day numbers ---------- */
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view :is(.chips,.seg,.v8-seg) > button .n{background:#F0EFEC!important;border:1px solid #DFDDD7!important;color:#555555!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view :is(.chips,.seg,.v8-seg) > button.on .n{background:#111111!important;border-color:#111111!important;color:#E7C77F!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view .v8-seg{background:#EFEFEC!important;border:1px solid #E5E4E0!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view .v8-seg > button.on{background:#FFFFFF!important;color:#111111!important;box-shadow:0 1px 0 #fff inset,0 2px 0 #DDDBD5,0 4px 8px -6px rgba(0,0,0,.3)!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view .cal-d .n{background:transparent!important;border:0!important;box-shadow:none!important;padding:0!important;color:#111111!important;font-weight:700!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view .cal-d.today .n,html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view .cal-d[aria-current] .n{color:#7A5A12!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view .cal-d{background:#FFFFFF!important;border:1px solid #E5E4E0!important;box-shadow:0 1px 0 #EFEEEA!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view .cal-d:not(.off):hover{border-color:#C9A24D!important;box-shadow:0 0 0 3px rgba(201,162,77,.12)!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view .cal-d.off{background:transparent!important;border-color:transparent!important;box-shadow:none!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view .cal-d small{color:#555555!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view :is(.cal-leg,.cal-d) i.leave{background:#2A2A2A!important;border-color:#2A2A2A!important}
+
+/* ---------- 8. charts: navy and purple series become onyx and warm grey ---------- */
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view :is(.card,.xc,.xdn,.xdn-r){--sapphire:#2B2B2B;--amethyst:#8C8A84;--c2:#2B2B2B;--c5:#2B2B2B;--z-dial-a:#FFFFFF;--z-dial-b:#F2F2EF;--z-dial-line:rgba(0,0,0,.08);--z-ring-lo:rgba(0,0,0,.18)}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view .xdn .xtrack{stroke:#EEEDE9!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view .xdn .xdn-c b{color:#111111!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view .xdn .xdn-c :is(small,span){color:#555555!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view .xc .xg text{fill:#6B6A66!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view .xc .xg line{stroke:#ECEBE7!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view .xc .xg line.base{stroke:#D4D2CC!important}
+
+/* ---------- 9. progress tracks ---------- */
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view :is(.sc-bar,.track,u.track){background:#ECEBE7!important}
+
+/* ---------- 10. avatars: onyx coin, gold initials ---------- */
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view .v8-av{background:linear-gradient(180deg,#2A2A2A,#0E0E0E)!important;color:#E7C77F!important;-webkit-text-fill-color:#E7C77F!important;border:1px solid rgba(231,199,127,.5)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 2px 0 rgba(0,0,0,.12)!important;text-shadow:none!important}
+
+/* ---------- 11. tiles: teachers, roles, notes, report launchers, notice kinds ---------- */
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view :is(.sc-tile,.ncard){background:#FFFFFF!important;background-image:none!important;border:1px solid #E5E4E0!important;box-shadow:var(--ox-raise)!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view :is(.sc-tile,.ncard):hover{box-shadow:var(--ox-raise-hi)!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view .sc-tile.on{border-color:#C9A24D!important;box-shadow:0 0 0 3px rgba(201,162,77,.16),var(--ox-raise)!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view .ncard.pin{border-top:3px solid #C9A24D!important}
+/* report launchers */
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view .qa > button{background:#FFFFFF!important;background-image:none!important;border:1px solid #E5E4E0!important;box-shadow:var(--ox-raise)!important;color:#111111!important;transition:box-shadow .18s ease,transform .18s ease,border-color .18s ease}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view .qa > button:hover{box-shadow:var(--ox-raise-hi)!important;border-color:#D8C59A!important;transform:translateY(-1px)}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view .qa > button:focus-visible{outline:2px solid #C9A24D!important;outline-offset:2px}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view .qa > button > svg.i{background:linear-gradient(180deg,#2A2A2A,#0E0E0E)!important;border:1px solid rgba(231,199,127,.5)!important;color:#E7C77F!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 3px 0 rgba(0,0,0,.14),0 8px 14px -8px rgba(0,0,0,.4)!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view .qa > button > svg.i *{color:#E7C77F!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view .qa > button small{color:#555555!important}
+/* notice kinds */
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view .v8-types > button{background:#FFFFFF!important;background-image:none!important;border:1px solid #E5E4E0!important;box-shadow:0 1px 0 #fff inset,0 2px 0 #E8E6E0,0 6px 12px -10px rgba(0,0,0,.25)!important;color:#111111!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view .v8-types > button:hover{border-color:#D8C59A!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view .v8-types > button > svg.i{background:#F4F4F2!important;border:1px solid #E5E4E0!important;color:#7A5A12!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view .v8-types > button.on{background:#FFFFFF!important;border:1.5px solid #C9A24D!important;box-shadow:0 0 0 3px rgba(201,162,77,.16),0 2px 0 #E2D6B8!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view .v8-types > button.on > svg.i{background:linear-gradient(180deg,#2A2A2A,#0E0E0E)!important;border-color:rgba(231,199,127,.55)!important;color:#E7C77F!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view .v8-types > button.on > svg.i *{color:#E7C77F!important}
+
+/* ---------- 12. permission ticks: onyx key with a gold tick (no gold fill) ---------- */
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view .sc-chk{background:#FFFFFF!important;border:1.5px solid #C9C6BE!important;box-shadow:inset 0 1px 2px rgba(0,0,0,.05)!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view .sc-chk:hover{border-color:#C9A24D!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view .sc-chk[aria-checked="true"]{background:linear-gradient(180deg,#2E2E2E,#121212)!important;border-color:#121212!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 2px 0 rgba(0,0,0,.2)!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view .sc-chk[aria-checked="true"] svg :is(path,polyline){stroke:#E7C77F!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view .sc-chk:focus-visible{outline:2px solid #C9A24D!important;outline-offset:2px}
+
+/* ---------- 13. empty states and misc ---------- */
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view .empty{background:#FAFAF8!important;background-image:none!important;border:1px dashed #D4D2CC!important;color:#555555!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view .empty :is(svg,svg *){color:#B8893A!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view .logo{border-color:#E5E4E0!important}
+
+/* ---------- 14. sheets / forms ---------- */
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #sheet{background:#FFFFFF!important;background-image:none!important;border:1px solid #E5E4E0!important;box-shadow:0 1px 0 rgba(255,255,255,.9) inset,0 4px 0 #DAD7CF,0 40px 80px -30px rgba(0,0,0,.55)!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #sheet .sh{background:#FFFFFF!important;background-image:none!important;border-bottom:1px solid #ECEBE7!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #sheet .sh :is(.eye,small,[class*="eye"]){color:#7A5A12!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #sheet :is(.acts,.sb,.sf,.sheet-f,.foot){background:#FAFAF8!important;background-image:none!important;border-top:1px solid #ECEBE7!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #sheet input[type=file]{color:#555555!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #sheet input[type=file]::file-selector-button{background:#FFFFFF!important;border:1px solid #D4D2CC!important;border-radius:9px;color:#111111!important;box-shadow:0 2px 0 #DDDBD5!important;padding:6px 12px;margin-right:10px;font-weight:600}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #sheet .sh .x{background:#FFFFFF!important;border:1px solid #D4D2CC!important;color:#111111!important;box-shadow:0 2px 0 #E2E0DA!important}
+/* donut dial gradient lives in the global defs: neutral white-grey, no cream */
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #zz-defs{--z-dial-a:#FFFFFF;--z-dial-b:#F1F1EE;--z-dial-line:rgba(0,0,0,.08)}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view .xc svg text:not(.xg text){fill:#3A3A3A}
+/* desktop tables: an empty action cell was hidden and the money cell forced to
+   block, which shifted "Entered by" under the wrong header (expenses, loans) */
+@media (min-width:1101px){
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view .tw.cards tr td.act:empty{display:table-cell!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view .tw.cards tbody td{vertical-align:middle!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view .tw.cards tr td.mz-td.mz-td:not(.r):not(.act):not(:first-child){display:table-cell!important}
+}
+/* weekly routine: seven narrow columns, keep session times on one line */
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view .rt-wk{gap:8px!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view .rt-col{padding:9px 8px!important;background:#FAFAF8!important;border:1px solid #E5E4E0!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view .rt-col.today{background:#FFFFFF!important;border:1.5px solid #C9A24D!important;box-shadow:0 0 0 3px rgba(201,162,77,.12)!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view .rt-it{padding:9px 8px!important;background:#FFFFFF!important;border:1px solid #E5E4E0!important;box-shadow:0 1px 0 #fff inset,0 2px 0 #E8E6E0,0 6px 12px -10px rgba(0,0,0,.25)!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view .rt-it:hover{border-color:#C9A24D!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view .rt-it .t{white-space:nowrap!important;font-size:11px!important;letter-spacing:-.01em!important;color:#7A5A12!important;font-variant-numeric:tabular-nums}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view .rt-it small{color:#555555!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #sheet :has(> input[type=file]){background:#FAFAF8!important;border-color:#D4D2CC!important}
+/* settings > documents: kind picker matches the notice-kind tiles */
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view .dz-kinds > button{background:#FFFFFF!important;background-image:none!important;border:1px solid #E5E4E0!important;color:#111111!important;box-shadow:0 1px 0 #fff inset,0 2px 0 #E8E6E0,0 6px 12px -10px rgba(0,0,0,.25)!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view .dz-kinds > button:hover{border-color:#D8C59A!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view .dz-kinds > button svg.i{color:#7A5A12!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view .dz-kinds > button.on{background:#FFFFFF!important;background-image:none!important;border:1.5px solid #C9A24D!important;box-shadow:0 0 0 3px rgba(201,162,77,.16),0 2px 0 #E2D6B8!important}
+/* notices > circles: one icon coin for every circle (was beige/red/green), readable member chips */
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view .v8-ci-ic{background:transparent!important;border:0!important;box-shadow:none!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view .v8-ci-ic > svg.i{background:linear-gradient(180deg,#2A2A2A,#0E0E0E)!important;border:1px solid rgba(231,199,127,.5)!important;color:#E7C77F!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 3px 0 rgba(0,0,0,.14),0 8px 14px -8px rgba(0,0,0,.4)!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view .v8-ci-ic :is(svg,svg *){color:#E7C77F!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view .v8-ci-av > span{background:#F4F4F2!important;color:#2B2B2B!important;border:2px solid #FFFFFF!important;box-shadow:0 0 0 1px #DCDAD4!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view .v8-ci-av > span.more{background:#111111!important;color:#E7C77F!important;-webkit-text-fill-color:#E7C77F!important;box-shadow:0 0 0 1px #111111!important}
+/* notice preview paper: gold labels dark enough to read */
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view :is(.v8-paper-kind,.v8-paper [class*="kind"]){color:#7A5A12!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view .v8-paper-no > span:first-child{color:#7A5A12!important;border-color:#B8893A!important}
+@media (max-width:1399px){
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view .rt-it .t{white-space:normal!important}
+}

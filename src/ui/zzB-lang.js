@@ -116,17 +116,40 @@
   }
 
   /* titles, aria-labels and placeholders (also on the root containers, which the main pass skips) */
-  const ATTRS = ['title', 'aria-label', 'placeholder'];
+  const ATTRS = ['title', 'aria-label', 'placeholder', 'data-l', 'data-n', 'data-label', 'data-tip', 'alt', 'data-s', 'data-c'];
+  const ATTR_SEL = ATTRS.map(a => '[' + a + ']').join(',');
+  const HAS_BN = /[\u0980-\u09FF]/, HAS_LA = /[A-Za-z]{2,}/;
+  const touched = new Set();
+  /* back to English: put every attribute we translated back to its original text */
+  function restoreAttrs() {
+    touched.forEach(el => {
+      for (const a of ATTRS) { const r = el['__bx_' + a]; if (r && el.getAttribute(a) === r.out) el.setAttribute(a, r.o); }
+      if (el.__phO != null && el.getAttribute('placeholder') !== el.__phO) el.setAttribute('placeholder', el.__phO);
+    });
+    touched.clear();
+  }
+  /* donut charts keep their legend labels in a JSON attribute */
+  function fixSegs() {
+    document.querySelectorAll('[data-segs]').forEach(el => {
+      try {
+        if (!el.__segO) el.__segO = el.getAttribute('data-segs');
+        const a = JSON.parse(el.__segO); a.forEach(x => { if (x && typeof x[0] === 'string') x[0] = tr(x[0]); });
+        const out = JSON.stringify(a); if (el.getAttribute('data-segs') !== out) el.setAttribute('data-segs', out);
+      } catch (e) { }
+    });
+  }
   function fixAttrs() {
-    document.querySelectorAll('[title],[aria-label],[placeholder]').forEach(el => {
+    try { fixSegs(); } catch (e) { }
+    document.querySelectorAll(ATTR_SEL).forEach(el => {
       if (el.closest('[data-notx]')) return;
       for (const a of ATTRS) {
-        const v = el.getAttribute(a); if (!v || !/[A-Za-z]{2,}/.test(v)) continue;
+        const v = el.getAttribute(a); if (!v) continue;
         const K = '__bx_' + a, rec = el[K];
+        if (!((LANG === 'bn' ? HAS_LA : HAS_BN).test(v) || (rec && rec.out === v))) continue;
         const orig = rec && rec.out === v ? rec.o : v;
         const out = tr(orig);
         if (out !== v) el.setAttribute(a, out);
-        el[K] = { o: orig, out };
+        el[K] = { o: orig, out }; touched.add(el);
       }
     });
   }
@@ -138,7 +161,8 @@
     const _txAll2 = txAll;
     txAll = function () {
       const r = _txAll2.apply(this, arguments);
-      if (LANG !== 'bn' || TX_BUSY) return r;
+      if (TX_BUSY) return r;
+      if (LANG !== 'bn') { try { MO.disconnect(); fixAttrs(); } catch (e) { } finally { try { MO.observe(document.body, { childList: true, subtree: true }); } catch (e) { } } return r; }
       try { MO.disconnect(); fixAttrs(); } catch (e) { } finally { try { MO.observe(document.body, { childList: true, subtree: true }); } catch (e) { } }
       const panel = document.getElementById('fa-panel') || document.body;
       const mine = [...document.querySelectorAll('#fa-panel .ag-u')];
@@ -146,7 +170,7 @@
         MO.disconnect();
         mine.forEach(e => e.setAttribute('data-notx', ''));
         applyTx(document.body);
-        panel.querySelectorAll('[placeholder]').forEach(el => { const v = el.getAttribute('placeholder'); if (!el.__phO) el.__phO = v; const o = tr(el.__phO); if (o !== v) el.setAttribute('placeholder', o); });
+        panel.querySelectorAll('[placeholder]').forEach(el => { const v = el.getAttribute('placeholder'); if (el.__phO == null) el.__phO = v; touched.add(el); const o = tr(el.__phO); if (o !== v) el.setAttribute('placeholder', o); });
       } catch (e) { }
       finally { mine.forEach(e => e.removeAttribute('data-notx')); try { MO.observe(document.body, { childList: true, subtree: true }); } catch (e) { } }
       return r;
@@ -157,8 +181,8 @@
   /* attributes set by script after a node exists do not trigger the text observer: watch them too */
   let aq = 0;
   try {
-    new MutationObserver(() => { if (LANG !== 'bn' || aq) return; aq = requestAnimationFrame(() => { aq = 0; try { fixAttrs(); } catch (e) { } }); })
-      .observe(document.body, { attributes: true, subtree: true, attributeFilter: ['title', 'aria-label', 'placeholder'] });
+    new MutationObserver(() => { if (aq) return; aq = requestAnimationFrame(() => { aq = 0; try { fixAttrs(); } catch (e) { } }); })
+      .observe(document.body, { attributes: true, subtree: true, attributeFilter: ATTRS });
   } catch (e) { }
 
   // 4 · Language page: drop the Mixed tile, two-column grid

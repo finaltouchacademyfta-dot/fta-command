@@ -1,0 +1,153 @@
+/* =====================================================================
+   FTA · Premium Light "Onyx & Gold" polish, reviewer C (demo layer only)
+   Scope: Connect pages (Profiles, Messages, Live class, Watch Together,
+   Recordings, Chat monitor), the Mentor and Student portals, and phone views.
+   Premium Light only (midnight + light). Dark themes, lux and qit are untouched.
+   The live-class video stage stays dark on purpose, like Google Meet.
+   ===================================================================== */
+
+/* ---------- chat tokens: near-black ink, neutral greys, gold only as accent ---------- */
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body :is(#cx-root .zc-wa,.zc-pop,.zc-modal,#zc-toasts){
+  --ink:#111111;--muted:#555555;
+  --zc-ink:#111111;--zc-mu:#555555;--zc-g:#7A5A12;--zc-ln:#E5E4E0;
+  --zc-s1:#FFFFFF;--zc-s2:#F4F4F2;--zc-gs:rgba(201,162,77,.14);--zc-gf:rgba(201,162,77,.06);
+  --zc-me:#FBF6EA;--zc-them:#FFFFFF;color:#111111}
+
+/* chat shell: clean white panes on a neutral wallpaper */
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #cx-root .zc-wa{background:#FFFFFF!important;border:1px solid #E5E4E0!important;box-shadow:0 1px 0 #FFFFFF inset,0 1px 2px rgba(0,0,0,.05),0 3px 0 #E4E2DC,0 14px 28px -18px rgba(0,0,0,.28)!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #cx-root .zc-side{background:#FFFFFF!important;border-right:1px solid #E5E4E0!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #cx-root .zc-main{background:#EEEDE9!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #cx-root .zc-body{background-color:#EEEDE9!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #cx-root :is(.zc-hd,.zc-sbar,.zc-comp,#zc-top .zc-monote){background:#FFFFFF!important;border-color:#E5E4E0!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #cx-root .zc-hd{box-shadow:0 1px 0 #E5E4E0,0 6px 14px -12px rgba(0,0,0,.25)!important}
+
+/* clear near-black text everywhere in chat (old navy ink removed) */
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #cx-root .zc-wa :is(.zc-sh b,.zc-ri,.zc-rt,.zc-r1,.zc-r1 b,.zc-r2,.zc-ht,.zc-ht b,.zc-b,.zc-tx,#zc-rt,.zc-fab){color:#111111!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #cx-root .zc-wa :is(.zc-r2 small,.zc-ht small,#zc-sub,.zc-monote,.zc-meta){color:#555555!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #cx-root .zc-wa .zc-r1 time{color:#666666!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #cx-root .zc-wa .zc-ri.unread .zc-r1 time{color:#7A5A12!important;font-weight:700}
+
+/* icon keys: neutral graphite, gold on hover */
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #cx-root .zc-wa :is(.zc-ib,.zc-ab){color:#4A4A4A!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #cx-root .zc-wa :is(.zc-ib,.zc-ab):hover{color:#7A5A12!important;background:rgba(201,162,77,.10)!important}
+
+/* person avatars: onyx coin with gold initials (no random colours) */
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body :is(#view,.zc-pop,.zc-modal,.pt-modal) .zc-av:not(.zc-gav){background:linear-gradient(180deg,#2A2A2A,#0E0E0E)!important;color:#E7C77F!important;box-shadow:inset 0 0 0 1px rgba(231,199,127,.55),inset 0 1px 0 rgba(255,255,255,.12),0 4px 10px -6px rgba(0,0,0,.45)!important;text-shadow:none!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body :is(#view,.zc-pop,.zc-modal,.pt-modal) .zc-av:not(.zc-gav) :is(span,svg,b){color:#E7C77F!important;-webkit-text-fill-color:#E7C77F!important}
+/* group avatars: white coin, gold ring, gold-ink icon */
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body :is(#view,.zc-pop,.zc-modal) .zc-av.zc-gav{background:linear-gradient(180deg,#FFFFFF,#F6F6F4)!important;color:#7A5A12!important;box-shadow:inset 0 0 0 1px rgba(201,162,77,.6),0 2px 0 #E4E2DC!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body :is(#view,.zc-pop,.zc-modal) .zc-av.zc-gav svg{color:#7A5A12!important}
+
+/* chat list rows */
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #cx-root .zc-ri:hover{background:#F6F6F4!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #cx-root .zc-ri.on{background:linear-gradient(90deg,rgba(201,162,77,.12),rgba(201,162,77,.03))!important;box-shadow:inset 3px 0 0 #C9A24D!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #cx-root :is(.zc-ub,#zc-fabn:not(:empty)){background:linear-gradient(180deg,#2A2A2A,#0E0E0E)!important;color:#F1D79B!important;border:1px solid rgba(231,199,127,.5)!important}
+
+/* search fields and composer: neutral wells, gold focus */
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #cx-root :is(.zc-ss,.zc-inw){background:#F4F4F2!important;border:1px solid #E5E4E0!important;box-shadow:inset 0 1px 2px rgba(0,0,0,.04)!important;color:#555555!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #cx-root :is(.zc-ss,.zc-inw):focus-within{background:#FFFFFF!important;border-color:#C9A24D!important;box-shadow:0 0 0 3px rgba(201,162,77,.16)!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #cx-root :is(.zc-ss input,.zc-inw textarea,.zc-sbar input)::placeholder{color:#6B6B6B!important}
+
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #cx-root#cx-root#cx-root :is(.zc-ss,.zc-inw,.zc-sbar) :is(input,textarea),html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #cx-root#cx-root#cx-root :is(.zc-ss,.zc-inw,.zc-sbar) :is(input,textarea):focus{background:transparent!important;background-image:none!important;border:0!important;box-shadow:none!important;outline:none!important}
+
+/* filter chips: white keys, onyx when on */
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #cx-root .zc-chips > button{background:#FFFFFF!important;border:1px solid #D4D2CC!important;color:#2B2B2B!important;box-shadow:0 1px 0 #E4E2DC!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #cx-root .zc-chips > button:hover{border-color:#C9A24D!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #cx-root .zc-chips > button.on{background:linear-gradient(180deg,#2E2E2E,#121212)!important;border-color:rgba(231,199,127,.55)!important;color:#F1D79B!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 2px 0 #000000!important}
+
+/* send and mic: onyx keys with gold icons */
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #cx-root .zc-send{background:linear-gradient(180deg,#2E2E2E,#121212)!important;border:1px solid rgba(231,199,127,.55)!important;color:#E7C77F!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 3px 0 #000000,0 8px 14px -8px rgba(0,0,0,.45)!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #cx-root .zc-send svg{color:#E7C77F!important}
+
+/* bubbles: white for others, soft gold tint for me; crisp edge + ledge */
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #cx-root .zc-row.them .zc-b{background:#FFFFFF!important;border-color:#E2E0DA!important;box-shadow:0 1px 0 #DAD7CF,0 8px 16px -12px rgba(0,0,0,.28)!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #cx-root .zc-row.me .zc-b{background:#FBF6EA!important;border-color:rgba(201,162,77,.45)!important;box-shadow:0 1px 0 #E6D9B8,0 8px 16px -12px rgba(0,0,0,.28)!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #cx-root .zc-nm{color:#7A5A12!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #cx-root .zc-nm small{color:#666666!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #cx-root .zc-day span{background:#FFFFFF!important;color:#555555!important;border:1px solid #E5E4E0!important;box-shadow:0 1px 0 #E4E2DC!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #cx-root .zc-newdiv{background:rgba(255,255,255,.75)!important;border-top:1px solid rgba(201,162,77,.35)!important;border-bottom:1px solid rgba(201,162,77,.35)!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #cx-root .zc-newdiv span{color:#7A5A12!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #cx-root .zc-drop{background:rgba(244,244,242,.92)!important;color:#7A5A12!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #cx-root .zc-wave i{background:rgba(60,60,60,.45)!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #cx-root .zc-fab{background:#FFFFFF!important;border:1px solid #D4D2CC!important;box-shadow:0 2px 0 #DDDBD5,0 8px 16px -10px rgba(0,0,0,.35)!important}
+
+/* ---------- page notes on Connect pages and portals: white card, gold edge ---------- */
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view :is(.cx-demo,.note.info,.pt-note){background:#FFFFFF!important;border:1px solid #E5E4E0!important;border-left:3px solid #C9A24D!important;color:#2B2B2B!important;box-shadow:0 1px 0 #FFFFFF inset,0 2px 0 #E4E2DC,0 10px 22px -18px rgba(0,0,0,.28)!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body .pt-modal .pt-note{background:#FFFFFF!important;border:1px solid #E5E4E0!important;border-left:3px solid #C9A24D!important;color:#2B2B2B!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body :is(#view,.pt-modal) :is(.cx-demo,.note.info,.pt-note) :is(p,span){color:#2B2B2B!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body :is(#view,.pt-modal) :is(.cx-demo,.note.info,.pt-note) b{color:#111111!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body :is(#view,.pt-modal) :is(.note.info,.pt-note) svg{color:#7A5A12!important}
+
+/* slider quote signature: readable gold on onyx */
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view .page > section.banner .rs-q cite{color:#E7C77F!important;-webkit-text-fill-color:#E7C77F!important}
+
+/* ---------- Live class ---------- */
+/* primary "Start class" / join keys: onyx with gold words (no gold fills) */
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view :is(.zl-btn.p,.zl-join):not(:disabled){background:linear-gradient(180deg,#2E2E2E,#121212)!important;color:#F1D79B!important;border:1px solid rgba(231,199,127,.55)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 3px 0 #000000,0 10px 18px -10px rgba(0,0,0,.5)!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view :is(.zl-btn.p,.zl-join):not(:disabled) :is(svg,span){color:#E7C77F!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view :is(.zl-btn.p,.zl-join):not(:disabled):hover{border-color:#E7C77F!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 3px 0 #000000,0 0 0 3px rgba(231,199,127,.14),0 12px 20px -10px rgba(0,0,0,.55)!important}
+/* secondary keys on white */
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body :is(#view,.pt-modal) .zl-btn:not(.p):not(:disabled){background:linear-gradient(180deg,#FFFFFF,#F6F6F4)!important;border:1px solid #D4D2CC!important;color:#111111!important;box-shadow:inset 0 1px 0 #FFFFFF,0 2px 0 #DDDBD5,0 6px 12px -10px rgba(0,0,0,.3)!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body :is(#view,.pt-modal) .zl-btn:not(.p):not(:disabled):hover{border-color:#C9A24D!important}
+/* class cards: same white 3D card as the rest of the app */
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view .zl-card{background:#FFFFFF!important;border:1px solid #E5E4E0!important;box-shadow:0 1px 0 #FFFFFF inset,0 1px 2px rgba(0,0,0,.05),0 3px 0 #E4E2DC,0 14px 28px -18px rgba(0,0,0,.28)!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view .zl-card dt{color:#555555!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view .zl-card dd{color:#111111!important}
+/* lobby preview stays dark like Meet; its caption must be readable */
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view .zl-prev :is(#zl-pvt,.zl-pvav p){color:#E8EAED!important;-webkit-text-fill-color:#E8EAED!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view .zl-prev{border:1px solid rgba(231,199,127,.28)!important;box-shadow:0 4px 0 #000000,0 24px 44px -22px rgba(0,0,0,.6)!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view .zl-ready h2{color:#111111!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view .zl-ready :is(.zl-who,.zl-hint){color:#3A3A3A!important}
+
+/* ---------- Watch Together / Recordings thumbnails: onyx, not navy ---------- */
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view .cx-wthumb:not([style*="url"]){background:radial-gradient(70% 90% at 70% 20%,rgba(231,199,127,.22),transparent 60%),linear-gradient(160deg,#262626,#0B0B0B)!important;border:1px solid rgba(231,199,127,.35)!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view .cx-wthumb:not([style*="url"])::after{border-color:transparent transparent transparent #E7C77F!important;opacity:1!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view .cx-ws{border:1px solid #E5E4E0!important;box-shadow:0 2px 0 #E4E2DC!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view .cx-ws:hover{border-color:#C9A24D!important}
+
+/* ---------- Profile tree modal: neutral backdrop, white header ---------- */
+/* bug fix: the small ".pt-lock" label rule (opacity .75) also hit <html class="pt-lock">
+   while a tree modal is open, washing the whole screen out. Keep the page fully opaque. */
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8).pt-lock{opacity:1!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body .pt-back{background:rgba(8,8,8,.52)!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body .pt-modal .pt-mh{background:#FFFFFF!important;border-bottom:1px solid #E5E4E0!important;box-shadow:inset 0 -1px 0 #FFFFFF,0 6px 14px -12px rgba(0,0,0,.25)!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body .pt-modal .pt-eyebrow{color:#555555!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body :is(#view,.pt-modal) .pt-legend li{color:#3A3A3A!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body :is(#view,.pt-modal) .zc-pact{background:#FFFFFF!important;border:1px solid #E5E4E0!important;box-shadow:0 2px 0 #E4E2DC!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body :is(#view,.pt-modal) .zc-pact > span{color:#3A3A3A!important}
+
+/* tree person crest: onyx coin with gold initials, same as chat avatars */
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body :is(#view,.pt-modal) .pt-av > span{background:radial-gradient(circle at 35% 28%,#3A3A3A,#121212 70%)!important;color:#E7C77F!important;-webkit-text-fill-color:#E7C77F!important;border-color:#FFFFFF!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body :is(#view,.pt-modal) .pt-av{background:conic-gradient(from 210deg,#9A7428,#F1D79B,#9A7428,#E7C77F,#9A7428)!important}
+
+/* ---------- Portals ---------- */
+/* notice icons: one family (onyx coin, gold glyph) instead of red/purple/blue */
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view .v8-nt .v8-nt-ic svg.i{background:linear-gradient(180deg,#2A2A2A,#0E0E0E)!important;color:#E7C77F!important;border:1px solid rgba(231,199,127,.5)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 3px 0 rgba(0,0,0,.14),0 8px 14px -8px rgba(0,0,0,.4)!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view .v8-nt .v8-nt-ic svg.i *{color:#E7C77F!important}
+/* circle names on notices: keep each circle's tone, deepened so it reads on white */
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view .v9j-from b{color:color-mix(in srgb,var(--tone,#7A5A12) 62%,#000000)!important}
+/* small gold-filled marks become onyx with gold words */
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view .v8-new{background:linear-gradient(180deg,#2A2A2A,#0E0E0E)!important;color:#F1D79B!important;border:1px solid rgba(231,199,127,.45)!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view .v8-cd.today .v8-dn{background:linear-gradient(180deg,#2A2A2A,#0E0E0E)!important;color:#F1D79B!important;box-shadow:inset 0 0 0 1px rgba(231,199,127,.55)!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view .v8-av{background:linear-gradient(180deg,#2A2A2A,#0E0E0E)!important;color:#E7C77F!important;-webkit-text-fill-color:#E7C77F!important;box-shadow:inset 0 0 0 1px rgba(231,199,127,.55),0 4px 10px -6px rgba(0,0,0,.45)!important}
+/* "at a glance" tiles and pay rows: clean white, no cream wash */
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view .card .sc-tile{background:linear-gradient(180deg,#FFFFFF,#FAFAF8)!important;border:1px solid #E5E4E0!important;box-shadow:0 1px 0 #FFFFFF inset,0 2px 0 #E4E2DC,0 8px 16px -14px rgba(0,0,0,.28)!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view .card .sc-tile:hover{border-color:#C9A24D!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view .mz-row{background:#FAFAF8!important;border-color:#E5E4E0!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view .mz-top > div{background:#FAFAF8!important;border-color:#E5E4E0!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view .mz-top > div.pend{background:#FFFFFF!important;border-color:#C9A24D!important;box-shadow:inset 0 0 0 1px rgba(201,162,77,.25)!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view .v9j-c{background:#FAFAF8!important;border-color:#E5E4E0!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view .v9f-cal{background:linear-gradient(180deg,#FFFFFF,#F6F6F4)!important;border:1px solid #D4D2CC!important;color:#111111!important;box-shadow:0 2px 0 #DDDBD5!important}
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view .sc-att{background:#EFEFEC!important;border-color:#E5E4E0!important}
+/* notification count on the bell: onyx, not navy */
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #top #ndot{background:linear-gradient(180deg,#2A2A2A,#0E0E0E)!important;color:#F1D79B!important;border:1px solid rgba(231,199,127,.6)!important}
+/* charts: onyx series line instead of navy */
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view .xc{--d-accent:#1A1A1A;--c2:#2B2B2B;--fx-c2:#2B2B2B}
+
+/* ---------- phone ---------- */
+/* the Add label under the centre key reads like its neighbours */
+html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #bnav .mn-qa .qa-l{background:transparent!important;border:0!important;box-shadow:none!important;color:#111111!important;font-weight:700!important}
+@media (max-width:760px){
+  html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #cx-root .zc-wa{border-radius:16px!important}
+  html[data-skin="midnight"][data-theme="light"][data-skin]:root:root:root:not(#z1):not(#z2):not(#z3):not(#z4):not(#z5):not(#z6):not(#z7):not(#z8) body #view .zl-prev{box-shadow:0 3px 0 #000000,0 16px 30px -18px rgba(0,0,0,.6)!important}
+}

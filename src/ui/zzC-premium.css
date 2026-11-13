@@ -1,0 +1,132 @@
+/* =====================================================================
+   FTA · premium polish layer (zzC). Visual refinement only: no layout,
+   data or behaviour changes. Loaded last so it sits on top of every skin.
+   ===================================================================== */
+:root{--pm-ease:cubic-bezier(.22,.8,.24,1);--pm-gold:#C9A659;--pm-gold-soft:rgba(201,166,89,.28)}
+
+/* 1 · sidebar: the collapse/pin button sat on top of the portal name */
+html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #side .brand .pinb{width:24px!important;height:24px!important;min-width:0!important;top:7px!important;right:8px!important;border-radius:8px!important;opacity:.55;transition:opacity .2s var(--pm-ease),background-color .2s var(--pm-ease)}
+html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #side .brand:hover .pinb,html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #side .brand .pinb:focus-visible{opacity:1}
+html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #side .brand > div:not(.logo){padding-top:10px!important;padding-right:4px!important}
+
+/* 2 · phone bottom bar: every label on the same baseline */
+@media (max-width:820px){
+  html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #bnav > button{display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:flex-end!important;gap:3px!important;padding-top:6px!important;padding-bottom:7px!important;line-height:1.15!important;-webkit-tap-highlight-color:transparent}
+  html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #bnav > button svg.i{flex:0 0 auto}
+  html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #bnav > button.mn-qa{justify-content:flex-end!important}
+  html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #bnav > button.mn-qa .qa-l{line-height:1.15!important;margin:0!important}
+  html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #bnav > button:active svg.i{transform:scale(.88)}
+  html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #bnav > button svg.i{transition:transform .18s var(--pm-ease)}
+}
+
+
+/* 4 · cards: softer depth, a gold hairline on hover, smooth motion */
+html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #view .card,html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #view .kpi,html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #view .cc-k button.cck{transition:transform .28s var(--pm-ease),box-shadow .28s var(--pm-ease),border-color .28s var(--pm-ease)}
+@media (hover:hover) and (pointer:fine){
+  html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #view .kpi:hover,html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #view .cc-k button.cck:hover{transform:translateY(-3px);box-shadow:0 18px 38px -18px rgba(60,40,8,.38),0 0 0 1px var(--pm-gold-soft)!important}
+  html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #view .card:hover{box-shadow:0 14px 34px -20px rgba(60,40,8,.30),0 0 0 1px rgba(201,166,89,.16)!important}
+}
+
+/* 5 · money & figures: even digits, no jitter while values change */
+html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #view .num,html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #view .kv,html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #view .fg.num,html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #view td.n,html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #view .n{font-variant-numeric:tabular-nums lining-nums;font-feature-settings:"tnum" 1,"lnum" 1}
+
+/* 6 · buttons: tactile press, clear gold focus ring (keyboard only) */
+html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #view .btn,html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #top button,html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #sheet .btn{transition:transform .16s var(--pm-ease),box-shadow .2s var(--pm-ease),background-color .2s var(--pm-ease),border-color .2s var(--pm-ease)}
+html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #view .btn:active,html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #top button:active,html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #sheet .btn:active{transform:translateY(1px) scale(.985)}
+html:root:root:root :is(button,a,input,select,textarea,[tabindex]):focus-visible{outline:2px solid var(--pm-gold)!important;outline-offset:2px!important;border-radius:inherit}
+
+/* 7 · toast & sheet: glass, rounder, softer */
+
+/* 9 · thin gold scrollbars on desktop */
+@media (hover:hover) and (pointer:fine){
+  html:root:root{scrollbar-width:thin;scrollbar-color:rgba(176,122,40,.45) transparent}
+  html:root:root ::-webkit-scrollbar{width:10px;height:10px}
+  html:root:root ::-webkit-scrollbar-thumb{background:rgba(176,122,40,.38);border-radius:10px;border:3px solid transparent;background-clip:content-box}
+  html:root:root ::-webkit-scrollbar-thumb:hover{background:rgba(176,122,40,.6);background-clip:content-box;border:3px solid transparent}
+}
+
+/* 10 · selection colour in brand gold */
+::selection{background:rgba(201,166,89,.32)}
+
+@media (prefers-reduced-motion:reduce){
+  html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #view > *{animation:none!important}
+  html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #view .kpi:hover,html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #view .cc-k button.cck:hover{transform:none}
+}
+
+/* modal: dim + soft blur behind the card */
+html:root:root:root #ov:not([hidden]){backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+
+/* =====================================================================
+   Collapsed rail (menu unpinned): icons centred and whole, no cut labels
+   ===================================================================== */
+@media (min-width:821px){
+  html:root:root:root:root:root body:not(.side-pin):not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #side:not(:hover) #sidenav{padding:8px 6px 12px!important;gap:8px!important;align-items:stretch!important}
+  html:root:root:root:root:root body:not(.side-pin):not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #side:not(:hover) #sidenav .navg{padding:6px 0!important;margin:0!important;display:flex!important;flex-direction:column!important;align-items:center!important;width:100%!important;box-sizing:border-box!important;overflow:visible!important}
+  html:root:root:root:root:root body:not(.side-pin):not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #side:not(:hover):not(#q1):not(#q2):not(#q3) #sidenav .navg > h6{font-size:0!important;line-height:0!important;letter-spacing:0!important;height:2px!important;width:22px!important;margin:2px auto 6px!important;padding:0!important;border-radius:2px!important;background:linear-gradient(90deg,transparent,rgba(201,166,89,.7),transparent)!important;overflow:hidden!important;color:transparent!important}
+  html:root:root:root:root:root body:not(.side-pin):not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #side:not(:hover) #sidenav .navg > h6 *{display:none!important}
+  html:root:root:root:root:root body:not(.side-pin):not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #side:not(:hover) #sidenav .navg .nav{width:100%!important;max-width:none!important;min-width:0!important;padding:4px 0!important;margin:1px 0!important;display:flex!important;justify-content:center!important;align-items:center!important;gap:0!important;box-sizing:border-box!important;min-height:44px!important;height:auto!important}
+  html:root:root:root:root:root body:not(.side-pin):not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #side:not(:hover) #sidenav .nav > svg.i{margin:0!important;flex:0 0 36px!important}
+  html:root:root:root:root:root body:not(.side-pin):not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #side:not(:hover) #sidenav .nav > .l,html:root:root:root:root:root body:not(.side-pin):not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #side:not(:hover) #sidenav .nav > .bdg,html:root:root:root:root:root body:not(.side-pin):not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #side:not(:hover) #sidenav .nav > .b,html:root:root:root:root:root body:not(.side-pin):not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #side:not(:hover) #sidenav .nav > em{display:none!important}
+  html:root:root:root:root:root body:not(.side-pin):not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #side:not(:hover) #sidenav .nav{position:relative!important}
+  html:root:root:root:root:root body:not(.side-pin):not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #side:not(:hover) #sidenav .nav.on{background:transparent!important;box-shadow:none!important}
+  html:root:root:root:root:root body:not(.side-pin):not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #side:not(:hover) #sidenav .nav.on > svg.i{box-shadow:0 0 0 2px rgba(201,166,89,.85),0 6px 14px -4px rgba(0,0,0,.45)!important}
+}
+
+/* =====================================================================
+   Premium motion on the menu (transform/opacity only, colours untouched)
+   ===================================================================== */
+@media (hover:hover) and (pointer:fine){
+  html:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #side #sidenav .nav > svg.i{transition:transform .32s cubic-bezier(.34,1.56,.64,1),box-shadow .25s ease!important}
+  html:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #side #sidenav .nav:hover > svg.i{transform:scale(1.1) rotate(-3deg)}
+  html:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #side #sidenav .nav > .l{transition:transform .3s cubic-bezier(.22,.8,.24,1)}
+  html:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #side #sidenav .nav:hover > .l{transform:translateX(3px)}
+  html:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #top button:hover svg,html:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #top button:hover .ic{transform:scale(1.08)}
+  html:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #top button svg{transition:transform .28s cubic-bezier(.34,1.56,.64,1)}
+}
+@keyframes pmLabelIn{from{opacity:0;transform:translateX(-6px)}to{opacity:1;transform:none}}
+html:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #side:hover #sidenav .nav > .l{animation:pmLabelIn .32s cubic-bezier(.22,.8,.24,1) both}
+@keyframes pmDot{0%,100%{transform:scale(1)}50%{transform:scale(1.35)}}
+html:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #top .dot,html:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #top .cnt{animation:pmDot 2.6s ease-in-out infinite}
+@media (prefers-reduced-motion:reduce){html:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #side #sidenav .nav > .l{animation:none!important}html:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #top .dot,html:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #top .cnt{animation:none!important}}
+
+/* the little name tooltip is only for the collapsed rail; hide it when the menu is already open */
+html:root:root body.side-pin #v8-tip,html:root:root #side:hover ~ #v8-tip{display:none!important}
+
+/* app-like: no pinch / double-tap zoom, no rubber-band, no text-size jumps; fields stay 16px so iOS never zooms on focus */
+html:root:root{touch-action:manipulation;-webkit-text-size-adjust:100%;text-size-adjust:100%}
+html:root:root body{overscroll-behavior-y:none}
+@media (pointer:coarse){
+  html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]),html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) select,html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) textarea{font-size:16px!important}
+}
+
+/* month picker: quick-choice buttons must never squeeze into one-letter columns, and the row must not stretch tall */
+html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) .v8-pop-b{grid-auto-rows:min-content!important;align-content:start!important}
+@media (max-width:640px){
+  html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) .v8-pre{align-self:start!important;align-items:flex-start!important;flex-wrap:nowrap!important;height:auto!important;max-height:none!important;overflow-x:auto!important;overflow-y:hidden!important;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+  html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) .v8-pre::-webkit-scrollbar{display:none}
+}
+html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) .v8-pre button{flex:0 0 auto!important;white-space:nowrap!important;overflow-wrap:normal!important;word-break:normal!important;min-width:max-content}
+
+/* horizontally scrolling tab rows: tabs keep their natural width, the row scrolls (never one-letter columns) */
+html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) .cx-tree button,html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) .tabs > button,html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) [role="tablist"] > *,html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) .v8-tabs > button,html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) .rs-tab{flex:0 0 auto}
+@media (max-width:760px){html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) .cx-tree button{white-space:nowrap!important;overflow-wrap:normal!important;word-break:normal!important}}
+
+/* notice letterhead on very narrow phones: the name block keeps room, the notice number drops under it */
+@media (max-width:400px){
+  html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) .v8-paper header{flex-wrap:wrap!important}
+  html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) .v8-paper header > div:not(.v8-paper-no){min-width:min(150px,100%)!important;flex:1 1 150px!important}
+  html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) .v8-paper header .v8-paper-no{flex:1 1 100%!important;text-align:left!important}
+}
+
+/* phone top bar: menu + logo on the left, actions on the right edge, never a floating cluster */
+@media (max-width:820px){
+  html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #top .top-r{width:100%!important;justify-content:flex-start!important}
+  html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #top .top-r > #ttl{display:block!important;flex:1 1 0!important;min-width:0!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important}
+  html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #top .top-r > #ttl:empty{visibility:hidden}
+}
+
+/* bottom menu: gliding highlight pill under the active tab (moved by zzD-motion.js) */
+html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #bnav{position:fixed}
+html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #bnav > i.pm-pill{position:absolute;left:0;top:5px;bottom:5px;width:0;border-radius:18px;pointer-events:none;z-index:0;background:linear-gradient(180deg,rgba(201,166,89,.26),rgba(201,166,89,.10));box-shadow:inset 0 0 0 1px rgba(201,166,89,.45),0 6px 14px -8px rgba(120,84,20,.55);will-change:transform,width}
+html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #bnav > button{position:relative;z-index:1}
+html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #bnav > button.on::after{display:none!important}

@@ -60,6 +60,8 @@ if MODE != 'demo':
     assert src.count(t0) >= 1
     src = src.replace(t0, '<title>Final Touch Academy · FTA</title>', 1)
 if MODE != 'demo': head_inject += '<script src="config.js"></script>\n<script src="vendor/supabase.js"></script>\n'
+VP = 'width=device-width,initial-scale=1,viewport-fit=cover'
+src = src.replace('content="' + VP + '"', 'content="' + VP + ',maximum-scale=1,minimum-scale=1,user-scalable=no"').replace('content=' + VP, 'content="' + VP + ',maximum-scale=1,minimum-scale=1,user-scalable=no"')
 src = src.replace('<head>', '<head>\n' + head_inject, 1) if '<head>' in src else head_inject + src
 end = '\n<style id="prod-theme">\n' + tcss + '\n</style>\n<script>\n' + rd('prod-fix.js') + '\n;\n' + rd('prod-theme.js') + '\n</script>\n'
 if MODE != 'demo': end += '<script>\n' + rd('prod-data.js') + '\n</script>\n<style id="prod-push">\n' + rd('prod-push.css') + '\n</style>\n<script>\n' + rd('prod-push.js') + '\n</script>\n' + '<style id="prod-agent">\n' + rd('prod-agent.css') + '\n</style>\n<script>\n' + rd('prod-agent.js') + '\n</script>\n'
@@ -67,8 +69,8 @@ if MODE != 'demo': end += '<script>\n' + rd('prod-data.js') + '\n</script>\n<sty
 # same files and order as the owner-approved preview (9 Nov 2026); Class status + Messages are classroom.js (no paid video service); Watch / Recordings are not included
 UI = os.path.join(ROOT, 'src', 'ui')
 UI_CSS = ['portal.css', 'profile-tree.css', 'ui-luxe.css', 'zz1-visual.css', 'zz2-light.css', 'zz3-connect.css', 'zz4-royal-light.css', 'zz5-clear-ink.css',
-          'zz6-restore-slider.css', 'zz7-onyx-gold.css', 'zz8-a-finance.css', 'zz8-b-academics.css', 'zz8-c-connect.css', 'receipt-maker.css', 'classroom.css', 'student-times.css', 'zz9-fit.css', 'zzA-brand.css', 'zzB-lang.css']
-UI_JS = ['portal.js', 'profile-tree.js', 'ui-luxe.js', 'zz1-visual.js', 'zz2-light.js', 'receipt-maker.js', 'classroom.js', 'student-times.js', 'zz9-english.js', 'zz9-fit.js', 'zzA-brand.js', 'zzB-lang.js']
+          'zz6-restore-slider.css', 'zz7-onyx-gold.css', 'zz8-a-finance.css', 'zz8-b-academics.css', 'zz8-c-connect.css', 'receipt-maker.css', 'classroom.css', 'student-times.css', 'zz9-fit.css', 'zzA-brand.css', 'zzB-lang.css', 'zzC-premium.css']
+UI_JS = ['portal.js', 'profile-tree.js', 'ui-luxe.js', 'zz1-visual.js', 'zz2-light.js', 'receipt-maker.js', 'classroom.js', 'student-times.js', 'zz9-english.js', 'zz9-fit.js', 'zzA-brand.js', 'zzB-lang.js', 'zzD-motion.js']
 import glob
 UI_JS += sorted(os.path.basename(x) for x in glob.glob(os.path.join(UI, 'zzB-bn-*.js')))
 ui_rd = lambda f: open(os.path.join(UI, f), encoding='utf8').read()
