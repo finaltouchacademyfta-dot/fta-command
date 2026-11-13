@@ -17,11 +17,8 @@ html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):
   html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #bnav > button.mn-qa .qa-l{line-height:1.15!important;margin:0!important}
   html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #bnav > button:active svg.i{transform:scale(.88)}
   html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #bnav > button svg.i{transition:transform .18s var(--pm-ease)}
-  html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #bnav{backdrop-filter:blur(18px) saturate(1.25)!important;-webkit-backdrop-filter:blur(18px) saturate(1.25)!important}
 }
 
-/* 3 · frosted top bar */
-html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #top{backdrop-filter:blur(16px) saturate(1.2)!important;-webkit-backdrop-filter:blur(16px) saturate(1.2)!important}
 
 /* 4 · cards: softer depth, a gold hairline on hover, smooth motion */
 html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #view .card,html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #view .kpi,html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #view .cc-k button.cck{transition:transform .28s var(--pm-ease),box-shadow .28s var(--pm-ease),border-color .28s var(--pm-ease)}
@@ -39,15 +36,6 @@ html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):
 html:root:root:root :is(button,a,input,select,textarea,[tabindex]):focus-visible{outline:2px solid var(--pm-gold)!important;outline-offset:2px!important;border-radius:inherit}
 
 /* 7 · toast & sheet: glass, rounder, softer */
-html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #toast > *{backdrop-filter:blur(14px) saturate(1.2);-webkit-backdrop-filter:blur(14px) saturate(1.2);border-radius:16px}
-html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #sheet{backdrop-filter:blur(2px)}
-
-/* 8 · page change: a short fade-up (skipped when the person prefers less motion) */
-@keyframes pmIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #view > *{animation:pmIn .42s var(--pm-ease) both}
-html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #view > *:nth-child(2){animation-delay:.04s}
-html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #view > *:nth-child(3){animation-delay:.08s}
-html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #view > *:nth-child(n+4){animation-delay:.12s}
 
 /* 9 · thin gold scrollbars on desktop */
 @media (hover:hover) and (pointer:fine){
@@ -64,3 +52,6 @@ html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):
   html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #view > *{animation:none!important}
   html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #view .kpi:hover,html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #view .cc-k button.cck:hover{transform:none}
 }
+
+/* modal: dim + soft blur behind the card */
+html:root:root:root #ov:not([hidden]){backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}

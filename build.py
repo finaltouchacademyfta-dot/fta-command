@@ -68,7 +68,7 @@ if MODE != 'demo': end += '<script>\n' + rd('prod-data.js') + '\n</script>\n<sty
 UI = os.path.join(ROOT, 'src', 'ui')
 UI_CSS = ['portal.css', 'profile-tree.css', 'ui-luxe.css', 'zz1-visual.css', 'zz2-light.css', 'zz3-connect.css', 'zz4-royal-light.css', 'zz5-clear-ink.css',
           'zz6-restore-slider.css', 'zz7-onyx-gold.css', 'zz8-a-finance.css', 'zz8-b-academics.css', 'zz8-c-connect.css', 'receipt-maker.css', 'classroom.css', 'student-times.css', 'zz9-fit.css', 'zzA-brand.css', 'zzB-lang.css', 'zzC-premium.css']
-UI_JS = ['portal.js', 'profile-tree.js', 'ui-luxe.js', 'zz1-visual.js', 'zz2-light.js', 'receipt-maker.js', 'classroom.js', 'student-times.js', 'zz9-english.js', 'zz9-fit.js', 'zzA-brand.js', 'zzB-lang.js']
+UI_JS = ['portal.js', 'profile-tree.js', 'ui-luxe.js', 'zz1-visual.js', 'zz2-light.js', 'receipt-maker.js', 'classroom.js', 'student-times.js', 'zz9-english.js', 'zz9-fit.js', 'zzA-brand.js', 'zzB-lang.js', 'zzD-motion.js']
 import glob
 UI_JS += sorted(os.path.basename(x) for x in glob.glob(os.path.join(UI, 'zzB-bn-*.js')))
 ui_rd = lambda f: open(os.path.join(UI, f), encoding='utf8').read()
