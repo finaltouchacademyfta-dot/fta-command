@@ -125,7 +125,7 @@
 
 /* bottom menu (phone): a highlight pill glides under the active tab with spring physics, and the icon pops */
 (function () {
-  let pill = null, cx = null, cw = null, sx = null, sw = null, lastKey = '';
+  let pill = null, cx = null, cw = null, sx = null, sw = null, lastKey = '', tx = 0, tw = 0;
   const reduce = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
   function spring1(from, to, tick, K, C) {
     let x = from, v = 0, last = performance.now(), dead = false;
@@ -141,6 +141,17 @@
     if (pill.parentNode !== bar) bar.insertBefore(pill, bar.firstChild);
   }
   function paint() { pill.style.width = cw + 'px'; pill.style.transform = 'translateX(' + cx + 'px)'; }
+  function glide(b, x, w, key) {
+    lastKey = key; tx = x; tw = w; sx && sx.stop(); sw && sw.stop();
+    /* stretch like a drop of liquid: the edge in the direction of travel races ahead, the other edge follows */
+    let L = cx, R = cx + cw; const L2 = x, R2 = x + w, right = L2 >= L;
+    const KL = right ? 230 : 560, CL = right ? 22 : 33, KR = right ? 560 : 230, CR = right ? 33 : 22;
+    const apply = () => { cx = L; cw = Math.max(18, R - L); paint(); };
+    sx = spring1(L, L2, v => { L = v; apply(); }, KL, CL);
+    sw = spring1(R, R2, v => { R = v; apply(); }, KR, CR);
+    const ic = b.querySelector('svg.i');
+    if (ic) { const t0 = performance.now(); (function s(now) { const t = Math.min(1, (now - t0) / 420); const k = 1 + .22 * Math.exp(-5 * t) * Math.cos(t * 11); ic.style.scale = t < 1 ? k.toFixed(3) : ''; ic.style.translate = t < 1 ? '0 ' + (-3 * Math.exp(-5 * t) * Math.cos(t * 11)).toFixed(2) + 'px' : ''; if (t < 1) requestAnimationFrame(s); })(t0); }
+  }
   function sync() {
     const bar = document.getElementById('bnav'); if (!bar) return;
     const b = bar.querySelector('button.on:not(.mn-qa)');
@@ -149,14 +160,17 @@
     const br = bar.getBoundingClientRect(), r = b.getBoundingClientRect(); if (!r.width) return;
     const x = r.left - br.left + 4, w = r.width - 8, key = b.getAttribute('data-go') || b.textContent;
     pill.style.opacity = '1';
-    if (cx === null || reduce()) { cx = x; cw = w; paint(); lastKey = key; return; }
-    if (key === lastKey) { if (Math.abs(x - cx) > .5 || Math.abs(w - cw) > .5) { sx && sx.stop(); sw && sw.stop(); cx = x; cw = w; paint(); } return; }
-    lastKey = key; sx && sx.stop(); sw && sw.stop();
-    sx = spring1(cx, x, v => { cx = v; paint(); }, 380, 28);
-    sw = spring1(cw, w, v => { cw = v; paint(); }, 380, 28);
-    const ic = b.querySelector('svg.i');
-    if (ic) { const t0 = performance.now(); (function s(now) { const t = Math.min(1, (now - t0) / 420); const k = 1 + .22 * Math.exp(-5 * t) * Math.cos(t * 11); ic.style.scale = t < 1 ? k.toFixed(3) : ''; ic.style.translate = t < 1 ? '0 ' + (-3 * Math.exp(-5 * t) * Math.cos(t * 11)).toFixed(2) + 'px' : ''; if (t < 1) requestAnimationFrame(s); })(t0); }
+    if (cx === null || reduce()) { cx = x; cw = w; tx = x; tw = w; paint(); lastKey = key; return; }
+    if (key === lastKey) { if (Math.abs(x - tx) > .5 || Math.abs(w - tw) > .5) { sx && sx.stop(); sw && sw.stop(); cx = x; cw = w; tx = x; tw = w; paint(); } return; }
+    glide(b, x, w, key);
   }
+  /* start gliding the instant the finger lifts, before the page behind has finished rebuilding */
+  document.addEventListener('click', e => {
+    const b = e.target.closest && e.target.closest('#bnav > button:not(.mn-qa)'); if (!b || reduce() || cx === null) return;
+    const bar = document.getElementById('bnav'), br = bar.getBoundingClientRect(), r = b.getBoundingClientRect(), key = b.getAttribute('data-go') || b.textContent;
+    if (!r.width || key === lastKey) return; ensure(bar); pill.style.opacity = '1';
+    glide(b, r.left - br.left + 4, r.width - 8, key);
+  }, true);
   let q = 0; const sched = () => { if (!q) q = requestAnimationFrame(() => { q = 0; sync(); }); };
   function boot() {
     const bar = document.getElementById('bnav'); if (!bar || bar.__pmp) return; bar.__pmp = 1;
