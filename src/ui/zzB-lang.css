@@ -1,0 +1,11 @@
+/* zzB · two languages only (English / Bangla). Self-hosted Kalpurush answers for Bangla glyphs wherever
+   the existing font stacks already name 'Noto Sans Bengali' - so no existing typography rule is touched.
+   Weights above 500 keep the real Noto Sans Bengali bold from the existing stylesheet. */
+@font-face{font-family:'Noto Sans Bengali';font-style:normal;font-weight:100 500;font-display:swap;
+  src:url(fonts/kalpurush.woff2) format('woff2');
+  unicode-range:U+0951-0952,U+0964-0965,U+0980-09FE,U+1CD0,U+1CD2,U+1CD5-1CD6,U+1CD8,U+1CE1,U+1CEA,U+1CED,U+1CF2,U+1CF5-1CF7,U+200C-200D,U+20B9,U+25CC,U+A8F1}
+@font-face{font-family:'Kalpurush';font-style:normal;font-weight:400;font-display:swap;
+  src:url(fonts/kalpurush.woff2) format('woff2');
+  unicode-range:U+0951-0952,U+0964-0965,U+0980-09FE,U+1CD0,U+1CD2,U+1CD5-1CD6,U+1CD8,U+1CE1,U+1CEA,U+1CED,U+1CF2,U+1CF5-1CF7,U+200C-200D,U+20B9,U+25CC,U+A8F1}
+/* the Language page now holds two choices */
+.sc-grid.fta-two{grid-template-columns:repeat(2,minmax(0,1fr))!important}

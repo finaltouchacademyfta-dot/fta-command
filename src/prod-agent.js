@@ -126,7 +126,14 @@ HOW THIS ACADEMY APP WORKS (Final Touch Academy · FTA Command Centre · money i
 - Settings: ORG (academy name, address…), SCH.PERM (permissions per role: letters v=view a=add e=edit d=delete p=approve per page key), UISET/DOCSET/MSGSET, lists (EXP_CATS, PAY_METHODS…).
 - People who sign in: Owner, Admin, Junior Admin, Finance Manager, Collection Staff, Viewer (office) — added with SCH.staffForm; Mentors and Students sign in with Google using the e-mail saved on their record.
 - Deleting moves things to SCH.BIN (Recycle bin, restorable for 30 days). Every action is written to the Activity log (AUDIT).
-- Data is saved automatically to the server; the server checks permissions again for every change.`;
+- Data is saved automatically to the server; the server checks permissions again for every change.
+NEWER PARTS OF THE APP (Nov 2026)
+- Receipt Maker (page rc-maker): issued receipts FTA.RCPT and salary slips FTA.RCSAL (id = the printed number, e.g. FTA-2026-0001); shared settings FTA.RCSET record 'main'. Issue only through the page: open_page rc-maker, then call_app_function FTA_RECEIPT.doc('receipt'|'salary'), FTA_RECEIPT.pick('STU-…' or 'MEN-…'), set the draft with FTA_RECEIPT._rm().d.receipt (name, single.amt, single.desc, date…), then FTA_RECEIPT.issue(false). The number comes from the server and is never reused; an issued document is never edited or deleted — to cancel use FTA_RECEIPT.voidAsk(no) (the Owner writes the reason). Needs the internet.
+- Class status (pages cx-live / tp-live / sp-live): FTA.CLSLIVE sessions {gid, stu?, status On/Off, start, end, link}. FTA_CLASSROOM.running(), FTA_CLASSROOM.dayRows() (today against the routine), FTA_CLASSROOM.endClass(id) ends a class left running. Mentors start / end their own classes.
+- Messages (cx-chat): FTA.MSG {room, by, text, at}. room 'g:<groupId>' = class group, 'dm:<a>|<b>' = two people sorted alphabetically, the office is 'U:office'. The Owner writes as the office: create_record in MSG with {id:'M'+time, room:'dm:<MEN-or-STU-id>|U:office' (sorted), by:'U:office', text}. Mentor ↔ student chats are read-only for the office. Kept 6 months.
+- Per-student class times: SCH.RT entries with stu:['STU-…'] are one student's own class (day, start, end, gid). V9J.add(stuId, groupId) opens the window to add one; V9J.form(stuId) shows all of a student's times. A student with no RT entry for a group has "No class time yet".
+- Mentor slot requests: FTA.SLOTREQ {mentor, stu, when, status Pending/Approved/Declined} — approve on the Profiles page (cx-people, the mentor's Profile Tree).
+- Privacy rules the server enforces: mentors never receive students' phone / Gmail / address; students never receive mentors' contacts.`;
   function systemPrompt() {
     const cols = visibleCols().map(c => { const f = Object.keys(fieldsOf(c, 40)).filter(k => k[0] !== '_').slice(0, 18); return '- ' + c.name + ' [' + c.kind + (c.key ? ', key ' + c.key : '') + '] ' + count(c) + ' rows' + (f.length ? ': ' + f.join(', ') : ''); }).join('\n');
     const mem = MEM().filter(m => m.kind !== 'shape' && m.kind !== 'task').slice(0, 120).map(m => '- [' + m.id + '] (' + m.kind + ') ' + m.text).join('\n');
@@ -645,8 +652,8 @@ ${tasks ? '\nRECENT TASKS YOU DID\n' + tasks : ''}`;
     if (v.t === 'card') return cardHtml(v, i);
     return '';
   }
-  const HELLO = `<div class="fa-hello"><b>Hi! I can run the whole app for you.</b><p>Tell me what you want — in English or বাংলা. I look things up on my own, and before I save anything I show you a card to approve.</p></div>`;
-  const CHIPS = ['How much is due this month?', 'Students without a mentor', 'নতুন mentor entry করো', 'Show this month’s income and expenses', 'What did you learn about us?'];
+  const HELLO = `<div class="fa-hello"><b>Hi! I can run the whole app for you.</b><p>Tell me what you want — in English or Bangla. I look things up on my own, and before I save anything I show you a card to approve.</p></div>`;
+  const CHIPS = ['How much is due this month?', 'Students without a mentor', 'Add a new mentor', 'Show this month’s income and expenses', 'What did you learn about us?'];
   function draw() {
     const P = panelEl(); if (!P) return;
     const L = $id('fa-log');
@@ -667,7 +674,7 @@ ${tasks ? '\nRECENT TASKS YOU DID\n' + tasks : ''}`;
       <button type="button" class="fa-ib" id="fa-x" title="Close" aria-label="Close"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
       <div class="fa-log" id="fa-log" aria-live="polite"></div>
       <div class="fa-all" id="fa-all" hidden><button type="button" class="btn p" id="fa-allok"><span>Approve all</span></button><button type="button" class="btn" id="fa-allno">Skip all</button></div>
-      <form class="fa-in" id="fa-form"><textarea id="fa-q" rows="1" placeholder="Tell me what to do… (English / বাংলা)" aria-label="Message"></textarea>
+      <form class="fa-in" id="fa-form"><textarea id="fa-q" rows="1" placeholder="Tell me what to do…" aria-label="Message"></textarea>
       <button type="submit" class="btn p" id="fa-send" aria-label="Send"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
       <button type="button" class="btn" id="fa-stop" hidden>Stop</button></form>`;
     document.body.appendChild(P);

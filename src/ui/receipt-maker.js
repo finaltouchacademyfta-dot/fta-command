@@ -149,6 +149,7 @@
   /* ---------------------------------------------------------------- looks */
   const THEMES = {
     onyx: ['Onyx & Gold', '#1F1D1C', '#2B2724', '#B8892E', '#ECC978', '#8A6420', '#FAF5E9', '#EADFC4'],
+    ivory: ['Ivory & Gold', '#FFFDF8', '#FFF9EB', '#B8892E', '#D9A94A', '#8A6420', '#FBF5E4', '#E9D8A6'],
     navy: ['Royal Navy', '#0F1F3D', '#1C3463', '#B8892E', '#F1D79B', '#1C3463', '#EEF2F9', '#D6DEEC'],
     emerald: ['Emerald', '#0E3B2E', '#175A45', '#B8892E', '#F1D79B', '#0F5E3B', '#EDF5F1', '#CFE3D9'],
     mono: ['Print (black & white)', '#FFFFFF', '#FFFFFF', '#111111', '#111111', '#111111', '#F3F3F3', '#DDDDDD']
@@ -297,6 +298,187 @@ td.qty{width:80px}td.rate{width:120px}
 .period select{flex:1}
 .hide-print{}
 @media (max-width:700px){.top{grid-template-columns:1fr;text-align:left;padding:20px 18px}.logo{order:-1}.logo img{height:96px}.meta{text-align:left}.meta .kv{justify-content:flex-start}.body{padding:18px 16px}.cards{grid-template-columns:1fr}.sum{grid-template-columns:1fr}.pkg{grid-template-columns:1fr}.pkg .r{border-left:0;border-top:1px solid rgba(255,255,255,.12)}.bottom{flex-direction:column;align-items:stretch}.sign,.thanks{width:auto;max-width:none;text-align:left}.foot{padding:10px 16px;flex-direction:column}.f{grid-template-columns:100px 10px minmax(0,1fr)}td.amt{width:auto}.ar{grid-template-columns:minmax(0,1fr) 70px 58px 24px}.ar b{grid-column:1/-1;text-align:right}.wm span{font-size:70px}}
+
+/* hide ivory-only decorative elements on other themes */
+.paper:not(.ivory) > .body > .wm,
+.paper:not(.ivory) > .body > .ribbon{display:none}
+
+/* =====================================================================
+   IVORY & GOLD — premium white certificate style with gold filigree
+   Sample inspiration: formal payment-receipt card, cream background,
+   gold ornate corners, centered logo, gold ribbon receipt banner,
+   gold-bordered cards, gold table header, gold amount-paid highlight,
+   soft gold watermark. No dark bands anywhere.
+   ===================================================================== */
+.paper.ivory{
+  --band:#FFFDF8;--band2:#FFF9EB;--gold:#B8892E;--gold-hi:#D9A94A;--gold-deep:#8A6420;
+  --soft:#FBF5E4;--soft-line:#E9D8A6;--ink:#2B2008;
+  background:#FFFDF8;
+  border:2px solid var(--gold);
+  box-shadow:0 22px 48px -24px rgba(138,100,32,.35),inset 0 0 0 1px rgba(217,169,74,.35),inset 0 0 0 10px #FFFDF8,inset 0 0 0 11px var(--gold);
+  padding:14px;
+  border-radius:12px;
+}
+/* ornate gold corners — SVG filigree, one per corner */
+.paper.ivory::before,.paper.ivory::after{
+  content:"";position:absolute;width:68px;height:68px;background-repeat:no-repeat;background-size:contain;pointer-events:none;z-index:2;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><g fill='none' stroke='%23B8892E' stroke-width='1.6' stroke-linecap='round'><path d='M4 20V6h14'/><path d='M4 12h8'/><path d='M12 4v8'/><circle cx='6' cy='6' r='1.4' fill='%23B8892E'/><path d='M20 6c3 0 6 0 9 2' opacity='.6'/><path d='M6 20c0 3 0 6 2 9' opacity='.6'/></g></svg>");
+}
+.paper.ivory::before{top:16px;left:16px}
+.paper.ivory::after{top:16px;right:16px;transform:scaleX(-1)}
+/* add bottom corners via extra wrappers (use body for one, bottom for another) */
+.paper.ivory .body::before,.paper.ivory .body::after{
+  content:"";position:absolute;width:68px;height:68px;background-repeat:no-repeat;background-size:contain;pointer-events:none;z-index:2;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><g fill='none' stroke='%23B8892E' stroke-width='1.6' stroke-linecap='round'><path d='M4 20V6h14'/><path d='M4 12h8'/><path d='M12 4v8'/><circle cx='6' cy='6' r='1.4' fill='%23B8892E'/><path d='M20 6c3 0 6 0 9 2' opacity='.6'/><path d='M6 20c0 3 0 6 2 9' opacity='.6'/></g></svg>");
+}
+.paper.ivory .body{position:relative}
+.paper.ivory .body::before{bottom:-14px;left:-14px;transform:scaleY(-1)}
+.paper.ivory .body::after{bottom:-14px;right:-14px;transform:scale(-1,-1)}
+
+/* top header: white/ivory, centered layout, gold text, no dark gradient */
+.paper.ivory .top{
+  background:#FFFDF8 !important;
+  color:var(--ink) !important;
+  grid-template-columns:1fr !important;
+  text-align:center !important;
+  padding:34px 34px 10px !important;
+  border-bottom:0 !important;
+  gap:4px !important;
+}
+.paper.ivory .logo{display:flex;justify-content:center}
+.paper.ivory .logo img{height:92px !important;max-width:200px !important;-webkit-mask-image:none !important;mask-image:none !important}
+.paper.ivory .co{order:2;text-align:center}
+.paper.ivory .co .cname{font-family:Cinzel,Georgia,serif;font-size:28px;font-weight:700;letter-spacing:.12em;color:var(--gold-deep) !important;line-height:1.1;margin-top:6px}
+.paper.ivory .co .ctag{color:var(--gold-deep) !important;font-size:12px;letter-spacing:.14em;font-style:italic;text-transform:none;margin:4px 0 0;font-family:"Cormorant Garamond","Times New Roman",serif;font-weight:500}
+.paper.ivory .co .addr{display:none}
+/* meta (receipt no/date) moves to inside body as a two-column row */
+.paper.ivory .meta{order:3;text-align:center;margin-top:10px}
+.paper.ivory .meta .rt{display:none}
+.paper.ivory .meta .kv{justify-content:center !important;gap:12px}
+.paper.ivory .meta .kv small{color:var(--gold-deep) !important;font-style:italic;font-family:"Cormorant Garamond",Georgia,serif;font-size:13px}
+.paper.ivory .meta .kv b{color:var(--ink) !important;font-weight:600}
+.paper.ivory .meta .web{display:none}
+/* horizontal rule under "Education is an Amanah" */
+.paper.ivory .co::after{
+  content:"";display:block;width:60%;margin:8px auto 0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--gold) 20%,var(--gold) 80%,transparent);
+}
+
+/* PAYMENT RECEIPT ribbon banner — gold outline hexagon-ish shape */
+.paper.ivory .body{padding:10px 48px 32px !important}
+.paper.ivory .body::before,.paper.ivory .body::after{z-index:3}
+.paper.ivory .body > .ribbon{
+  display:flex;justify-content:center;margin:14px 0 20px;position:relative;
+}
+.paper.ivory .body > .ribbon::before,
+.paper.ivory .body > .ribbon::after{
+  content:"";position:absolute;top:50%;width:calc(50% - 170px);height:1px;background:linear-gradient(90deg,transparent,var(--gold));
+}
+.paper.ivory .body > .ribbon::before{left:0}
+.paper.ivory .body > .ribbon::after{right:0;background:linear-gradient(90deg,var(--gold),transparent)}
+.paper.ivory .body > .ribbon > .tag{
+  font-family:Cinzel,Georgia,serif;font-size:18px;font-weight:700;letter-spacing:.32em;
+  color:var(--gold-deep);padding:10px 36px;
+  background:#FFFDF8;border:2px solid var(--gold);
+  clip-path:polygon(20px 0,calc(100% - 20px) 0,100% 50%,calc(100% - 20px) 100%,20px 100%,0 50%);
+  position:relative;
+}
+
+/* Watermark FTA mark in the background */
+.paper.ivory .body{background:#FFFDF8;position:relative}
+.paper.ivory .body > .wm{
+  position:absolute;inset:0;display:grid;place-items:center;pointer-events:none;z-index:0;opacity:.06;
+}
+.paper.ivory .body > .wm img{width:320px;height:auto}
+.paper.ivory .body > *{position:relative;z-index:1}
+
+/* info cards: no gold gradient, just white with gold trim and gold section header */
+.paper.ivory .cards{gap:14px}
+.paper.ivory .card{
+  background:#FFFDF8 !important;border:1px solid var(--soft-line) !important;
+  border-radius:8px !important;box-shadow:none !important;padding:0 !important;
+}
+.paper.ivory .card h3{
+  background:transparent !important;color:var(--gold-deep) !important;
+  border-bottom:1px solid var(--gold) !important;margin:0 !important;
+  padding:10px 16px !important;font-size:11px !important;letter-spacing:.24em;
+}
+.paper.ivory .card > :not(h3){padding:10px 16px 14px}
+.paper.ivory .big{color:var(--ink) !important;font-family:Cinzel,Georgia,serif;font-size:16px}
+.paper.ivory .f > .lb,.paper.ivory .f > .cl{color:var(--gold-deep) !important;font-family:"Cormorant Garamond",Georgia,serif;font-style:italic;font-size:14px;font-weight:600}
+.paper.ivory .f > .v{color:var(--ink) !important;font-weight:600;font-size:13.5px}
+
+/* items table: gold header, gold-tinted row rules */
+.paper.ivory table{margin-top:18px}
+.paper.ivory thead th{
+  background:#FBF5E4 !important;color:var(--gold-deep) !important;
+  font-family:Cinzel,Georgia,serif;font-size:11.5px;letter-spacing:.18em;
+  text-transform:uppercase;font-weight:700;
+  border-top:1.5px solid var(--gold) !important;border-bottom:1.5px solid var(--gold) !important;
+  padding:11px 14px !important;
+}
+.paper.ivory thead th:first-child,.paper.ivory thead th:last-child{border-radius:0 !important}
+.paper.ivory tbody td{border-bottom:1px solid var(--soft-line) !important;color:var(--ink);font-size:13.5px}
+.paper.ivory tbody td.amt{color:var(--ink) !important}
+
+/* pkg: white box with gold border and gold text */
+.paper.ivory .pkg{
+  background:#FFFDF8 !important;color:var(--ink) !important;
+  border:1.5px solid var(--gold) !important;box-shadow:none !important;
+  margin-top:18px;
+}
+.paper.ivory .pkg .r{border-left:1px solid var(--soft-line) !important;text-align:center}
+.paper.ivory .pkg .tag{background:var(--gold) !important;color:#FFFDF8 !important}
+.paper.ivory .pkg .pn{color:var(--gold-deep) !important}
+.paper.ivory .pkg .r small{color:var(--gold-deep) !important}
+.paper.ivory .pkg .r b{color:var(--ink) !important}
+
+/* totals: amount paid becomes gold-bordered highlight box (not dark fill) */
+.paper.ivory .sum{margin-top:18px}
+.paper.ivory .t{color:var(--ink);font-family:"Cormorant Garamond",Georgia,serif;font-style:italic;font-size:15px}
+.paper.ivory .t b{font-family:Inter,"Segoe UI",sans-serif;font-style:normal}
+.paper.ivory .t.total{border-top:1px solid var(--soft-line) !important;color:var(--gold-deep);font-weight:700}
+.paper.ivory .t.paid{
+  background:transparent !important;color:var(--gold-deep) !important;
+  border:1.5px solid var(--gold) !important;border-radius:8px !important;
+  padding:12px 14px !important;font-weight:700;font-size:16px;margin-top:8px;
+}
+.paper.ivory .t.paid.solo{border-radius:8px !important}
+.paper.ivory .t.paid .val{color:var(--gold-deep) !important;font-weight:700}
+.paper.ivory .t.due{
+  background:transparent !important;color:var(--gold-deep) !important;
+  border:0 !important;border-top:1px dashed var(--soft-line) !important;border-radius:0 !important;
+  padding:8px 14px !important;font-weight:600;
+}
+.paper.ivory .t.due.adv{color:#0F5E3B !important}
+
+/* amount-in-words: soft ivory bar */
+.paper.ivory .words{background:var(--soft) !important;border:1px solid var(--soft-line) !important;color:var(--ink);font-family:"Cormorant Garamond",Georgia,serif;font-style:italic;font-size:14px}
+.paper.ivory .words b{color:var(--gold-deep) !important;font-family:Inter,sans-serif;font-style:normal}
+
+/* status badges */
+.paper.ivory .status{background:var(--soft) !important;color:var(--gold-deep) !important;border-color:var(--gold) !important}
+
+/* notes, cert, policy */
+.paper.ivory .cert{background:#FFFDF8 !important;border:1px solid var(--soft-line) !important;border-left:4px solid var(--gold) !important}
+.paper.ivory .cert h3,.paper.ivory .notes h3,.paper.ivory .pol h3{color:var(--gold-deep) !important}
+.paper.ivory .pol{border-left:2px solid var(--gold) !important}
+.paper.ivory .pol li::marker{color:var(--gold)}
+
+/* bottom + signature */
+.paper.ivory .bottom{border-top:1px dashed var(--soft-line) !important}
+.paper.ivory .thanks{font-family:"Cormorant Garamond",Georgia,serif;font-style:italic;color:var(--gold-deep)}
+.paper.ivory .sign{text-align:center}
+.paper.ivory .sign .ln{border-top:1px solid var(--gold) !important;margin-top:32px;padding-top:6px;color:var(--gold-deep);font-family:"Cormorant Garamond",Georgia,serif;font-style:italic;font-size:13px}
+
+/* footer: location + website in small gold strip */
+.paper.ivory .foot{background:transparent !important;border-top:1px solid var(--soft-line) !important;color:var(--gold-deep) !important;padding:10px 34px !important;font-family:"Cormorant Garamond",Georgia,serif;font-style:italic;font-size:12.5px}
+.paper.ivory .foot a,.paper.ivory .foot *{color:var(--gold-deep) !important}
+
+/* edit-mode: keep ivory inputs gentle */
+.ed.ivory tbody td input{background:#FFFDF8;border:1px solid var(--soft-line);color:var(--ink)}
+.ed.ivory .t.paid input{background:#FFFDF8;border-color:var(--gold);color:var(--gold-deep)}
+.ed.ivory input:focus,.ed.ivory select:focus,.ed.ivory textarea:focus{background:#FFFDF8;color:var(--ink);box-shadow:0 0 0 3px rgba(217,169,74,.25)}
 `;
   const opts = (list, v) => list.map(o => { const [val, lab] = Array.isArray(o) ? o : [o, o]; return `<option value="${E(val)}"${String(val) === String(v) ? ' selected="selected"' : ''}>${E(lab)}</option>`; }).join('');
   function periodOptions(v, allowEmpty) { const now = new Date(), out = allowEmpty ? [['', '—']] : []; for (let i = -18; i <= 18; i++) { const x = ym(new Date(now.getFullYear(), now.getMonth() + i, 1)); out.push([x, ymLabel(x)]); } if (v && !out.some(o => o[0] === v)) out.push([v, ymLabel(v)]); return opts(out, v); }
@@ -320,7 +502,7 @@ td.qty{width:80px}td.rate{width:120px}
 <div class="meta">${T('title', 'div', 'rt')}<div class="kv">${T('l_no', 'small')}<b>${E(no)}</b>${status === 'draft' ? '<i>(draft)</i>' : ''}</div>
 <div class="kv">${T('l_date', 'small')}${ed ? `<input data-f="date" type="date" value="${E(d.date)}" style="width:150px" aria-label="Date"/>` : `<b>${E(prettyDate(d.date))}</b>`}</div>
 <div class="web">${E(ORGV.email || 'finaltouchacademyfta@gmail.com')}<br/>${E(ORGV.web || 'finaltouch.academy')}</div></div></div>
-<div class="body"><div class="cards"><div class="card">${T('h_info', 'h3')}`;
+<div class="body"><div class="wm" aria-hidden="true">${logo ? `<img src="${logo}" alt=""/>` : ''}</div><div class="ribbon"><span class="tag">${E((doc === 'salary' ? 'SALARY SLIP' : (T('title', 'span', 'rt').replace(/<[^>]+>/g, '').trim() || 'PAYMENT RECEIPT')).toUpperCase())}</span></div><div class="cards"><div class="card">${T('h_info', 'h3')}`;
     /* who */
     h += `<div class="big">${ed ? V('name', d.name, { ph: doc === 'salary' ? 'Teacher name' : (d.kind === 'guardian' ? 'Guardian name' : d.kind === 'other' ? 'Name / organisation' : 'Student name'), al: 'Name' }) : E(d.name)}</div>`;
     if (doc === 'salary') h += F('l_id', 'idno', d.idno, { ph: 'Optional' }) + F('l_desig', 'designation', d.designation, { ph: 'e.g. Subject Teacher' }) + F('l_subj', 'subjects', d.subjects, { ph: 'Optional' }) + F('l_phone', 'phone', d.phone, { ph: 'Optional', al: 'Phone' });
@@ -459,7 +641,13 @@ td.qty{width:80px}td.rate{width:120px}
     </aside>`;
   }
   const viewRec = () => RM.view && DB.list.find(r => r.no === RM.view);
-  function waBtn() { const r = viewRec(); if (!r || !r.d.phone) return ''; const k = r.calc, c = r.d.cur; const txt = r.d.doc === 'salary' ? `আসসালামু আলাইকুম। ${r.d.name}, ${periodText(r.d)} মাসের salary ${money(k.paid, c)} পাঠানো হয়েছে। Slip ${r.no}। ধন্যবাদ, Final Touch Academy।` : `আসসালামু আলাইকুম। ${r.d.name} এর ${periodText(r.d)} বাবদ ${money(k.paid, c)} পেয়েছি${k.due > 0 ? ', বাকি ' + money(k.due, c) : ''}। Receipt ${r.no}। ধন্যবাদ, Final Touch Academy।`; const href = G(() => waLink(r.d.phone, txt)) || ('https://wa.me/?text=' + encodeURIComponent(txt)); return `<a class="btn wa" target="_blank" rel="noopener" href="${E(href)}">${icon('wa')}WhatsApp</a>`; }
+  function waText(r) { const k = r.calc, c = r.d.cur; const en = G(() => LANG) === 'en';   /* the message follows the app language: English mode never sends Bangla */
+    const txt = en
+      ? (r.d.doc === 'salary' ? `Assalamu Alaikum, ${r.d.name}. Your salary for ${periodText(r.d)}, ${money(k.paid, c)}, has been paid. Slip ${r.no}. Thank you, Final Touch Academy.` : `Assalamu Alaikum. We have received ${money(k.paid, c)} for ${r.d.name} (${periodText(r.d)})${k.due > 0 ? '; still due ' + money(k.due, c) : ''}. Receipt ${r.no}. Thank you, Final Touch Academy.`)
+      : (r.d.doc === 'salary' ? `আসসালামু আলাইকুম। ${r.d.name}, ${periodText(r.d)} মাসের salary ${money(k.paid, c)} পাঠানো হয়েছে। Slip ${r.no}। ধন্যবাদ, Final Touch Academy।` : `আসসালামু আলাইকুম। ${r.d.name} এর ${periodText(r.d)} বাবদ ${money(k.paid, c)} পেয়েছি${k.due > 0 ? ', বাকি ' + money(k.due, c) : ''}। Receipt ${r.no}। ধন্যবাদ, Final Touch Academy।`); return G(() => waLink(r.d.phone, txt)) || ('https://wa.me/?text=' + encodeURIComponent(txt)); }
+  /* the message is written again at the moment of the tap, so it is always in the language in use now */
+  function waBtn() { const r = viewRec(); if (!r || !r.d.phone) return ''; return `<a class="btn wa" data-rm-wa target="_blank" rel="noopener" href="${E(waText(r))}">${icon('wa')}WhatsApp</a>`; }
+  document.addEventListener('click', e => { const a = e.target.closest && e.target.closest('a[data-rm-wa]'); if (!a) return; const r = viewRec(); if (r && r.d.phone) a.href = waText(r); }, true);
   function historyHTML() {
     const q = RM.q.trim().toLowerCase();
     let L = DB.list.filter(r => can(modOf(r.d.doc), 'v')).slice().reverse();
