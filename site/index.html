@@ -11932,7 +11932,12 @@ V9.enhance = root => {
       s.value = v; s.dispatchEvent(new Event('change', { bubbles: true }));
     };
     V8.MP[key] = { sel: s.value && s.value !== 'All' ? [s.value] : [], single: true, allowAll: all !== null, empty: 'All months', title: (lab || 'Month').trim().slice(0, 24) || 'Month', data: vals.filter(x => /^\d{4}-\d{2}$/.test(x)),
-      apply: sel => set(sel[0] || all || CUR) };
+      apply: sel => {
+        set(sel[0] || all || CUR);
+        /* keep the button text in step with the chosen month (the page may not redraw this filter) */
+        const b = V8.MP[key].btn || (s.nextElementSibling && s.nextElementSibling.querySelector('.v8-mp-b')), t = b && b.querySelector('.v8-mp-t b'), v = s.value;
+        if (t) t.textContent = /^\d{4}-\d{2}$/.test(v) ? V8.mLab(v, 1) : 'All months';
+      } };
     s.classList.add('v9-hid'); s.setAttribute('aria-hidden', 'true'); s.tabIndex = -1;
     s.insertAdjacentHTML('afterend', V8.mpBtn(key));
     const bt = s.nextElementSibling && s.nextElementSibling.querySelector('.v8-mp-t b'), v = s.value;
