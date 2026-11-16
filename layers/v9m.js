@@ -120,3 +120,10 @@ SCH.reconcile = () => {
     return r;
   };
 })();
+
+/* a mentor with no class yet only has "Another subject": its details box must be open from the start (it stayed hidden, and Send failed silently behind it) */
+(() => {
+  const sync = () => { const s = document.getElementById('ns-s'), c = document.getElementById('ns-cus'); if (s && c) c.hidden = s.value !== '__new'; };
+  const nf = SCH.newStuForm; SCH.newStuForm = function () { const r = nf.apply(this, arguments); sync(); return r; };
+  const ns2 = SCH.newStuSave; SCH.newStuSave = function () { sync(); return ns2.apply(this, arguments); };
+})();
