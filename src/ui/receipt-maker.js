@@ -748,14 +748,33 @@ td.qty{width:80px}td.rate{width:120px}
   const staticHTML = rec => paperHTML(rec, false);
   function printRec(rec) {
     const size = (rec.look || DB.look).paper === 'A5' ? 'A5' : 'A4';
-    const f = document.createElement('iframe'); f.setAttribute('aria-hidden', 'true'); f.style.cssText = 'position:fixed;right:0;bottom:0;width:0;height:0;border:0;visibility:hidden';
+    /* printable area (page minus 7mm margins) in CSS px: the paper is measured at exactly this size and scaled to fit ONE page */
+    const mm = v => v * 96 / 25.4, PW = Math.floor(mm(size === 'A5' ? 134 : 196)), PH = Math.floor(mm(size === 'A5' ? 196 : 283)) - 4;
+    const html = `<!doctype html><html><head><meta charset="utf-8"><title>${E(rec.no || 'Draft')}</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Cinzel:wght@600;700&display=swap"><style>${PAPER_CSS.replace(':host{all:initial;display:block}', '')}@page{size:${size} portrait;margin:7mm}html,body{margin:0;background:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact}body{width:${PW}px}.paper{max-width:none;width:100%;box-sizing:border-box;border:0;border-radius:0;box-shadow:none;break-inside:avoid;page-break-inside:avoid;page-break-after:avoid}</style></head><body>${staticHTML(rec)}</body></html>`;
+    /* touch phones and tablets cannot print a hidden frame: open the receipt in its own tab and print there */
+    const touch = !!(window.matchMedia && matchMedia('(pointer:coarse)').matches);
+    const fit = (doc, win) => {
+      const el = doc.querySelector('.paper'); if (!el) return;
+      let z = 1; el.style.zoom = '1';
+      for (let i = 0; i < 10; i++) { const h = el.getBoundingClientRect().height; if (h <= PH) break; z = z * (PH / h) * 0.985; el.style.zoom = String(z); }
+    };
+    const settle = (doc, win, then) => {
+      const imgs = [...doc.images], wait = Promise.all(imgs.map(im => im.complete ? 1 : new Promise(r => { im.onload = im.onerror = r; })));
+      wait.then(() => (doc.fonts && doc.fonts.ready ? doc.fonts.ready : Promise.resolve())).then(() => setTimeout(() => { fit(doc, win); setTimeout(then, 120); }, 120));
+    };
+    if (touch) {
+      let w = null; try { w = window.open('', '_blank'); } catch (e) { }
+      if (w && w.document) {
+        w.document.open(); w.document.write(html); w.document.close();
+        settle(w.document, w, () => { try { w.focus(); w.print(); } catch (e) { say('Could not open print. Download the PNG instead.'); } });
+        return;
+      }
+    }
+    const f = document.createElement('iframe'); f.setAttribute('aria-hidden', 'true'); f.style.cssText = `position:fixed;right:0;bottom:0;width:${PW}px;height:${PH}px;border:0;visibility:hidden;pointer-events:none`;
     document.body.appendChild(f);
-    const doc = f.contentDocument; doc.open();
-    doc.write(`<!doctype html><html><head><meta charset="utf-8"><title>${E(rec.no || 'Draft')}</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Cinzel:wght@600;700&display=swap"><style>${PAPER_CSS.replace(':host{all:initial;display:block}', '')}@page{size:${size} portrait;margin:7mm}html,body{margin:0;background:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact}.paper{max-width:none;border:0;border-radius:0;box-shadow:none}${size === 'A5' ? '.paper{zoom:.72}' : ''}</style></head><body>${staticHTML(rec)}</body></html>`);
-    doc.close();
-    const go2 = () => { try { f.contentWindow.focus(); f.contentWindow.print(); } catch (e) { say('Could not open print. Download the PNG instead.'); } setTimeout(() => f.remove(), 3000); };
-    const ready = () => (doc.fonts && doc.fonts.ready ? doc.fonts.ready : Promise.resolve()).then(() => setTimeout(go2, 120));
-    setTimeout(() => { const imgs = [...doc.images]; Promise.all(imgs.map(im => im.complete ? 1 : new Promise(r => { im.onload = im.onerror = r; }))).then(ready); }, 60);
+    const doc = f.contentDocument; doc.open(); doc.write(html); doc.close();
+    const go2 = () => { try { f.contentWindow.focus(); f.contentWindow.print(); } catch (e) { say('Could not open print. Download the PNG instead.'); } setTimeout(() => f.remove(), 60000); };
+    setTimeout(() => settle(doc, f.contentWindow, go2), 60);
   }
   function pngRec(rec, cb) {
     const W = 828, box = document.createElement('div'); box.style.cssText = 'position:fixed;left:-10000px;top:0;width:' + W + 'px';
