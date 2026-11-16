@@ -13318,12 +13318,12 @@ V9H.sbOpen = () => {
     <div class="acts"><button class="btn" type="button" onclick="V9H.popClose()">Cancel</button><button class="btn p" type="button" onclick="V9H.sbApply()">Done</button></div>`);
 };
 V9H.sbFilter = q => { q = q.toLowerCase(); document.querySelectorAll('#v9h-sbl .v9f-pick').forEach(l => l.hidden = q && !l.dataset.n.includes(q)); };
-V9H.sbApply = () => { const on = [...document.querySelectorAll('#v9h-sbl input:checked')].map(i => i.value), S = {}; on.forEach(id => S[id] = V9H.F.subs[id] || V9H.teacherFor(id)); V9H.F.subs = S; V9H.popClose(); V9H.sbDraw(); };
+V9H.sbApply = () => { const on = [...document.querySelectorAll('#v9h-sbl input:checked')].map(i => i.value), S = {}; on.forEach(id => S[id] = V9H.F.subs[id] || ''); V9H.F.subs = S; V9H.popClose(); V9H.sbDraw(); };
 V9H.sbDraw = () => {
   const el = $('#v9h-sl'), ids = Object.keys(V9H.F.subs), chips = document.querySelector('#v9h-sb .v9h-chips'); if (!el) return;
   chips.innerHTML = ids.length ? ids.map(id => `<span class="v9h-chip">${esc(progName(id))}</span>`).join('') : '<span class="v9h-ph">Click to choose subjects — you can add them later</span>';
-  el.innerHTML = ids.map(id => { const p = PROGS.find(x => x.id === id); return `<div class="v9h-sr"><div class="grow"><b>${esc(p.name)}</b><small>${money(p.fee)} a month</small></div><select data-v9h="1" aria-label="Teacher for ${esc(p.name)}" onchange="V9H.F.subs['${id}']=this.value">${opts(MENTORS.filter(m => m.status === 'Active').map(m => [m.id, m.name]), V9H.F.subs[id])}</select><button type="button" class="v9h-x" aria-label="Remove ${esc(p.name)}" onclick="delete V9H.F.subs['${id}'];V9H.sbDraw()">${ic('x')}</button></div>`; }).join('');
-  if (ids.length) { const pr = $('#nf-pr'), m = $('#nf-m'); pr.value = ids[0]; if (m) m.value = V9H.F.subs[ids[0]]; }
+  el.innerHTML = ids.map(id => { const p = PROGS.find(x => x.id === id); return `<div class="v9h-sr"><div class="grow"><b>${esc(p.name)}</b><small>${money(p.fee)} a month</small></div><select data-v9h="1" aria-label="Teacher for ${esc(p.name)}" onchange="V9H.F.subs['${id}']=this.value">${opts([['', 'Choose mentor']].concat(MENTORS.filter(m => m.status === 'Active').map(m => [m.id, m.name])), V9H.F.subs[id] || '')}</select><button type="button" class="v9h-x" aria-label="Remove ${esc(p.name)}" onclick="delete V9H.F.subs['${id}'];V9H.sbDraw()">${ic('x')}</button></div>`; }).join('');
+  if (ids.length && V9H.F.subs[ids[0]]) { const pr = $('#nf-pr'), m = $('#nf-m'); pr.value = ids[0]; if (m) m.value = V9H.F.subs[ids[0]]; }
   if (PU.F && document.getElementById('pu-mt')) { const fee = PU.feeOf(); Object.values(PU.F.rows).forEach(r => { if (!r.touched && r.st !== 'Off') r.pay = fee; }); PU.fDraw(); }
 };
 /* the monthly fee is the total of the ticked subjects */
@@ -13335,6 +13335,7 @@ saveStudent = function () {
   if (!SCH.NEW() || !V9H.F || !$('#v9h-sb')) return V9H._saveStudent.apply(this, arguments);
   const F = V9H.F, ids = Object.keys(F.subs);
   if (!ids.length && PU.F && Object.values(PU.F.rows).some(r => r.st !== 'Off' && (r.paid > 0))) { toast('Choose a subject before recording money for this student'); return; }
+  const nm = ids.find(id => !F.subs[id]); if (nm) { toast('Choose a mentor for ' + progName(nm)); const sel = [...document.querySelectorAll('#v9h-sl select')].find(x => !x.value); if (sel) sel.focus(); return; }
   const b = $('#nf-b'); if (b) { const v = F.boards.join(', ') || '—'; if (![...b.options].some(o => o.value === v)) { const o = document.createElement('option'); o.value = v; o.textContent = v; b.appendChild(o); } b.value = v; }
   if (ids.length) { $('#nf-pr').value = ids[0]; if ($('#nf-m')) $('#nf-m').value = F.subs[ids[0]]; }
   const n0 = STUDENTS.length, e0 = ENROL.length, i0 = INVOICES.length;
@@ -13798,6 +13799,34 @@ V9M.mo.observe(document.body, { childList: true, subtree: true });
 /* class notes have no id in the seed data: give them one so they can be deleted */
 (SCH.CNOTES || []).forEach((n, i) => { if (!n.id) n.id = 'CN-' + (i + 1); });
 (SCH.LEAVE || []).forEach((n, i) => { if (!n.id) n.id = 'LV-' + (i + 1); });
+
+/* ---------- teacher ↔ student links: the enrolment is the truth ----------
+   A student sits in a mentor's class only while an active enrolment names that mentor.
+   Fixes: a mentor changed on an enrolment (or a default that was never picked) left the student in the old mentor's class. */
+SCH.reconcile = () => {
+  try {
+    const live = ENROL.filter(e => e.status !== 'Completed' && e.mentor), by = new Map(), all = new Map();
+    ENROL.forEach(e => { const k = e.stu + '|' + e.prog; (all.get(k) || all.set(k, []).get(k)).push(e); });
+    live.forEach(e => { const k = e.stu + '|' + e.prog + '|' + e.mentor; by.set(k, 1); });
+    SCH.GROUPS.forEach(g => {
+      if (!g.prog) return;
+      for (let i = g.stu.length - 1; i >= 0; i--) {
+        const sid = g.stu[i], has = all.get(sid + '|' + g.prog);
+        /* the student has an enrolment for this subject but none with this group's mentor → not here */
+        if (has && has.length && !by.has(sid + '|' + g.prog + '|' + g.mentor)) g.stu.splice(i, 1);
+      }
+    });
+    live.forEach(e => {
+      let g = SCH.GROUPS.find(x => x.prog === e.prog && x.mentor === e.mentor && (x.batch || '') === (e.batch || '') && x.status === 'Active') || SCH.GROUPS.find(x => x.prog === e.prog && x.mentor === e.mentor && x.status === 'Active');
+      if (!g) { g = { key: e.prog + '|' + e.mentor + '|' + (e.batch || ''), id: 'G' + (1 + SCH.GROUPS.length), prog: e.prog, mentor: e.mentor, batch: e.batch || '', name: progName(e.prog), stu: [], per: 0, status: 'Active' }; SCH.GROUPS.push(g); }
+      if (!g.stu.includes(e.stu)) g.stu.push(e.stu);
+    });
+  } catch (x) { console.error('reconcile', x); }
+};
+(() => {
+  const mg = SCH.myGroups; SCH.myGroups = function () { SCH.reconcile(); return mg.apply(this, arguments); };
+  if (typeof V8 !== 'undefined' && V8.enrSave) { const es = V8.enrSave; V8.enrSave = function () { const r = es.apply(this, arguments); SCH.reconcile(); return r; }; }
+})();
 
 </script>
 <script>document.addEventListener('visibilitychange',function(){document.documentElement.classList.toggle('pm-paused',document.hidden)});</script>
@@ -14364,7 +14393,7 @@ html .qc .qc-b .qbx{display:flex!important;flex-direction:column;justify-content
    "FTA Premium" now runs on the new design engine (all new features,
    3D cards, charts, dialogs) with FTA Premium's own colours and fonts:
    skin = midnight engine, palette = premium (html[data-palette]).
-   First visit: Premium Light ("Onyx & Gold", owner-approved 9 Nov 2026) · English. A person's own choice of
+   First visit: FTA Premium (light) · English. A person's own choice of
    theme, mode and language is remembered in their browser.
    ===================================================================== */
 /* run an inline-handler string without eval (keeps the CSP free of 'unsafe-eval') */
@@ -14402,12 +14431,12 @@ window.__ftaRun = function (code, v) {
   };
   /* switching the theme from code must not leave the theme picker open (setSkin refreshes the picker) */
   function quiet(f) { const ov = document.getElementById('ov'), was = !!(ov && !ov.hidden); f(); if (!was && typeof closeSheet === 'function') { try { closeSheet(); } catch (e) { } } }
-  /* first visit (nothing saved yet): Premium Light (the approved Onyx & Gold design), English */
+  /* first visit (nothing saved yet): FTA Premium (light), English. Anyone who picks another theme keeps their own choice. */
   let first = false; try { first = !localStorage.getItem('fta-skin') && !localStorage.getItem(KEY); } catch (e) { }
   if (first) {
     try { localStorage.setItem('fta-demo-theme', 'light'); if (!localStorage.getItem('fta-lang')) localStorage.setItem('fta-lang', 'en'); } catch (e) { }
     if (typeof LANG !== 'undefined' && LANG !== 'en' && typeof setLang === 'function') setLang('en');
-    quiet(() => { setTheme('light'); setSkin('m-light'); });
+    quiet(() => { setTheme('light'); setSkin('premium'); });
   } else paint();
   /* the old FTA Premium skin key (saved by earlier versions) opens the new FTA Premium */
   if (skinKey() === 'premium') quiet(() => setSkin('premium'));
