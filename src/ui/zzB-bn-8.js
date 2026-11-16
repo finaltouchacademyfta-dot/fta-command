@@ -76,5 +76,8 @@ FTA_BNX.add({
   "Enrolment Open": "ভর্তি চলছে",
   "Request to join in the FTA app · seats are confirmed by the office": "FTA অ্যাপে “যোগ দেওয়ার অনুরোধ” করুন · আসন অফিস নিশ্চিত করবে",
   "Maths support": "গণিত সহায়তা",
-  "Check for updates": "আপডেট দেখুন"
+  "Check for updates": "আপডেট দেখুন",
+  "Please fix the highlighted field": "লাল চিহ্নিত ঘরটি ঠিক করুন",
+  "Choose mentor": "মেন্টর বাছুন",
+  "Choose a mentor for each subject": "প্রতিটি বিষয়ের জন্য মেন্টর বাছুন"
 });

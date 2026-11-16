@@ -27,3 +27,7 @@ html:root:root{touch-action:manipulation;-webkit-text-size-adjust:100%;text-size
 @media (pointer:coarse){
   html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]),html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) select,html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) textarea{font-size:16px!important}
 }
+
+/* money figures in cards stay on one line (zz9-fit shrinks them to fit instead of letting the last digit drop down) */
+html:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #view .cck .fg.num,html:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #view .kpi .kv.num{white-space:nowrap!important}
+@media (max-width:480px){html:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #view .cck .fg.num{font-size:clamp(14px,4.6vw,20px)!important}}

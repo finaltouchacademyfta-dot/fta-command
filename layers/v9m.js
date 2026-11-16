@@ -106,3 +106,17 @@ SCH.reconcile = () => {
   const mg = SCH.myGroups; SCH.myGroups = function () { SCH.reconcile(); return mg.apply(this, arguments); };
   if (typeof V8 !== 'undefined' && V8.enrSave) { const es = V8.enrSave; V8.enrSave = function () { const r = es.apply(this, arguments); SCH.reconcile(); return r; }; }
 })();
+
+/* ---------- mentor: "Send to the office" must never fail silently ----------
+   Phone numbers typed as +880… / 880… / without the leading 0 are accepted; if a field is wrong the sheet scrolls to it and says so. */
+(() => {
+  const ns = SCH.newStuSave;
+  SCH.newStuSave = function () {
+    const pe = document.getElementById('ns-p');
+    if (pe) { let d = pe.value.replace(/\D/g, ''); if (/^8801\d{9}$/.test(d)) d = d.slice(2); else if (/^1\d{9}$/.test(d)) d = '0' + d; pe.value = d; }
+    const r = ns.apply(this, arguments);
+    const bad = document.querySelector('#sheet .sc-err:not(:empty)');
+    if (bad) { const f = bad.parentElement.querySelector('input,select'); if (f) { try { f.scrollIntoView({ block: 'center', behavior: 'smooth' }); f.focus({ preventScroll: true }); } catch (e) { } } toast('Please fix the highlighted field'); }
+    return r;
+  };
+})();

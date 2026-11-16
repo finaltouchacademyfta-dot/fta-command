@@ -13335,7 +13335,7 @@ saveStudent = function () {
   if (!SCH.NEW() || !V9H.F || !$('#v9h-sb')) return V9H._saveStudent.apply(this, arguments);
   const F = V9H.F, ids = Object.keys(F.subs);
   if (!ids.length && PU.F && Object.values(PU.F.rows).some(r => r.st !== 'Off' && (r.paid > 0))) { toast('Choose a subject before recording money for this student'); return; }
-  const nm = ids.find(id => !F.subs[id]); if (nm) { toast('Choose a mentor for ' + progName(nm)); const sel = [...document.querySelectorAll('#v9h-sl select')].find(x => !x.value); if (sel) sel.focus(); return; }
+  const nm = ids.find(id => !F.subs[id]); if (nm) { toast('Choose a mentor for each subject'); const sel = [...document.querySelectorAll('#v9h-sl select')].find(x => !x.value); if (sel) sel.focus(); return; }
   const b = $('#nf-b'); if (b) { const v = F.boards.join(', ') || '—'; if (![...b.options].some(o => o.value === v)) { const o = document.createElement('option'); o.value = v; o.textContent = v; b.appendChild(o); } b.value = v; }
   if (ids.length) { $('#nf-pr').value = ids[0]; if ($('#nf-m')) $('#nf-m').value = F.subs[ids[0]]; }
   const n0 = STUDENTS.length, e0 = ENROL.length, i0 = INVOICES.length;
@@ -13826,6 +13826,20 @@ SCH.reconcile = () => {
 (() => {
   const mg = SCH.myGroups; SCH.myGroups = function () { SCH.reconcile(); return mg.apply(this, arguments); };
   if (typeof V8 !== 'undefined' && V8.enrSave) { const es = V8.enrSave; V8.enrSave = function () { const r = es.apply(this, arguments); SCH.reconcile(); return r; }; }
+})();
+
+/* ---------- mentor: "Send to the office" must never fail silently ----------
+   Phone numbers typed as +880… / 880… / without the leading 0 are accepted; if a field is wrong the sheet scrolls to it and says so. */
+(() => {
+  const ns = SCH.newStuSave;
+  SCH.newStuSave = function () {
+    const pe = document.getElementById('ns-p');
+    if (pe) { let d = pe.value.replace(/\D/g, ''); if (/^8801\d{9}$/.test(d)) d = d.slice(2); else if (/^1\d{9}$/.test(d)) d = '0' + d; pe.value = d; }
+    const r = ns.apply(this, arguments);
+    const bad = document.querySelector('#sheet .sc-err:not(:empty)');
+    if (bad) { const f = bad.parentElement.querySelector('input,select'); if (f) { try { f.scrollIntoView({ block: 'center', behavior: 'smooth' }); f.focus({ preventScroll: true }); } catch (e) { } } toast('Please fix the highlighted field'); }
+    return r;
+  };
 })();
 
 </script>
@@ -20432,6 +20446,30 @@ html:root:root{touch-action:manipulation;-webkit-text-size-adjust:100%;text-size
   html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]),html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) select,html:root:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) textarea{font-size:16px!important}
 }
 
+/* money figures in cards stay on one line (zz9-fit shrinks them to fit instead of letting the last digit drop down) */
+html:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #view .cck .fg.num,html:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #view .kpi .kv.num{white-space:nowrap!important}
+@media (max-width:480px){html:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #view .cck .fg.num{font-size:clamp(14px,4.6vw,20px)!important}}
+
+</style>
+<style data-ui="zzE-drawer.css">
+/* zzE · phone/tablet menu button + slide-in side menu (the same menu as the laptop sidebar), nothing else changes */
+@media (max-width:899px){
+ html:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #side{display:flex!important;flex-direction:column;position:fixed!important;top:0!important;left:0!important;bottom:0!important;width:min(320px,86vw)!important;max-width:86vw!important;height:auto!important;z-index:70!important;transform:translateX(-104%);transition:transform .26s cubic-bezier(.2,.9,.2,1);padding-top:calc(env(safe-area-inset-top,0px) + 12px)!important;padding-bottom:calc(env(safe-area-inset-bottom,0px) + 12px)!important;overflow-y:auto!important;overflow-x:hidden!important;border-radius:0 20px 20px 0!important;visibility:hidden}
+ html:root:root:root:root body.fta-drawer:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #side{transform:translateX(0);visibility:visible;box-shadow:18px 0 48px -8px rgba(0,0,0,.4)!important}
+ html:root:root:root:root body.fta-drawer:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8)::before{content:"";position:fixed;inset:0;background:rgba(10,12,16,.5);z-index:65}
+ html:root:root:root:root body.fta-drawer:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8){overflow:hidden!important}
+ /* the menu always shows full labels, never the thin icon rail */
+ html:root:root:root:root body.fta-drawer:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #side .brand>div:not(.logo),html:root:root:root:root body.fta-drawer:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #side .navg h6{display:block!important}
+ html:root:root:root:root body.fta-drawer:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #side .pinb{display:none!important}
+ html:root:root:root:root body.fta-drawer:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #side .nav{display:flex!important;flex-direction:row!important;align-items:center!important;justify-content:flex-start!important;gap:12px!important;padding:10px 14px!important;width:auto!important}
+ html:root:root:root:root body.fta-drawer:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #side .nav .l,html:root:root:root:root body.fta-drawer:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #side .slive .l{display:inline-block!important;opacity:1!important;width:auto!important;pointer-events:auto!important;overflow:visible!important;white-space:nowrap}
+ html:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #fta-hamb{all:unset;box-sizing:border-box;cursor:pointer;width:40px;height:40px;flex:0 0 auto;border-radius:12px;display:grid;place-items:center;color:inherit;-webkit-tap-highlight-color:transparent}
+ html:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #fta-hamb:active{transform:scale(.94)}
+ html:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #fta-hamb svg{width:22px;height:22px}
+ html:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #fta-drawer-x{position:absolute;top:calc(env(safe-area-inset-top,0px) + 12px);right:12px;width:36px;height:36px;border-radius:10px;border:0;background:rgba(127,127,127,.16);color:inherit;display:grid;place-items:center;cursor:pointer;font:700 20px/1 system-ui;z-index:2}
+}
+@media (min-width:900px){html:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #fta-hamb,html:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8) #fta-drawer-x{display:none!important}}
+
 </style>
 <script data-ui="portal.js">
 /* =====================================================================
@@ -23781,6 +23819,45 @@ td.qty{width:80px}td.rate{width:120px}
 })();
 
 </script>
+<script data-ui="zzE-drawer.js">
+/* zzE · phone/tablet: a menu button at the top-left opens the side menu (same menu as the laptop sidebar). */
+(function () {
+  'use strict';
+  var B = document.body, narrow = function () { return window.matchMedia('(max-width:899px)').matches; };
+  var HAMB = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h10"/></svg>';
+  var open = function () { B.classList.add('fta-drawer'); }, close = function () { B.classList.remove('fta-drawer'); };
+  function install() {
+    if (!narrow()) { close(); return; }
+    var top = document.querySelector('#top .top-r') || document.getElementById('top'), side = document.getElementById('side');
+    if (top && !document.getElementById('fta-hamb')) {
+      var b = document.createElement('button'); b.id = 'fta-hamb'; b.type = 'button'; b.setAttribute('aria-label', 'Menu'); b.innerHTML = HAMB;
+      b.addEventListener('click', function (e) { e.stopPropagation(); B.classList.toggle('fta-drawer'); });
+      top.insertBefore(b, top.firstChild);
+    }
+    if (side && !document.getElementById('fta-drawer-x')) {
+      var x = document.createElement('button'); x.id = 'fta-drawer-x'; x.type = 'button'; x.setAttribute('aria-label', 'Close menu'); x.textContent = '×';
+      x.addEventListener('click', close); side.appendChild(x);
+    }
+  }
+  var raf = 0, mo = new MutationObserver(function () {
+    if (document.getElementById('fta-hamb') && document.getElementById('fta-drawer-x')) return;
+    cancelAnimationFrame(raf); raf = requestAnimationFrame(install);
+  });
+  mo.observe(B, { childList: true, subtree: true });
+  /* tap outside the menu closes it; so does choosing a page, Escape, or growing past the phone breakpoint */
+  document.addEventListener('click', function (e) {
+    if (!B.classList.contains('fta-drawer')) return;
+    var side = document.getElementById('side'); if (!side) return;
+    if (e.target.closest('#fta-hamb')) return;
+    if (!side.contains(e.target)) { close(); return; }
+    if (e.target.closest('#sidenav a, #sidenav button, #sidenav .nav')) setTimeout(close, 90);
+  }, true);
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+  window.addEventListener('resize', function () { if (!narrow()) close(); else install(); });
+  install();
+})();
+
+</script>
 <script data-ui="zzB-bn-1.js">
 /* zzB · Bangla interface text, part 1 (dashboard, menus, assistant, themes, students, programmes, invoices) */
 FTA_BNX.add({
@@ -25305,7 +25382,10 @@ FTA_BNX.add({
   "Enrolment Open": "ভর্তি চলছে",
   "Request to join in the FTA app · seats are confirmed by the office": "FTA অ্যাপে “যোগ দেওয়ার অনুরোধ” করুন · আসন অফিস নিশ্চিত করবে",
   "Maths support": "গণিত সহায়তা",
-  "Check for updates": "আপডেট দেখুন"
+  "Check for updates": "আপডেট দেখুন",
+  "Please fix the highlighted field": "লাল চিহ্নিত ঘরটি ঠিক করুন",
+  "Choose mentor": "মেন্টর বাছুন",
+  "Choose a mentor for each subject": "প্রতিটি বিষয়ের জন্য মেন্টর বাছুন"
 });
 
 </script>

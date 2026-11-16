@@ -136,7 +136,7 @@ saveStudent = function () {
   if (!SCH.NEW() || !V9H.F || !$('#v9h-sb')) return V9H._saveStudent.apply(this, arguments);
   const F = V9H.F, ids = Object.keys(F.subs);
   if (!ids.length && PU.F && Object.values(PU.F.rows).some(r => r.st !== 'Off' && (r.paid > 0))) { toast('Choose a subject before recording money for this student'); return; }
-  const nm = ids.find(id => !F.subs[id]); if (nm) { toast('Choose a mentor for ' + progName(nm)); const sel = [...document.querySelectorAll('#v9h-sl select')].find(x => !x.value); if (sel) sel.focus(); return; }
+  const nm = ids.find(id => !F.subs[id]); if (nm) { toast('Choose a mentor for each subject'); const sel = [...document.querySelectorAll('#v9h-sl select')].find(x => !x.value); if (sel) sel.focus(); return; }
   const b = $('#nf-b'); if (b) { const v = F.boards.join(', ') || '—'; if (![...b.options].some(o => o.value === v)) { const o = document.createElement('option'); o.value = v; o.textContent = v; b.appendChild(o); } b.value = v; }
   if (ids.length) { $('#nf-pr').value = ids[0]; if ($('#nf-m')) $('#nf-m').value = F.subs[ids[0]]; }
   const n0 = STUDENTS.length, e0 = ENROL.length, i0 = INVOICES.length;
