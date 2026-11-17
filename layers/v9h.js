@@ -119,12 +119,12 @@ V9H.sbOpen = () => {
     <div class="acts"><button class="btn" type="button" onclick="V9H.popClose()">Cancel</button><button class="btn p" type="button" onclick="V9H.sbApply()">Done</button></div>`);
 };
 V9H.sbFilter = q => { q = q.toLowerCase(); document.querySelectorAll('#v9h-sbl .v9f-pick').forEach(l => l.hidden = q && !l.dataset.n.includes(q)); };
-V9H.sbApply = () => { const on = [...document.querySelectorAll('#v9h-sbl input:checked')].map(i => i.value), S = {}; on.forEach(id => S[id] = V9H.F.subs[id] || V9H.teacherFor(id)); V9H.F.subs = S; V9H.popClose(); V9H.sbDraw(); };
+V9H.sbApply = () => { const on = [...document.querySelectorAll('#v9h-sbl input:checked')].map(i => i.value), S = {}; on.forEach(id => S[id] = V9H.F.subs[id] || ''); V9H.F.subs = S; V9H.popClose(); V9H.sbDraw(); };
 V9H.sbDraw = () => {
   const el = $('#v9h-sl'), ids = Object.keys(V9H.F.subs), chips = document.querySelector('#v9h-sb .v9h-chips'); if (!el) return;
   chips.innerHTML = ids.length ? ids.map(id => `<span class="v9h-chip">${esc(progName(id))}</span>`).join('') : '<span class="v9h-ph">Click to choose subjects — you can add them later</span>';
-  el.innerHTML = ids.map(id => { const p = PROGS.find(x => x.id === id); return `<div class="v9h-sr"><div class="grow"><b>${esc(p.name)}</b><small>${money(p.fee)} a month</small></div><select data-v9h="1" aria-label="Teacher for ${esc(p.name)}" onchange="V9H.F.subs['${id}']=this.value">${opts(MENTORS.filter(m => m.status === 'Active').map(m => [m.id, m.name]), V9H.F.subs[id])}</select><button type="button" class="v9h-x" aria-label="Remove ${esc(p.name)}" onclick="delete V9H.F.subs['${id}'];V9H.sbDraw()">${ic('x')}</button></div>`; }).join('');
-  if (ids.length) { const pr = $('#nf-pr'), m = $('#nf-m'); pr.value = ids[0]; if (m) m.value = V9H.F.subs[ids[0]]; }
+  el.innerHTML = ids.map(id => { const p = PROGS.find(x => x.id === id); return `<div class="v9h-sr"><div class="grow"><b>${esc(p.name)}</b><small>${money(p.fee)} a month</small></div><select data-v9h="1" aria-label="Teacher for ${esc(p.name)}" onchange="V9H.F.subs['${id}']=this.value">${opts([['', 'Choose mentor']].concat(MENTORS.filter(m => m.status === 'Active').map(m => [m.id, m.name])), V9H.F.subs[id] || '')}</select><button type="button" class="v9h-x" aria-label="Remove ${esc(p.name)}" onclick="delete V9H.F.subs['${id}'];V9H.sbDraw()">${ic('x')}</button></div>`; }).join('');
+  if (ids.length && V9H.F.subs[ids[0]]) { const pr = $('#nf-pr'), m = $('#nf-m'); pr.value = ids[0]; if (m) m.value = V9H.F.subs[ids[0]]; }
   if (PU.F && document.getElementById('pu-mt')) { const fee = PU.feeOf(); Object.values(PU.F.rows).forEach(r => { if (!r.touched && r.st !== 'Off') r.pay = fee; }); PU.fDraw(); }
 };
 /* the monthly fee is the total of the ticked subjects */
@@ -136,6 +136,7 @@ saveStudent = function () {
   if (!SCH.NEW() || !V9H.F || !$('#v9h-sb')) return V9H._saveStudent.apply(this, arguments);
   const F = V9H.F, ids = Object.keys(F.subs);
   if (!ids.length && PU.F && Object.values(PU.F.rows).some(r => r.st !== 'Off' && (r.paid > 0))) { toast('Choose a subject before recording money for this student'); return; }
+  const nm = ids.find(id => !F.subs[id]); if (nm) { toast('Choose a mentor for each subject'); const sel = [...document.querySelectorAll('#v9h-sl select')].find(x => !x.value); if (sel) sel.focus(); return; }
   const b = $('#nf-b'); if (b) { const v = F.boards.join(', ') || '—'; if (![...b.options].some(o => o.value === v)) { const o = document.createElement('option'); o.value = v; o.textContent = v; b.appendChild(o); } b.value = v; }
   if (ids.length) { $('#nf-pr').value = ids[0]; if ($('#nf-m')) $('#nf-m').value = F.subs[ids[0]]; }
   const n0 = STUDENTS.length, e0 = ENROL.length, i0 = INVOICES.length;

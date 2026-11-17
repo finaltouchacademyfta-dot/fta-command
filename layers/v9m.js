@@ -78,3 +78,52 @@ V9M.mo.observe(document.body, { childList: true, subtree: true });
 /* class notes have no id in the seed data: give them one so they can be deleted */
 (SCH.CNOTES || []).forEach((n, i) => { if (!n.id) n.id = 'CN-' + (i + 1); });
 (SCH.LEAVE || []).forEach((n, i) => { if (!n.id) n.id = 'LV-' + (i + 1); });
+
+/* ---------- teacher ↔ student links: the enrolment is the truth ----------
+   A student sits in a mentor's class only while an active enrolment names that mentor.
+   Fixes: a mentor changed on an enrolment (or a default that was never picked) left the student in the old mentor's class. */
+SCH.reconcile = () => {
+  try {
+    const live = ENROL.filter(e => e.status !== 'Completed' && e.mentor), by = new Map(), all = new Map();
+    ENROL.forEach(e => { const k = e.stu + '|' + e.prog; (all.get(k) || all.set(k, []).get(k)).push(e); });
+    live.forEach(e => { const k = e.stu + '|' + e.prog + '|' + e.mentor; by.set(k, 1); });
+    SCH.GROUPS.forEach(g => {
+      if (!g.prog) return;
+      for (let i = g.stu.length - 1; i >= 0; i--) {
+        const sid = g.stu[i], has = all.get(sid + '|' + g.prog);
+        /* the student has an enrolment for this subject but none with this group's mentor → not here */
+        if (has && has.length && !by.has(sid + '|' + g.prog + '|' + g.mentor)) g.stu.splice(i, 1);
+      }
+    });
+    live.forEach(e => {
+      let g = SCH.GROUPS.find(x => x.prog === e.prog && x.mentor === e.mentor && (x.batch || '') === (e.batch || '') && x.status === 'Active') || SCH.GROUPS.find(x => x.prog === e.prog && x.mentor === e.mentor && x.status === 'Active');
+      if (!g) { g = { key: e.prog + '|' + e.mentor + '|' + (e.batch || ''), id: 'G' + (1 + SCH.GROUPS.length), prog: e.prog, mentor: e.mentor, batch: e.batch || '', name: progName(e.prog), stu: [], per: 0, status: 'Active' }; SCH.GROUPS.push(g); }
+      if (!g.stu.includes(e.stu)) g.stu.push(e.stu);
+    });
+  } catch (x) { console.error('reconcile', x); }
+};
+(() => {
+  const mg = SCH.myGroups; SCH.myGroups = function () { SCH.reconcile(); return mg.apply(this, arguments); };
+  if (typeof V8 !== 'undefined' && V8.enrSave) { const es = V8.enrSave; V8.enrSave = function () { const r = es.apply(this, arguments); SCH.reconcile(); return r; }; }
+})();
+
+/* ---------- mentor: "Send to the office" must never fail silently ----------
+   Phone numbers typed as +880… / 880… / without the leading 0 are accepted; if a field is wrong the sheet scrolls to it and says so. */
+(() => {
+  const ns = SCH.newStuSave;
+  SCH.newStuSave = function () {
+    const pe = document.getElementById('ns-p');
+    if (pe) { let d = pe.value.replace(/\D/g, ''); if (/^8801\d{9}$/.test(d)) d = d.slice(2); else if (/^1\d{9}$/.test(d)) d = '0' + d; pe.value = d; }
+    const r = ns.apply(this, arguments);
+    const bad = document.querySelector('#sheet .sc-err:not(:empty)');
+    if (bad) { const f = bad.parentElement.querySelector('input,select'); if (f) { try { f.scrollIntoView({ block: 'center', behavior: 'smooth' }); f.focus({ preventScroll: true }); } catch (e) { } } toast('Please fix the highlighted field'); }
+    return r;
+  };
+})();
+
+/* a mentor with no class yet only has "Another subject": its details box must be open from the start (it stayed hidden, and Send failed silently behind it) */
+(() => {
+  const sync = () => { const s = document.getElementById('ns-s'), c = document.getElementById('ns-cus'); if (s && c) c.hidden = s.value !== '__new'; };
+  const nf = SCH.newStuForm; SCH.newStuForm = function () { const r = nf.apply(this, arguments); sync(); return r; };
+  const ns2 = SCH.newStuSave; SCH.newStuSave = function () { sync(); return ns2.apply(this, arguments); };
+})();
