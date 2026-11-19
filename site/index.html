@@ -11952,6 +11952,24 @@ html:root:root body .va-k.k1 b{color:#f6e7b8}
 .v9t-seg b{font-weight:700}.v9t-seg em{margin-left:8px;font-style:normal;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--gold,#c9a24b)}
 .v9t-seg small{display:block;opacity:.75;line-height:1.4}.v9t-why{opacity:.9}
 
+/* v9u · phone layout fixes (menu button, top bar, drawer width, banner buttons) */
+@media (max-width:899px){
+ html:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8):not(#n9):not(#n10) #fta-hamb{display:none!important}
+ html:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8):not(#n9):not(#n10) #top .top-r{justify-content:flex-start;gap:8px}
+ html:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8):not(#n9):not(#n10) #top .top-r>#mlogo{margin-right:auto}
+ html:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8):not(#n9):not(#n10) #side .navg{width:100%;box-sizing:border-box}
+ html:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8):not(#n9):not(#n10) #side .nav,html:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8):not(#n9):not(#n10).fta-drawer #side .nav{width:100%!important;box-sizing:border-box!important}
+ html:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8):not(#n9):not(#n10) #side .nav .l{flex:1 1 auto;min-width:0;white-space:normal!important}
+ html:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8):not(#n9):not(#n10) #v9u-lang{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:14px 14px calc(18px + env(safe-area-inset-bottom,0px));padding:10px 12px;border-radius:14px;border:1px solid rgba(201,162,77,.28);color:inherit;font:600 12px/1 system-ui}
+ html:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8):not(#n9):not(#n10) #v9u-lang>div{display:flex;gap:6px}
+ html:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8):not(#n9):not(#n10) #v9u-lang button{border:1px solid rgba(201,162,77,.35);background:transparent;color:inherit;border-radius:9px;padding:8px 12px;font:700 12px/1 system-ui;cursor:pointer}
+ html:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8):not(#n9):not(#n10) #v9u-lang button.on{background:#C9A24D;color:#1b1407;border-color:#C9A24D}
+ /* banner action buttons: never leave the card, wrap onto the next line */
+ html:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8):not(#n9):not(#n10) .banner .bn-acts,html:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8):not(#n9):not(#n10) .banner .bn-top{flex-wrap:wrap;gap:8px;max-width:100%;min-width:0}
+ html:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8):not(#n9):not(#n10) .banner .bn-acts>*,html:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8):not(#n9):not(#n10) .banner .bn-acts .btn{flex:0 0 auto;max-width:100%;white-space:nowrap}
+ html:root:root:root:root body:not(#n1):not(#n2):not(#n3):not(#n4):not(#n5):not(#n6):not(#n7):not(#n8):not(#n9):not(#n10) .banner{overflow:hidden}
+}
+
 </style>
 <script>
 /* =====================================================================
@@ -14298,6 +14316,39 @@ SCH.pendEdit = id => {
     } catch (x) { console.error('pend buttons', x); }
     return r;
   };
+})();
+
+;
+/* v9u · phone: one menu button ("More") opens the side menu; no duplicate button in the top bar */
+(function () {
+  'use strict';
+  var B = document.body, narrow = function () { return window.matchMedia('(max-width:899px)').matches; };
+  function langRow() {
+    var side = document.getElementById('side'); if (!side || document.getElementById('v9u-lang')) return;
+    var d = document.createElement('div'); d.id = 'v9u-lang';
+    var cur = (typeof LANG !== 'undefined' && LANG) || 'en';
+    d.innerHTML = '<span>Language</span><div>' + [['en', 'EN'], ['bn', 'বাং']].map(function (x) {
+      return '<button type="button" data-noedit data-notx data-l="' + x[0] + '" class="' + (cur === x[0] ? 'on' : '') + '">' + x[1] + '</button>';
+    }).join('') + '</div>';
+    d.addEventListener('click', function (e) {
+      var b = e.target.closest('button[data-l]'); if (!b) return;
+      if (typeof setLang === 'function') setLang(b.getAttribute('data-l'));
+      d.querySelectorAll('button').forEach(function (x) { x.classList.toggle('on', x === b); });
+    });
+    side.appendChild(d);
+  }
+  var prev = window.moreMenu;
+  window.moreMenu = function () {
+    if (narrow() && document.getElementById('side')) {
+      if (typeof closeSheet === 'function') { try { closeSheet(); } catch (e) {} }
+      langRow(); B.classList.add('fta-drawer'); return;
+    }
+    return typeof prev === 'function' ? prev.apply(this, arguments) : undefined;
+  };
+  /* the old top-left menu button is not needed any more */
+  function drop() { var h = document.getElementById('fta-hamb'); if (h) h.remove(); }
+  new MutationObserver(function () { if (document.getElementById('fta-hamb')) drop(); }).observe(B, { childList: true, subtree: true });
+  drop();
 })();
 
 </script>
