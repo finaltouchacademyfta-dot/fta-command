@@ -10,8 +10,8 @@ M = 'html:root:is([data-skin="midnight"],[data-skin="emerald"])'
 def load(p):
     spec = importlib.util.spec_from_file_location('m' + hashlib.md5(p.encode()).hexdigest()[:6], p); m = importlib.util.module_from_spec(spec); spec.loader.exec_module(m); return m.PATCHES
 src = open(V8 + 'v8-original.html', encoding='utf8').read()
-cssL = ['v9.css', 'money1.css', 'money2.css', 'fix.css', 'v9s.css', 'v9f.css', 'v9g.css', 'v9h.css', 'v9i.css', 'v9j.css', 'v9k.css', 'v9l.css', 'v9m.css', 'v9p.css', 'v9a.css', 'v9t.css']
-jsL = ['v9.js', 'money1.js', 'money2.js', 'fix.js', 'v9s.js', 'v9f.js', 'v9g.js', 'v9h.js', 'v9i.js', 'v9j.js', 'v9k.js', 'v9l.js', 'v9m.js', 'v9p.js', 'v9a.js', 'v9r.js', 'v9t.js']
+cssL = ['v9.css', 'money1.css', 'money2.css', 'fix.css', 'v9s.css', 'v9f.css', 'v9g.css', 'v9h.css', 'v9i.css', 'v9j.css', 'v9k.css', 'v9l.css', 'v9m.css', 'v9p.css', 'v9a.css', 'v9t.css', 'v9u.css']
+jsL = ['v9.js', 'money1.js', 'money2.js', 'fix.js', 'v9s.js', 'v9f.js', 'v9g.js', 'v9h.js', 'v9i.js', 'v9j.js', 'v9k.js', 'v9l.js', 'v9m.js', 'v9p.js', 'v9a.js', 'v9r.js', 'v9t.js', 'v9u.js']
 css = '\n'.join(open(V8 + f, encoding='utf8').read() for f in cssL).replace('$M', M)
 js = '\n;\n'.join(open(V8 + f, encoding='utf8').read() for f in jsL)
 tail = "<script>document.addEventListener('visibilitychange'"
