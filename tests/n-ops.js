@@ -1,0 +1,192 @@
+/* Worker N · mentor ↔ student links, approvals, transfers (mock backend = the same server code and policy as production)
+   Run:  cd /home/claude/fta-command && MODE=mock python3 build.py && node tests/n-ops.js */
+const { chromium } = require('playwright');
+const http = require('http'), fs = require('fs'), path = require('path');
+const R = require('./rlib.js');
+const ROOT = path.join(__dirname, '..', 'site-mock'), PORT = 8781, URL0 = 'http://localhost:' + PORT + '/';
+const TYPES = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.png': 'image/png', '.svg': 'image/svg+xml', '.webmanifest': 'application/manifest+json', '.ico': 'image/x-icon' };
+const server = http.createServer((q, s) => {
+  let f = path.join(ROOT, decodeURIComponent(new URL(q.url, URL0).pathname)); if (f.endsWith('/')) f += 'index.html';
+  if (!f.startsWith(ROOT) || !fs.existsSync(f)) { s.writeHead(404); s.end(); return; }
+  s.writeHead(200, { 'Content-Type': TYPES[path.extname(f)] || 'application/octet-stream', 'Cache-Control': 'no-cache' }); fs.createReadStream(f).pipe(s);
+});
+let pass = 0, fail = 0; const errs = [];
+const ok = (c, m) => { if (c) { pass++; console.log('  ✓ ' + m); } else { fail++; console.log('  ✗ ' + m); } };
+const OWNER = 'owner@gmail.com', T1 = 'nusrat.teacher@gmail.com', T2 = 'tanvir.teacher@gmail.com';
+const ready = p => p.waitForFunction(() => document.documentElement.classList.contains('fta-on') && window.FTA && FTA.member, null, { timeout: 30000 });
+(async () => {
+  await new Promise(r => server.listen(PORT, r));
+  const b = await chromium.launch();
+  const p = await (await b.newContext({ viewport: { width: 1360, height: 900 } })).newPage(); await R.setup(p);
+  p.on('pageerror', e => errs.push(e.message)); p.on('console', m => { if (m.type() === 'error' && !/favicon|ERR_|404|beforeunload/.test(m.text())) errs.push('console: ' + m.text()); });
+  p.on('dialog', d => d.accept());
+  const as = async email => { await p.evaluate(async () => { if (window.FTA && FTA.sync && FTA.member) await FTA.sync(); }); await p.evaluate(e => localStorage.setItem('fta-mock-session', e), email); await p.reload(); await ready(p); await p.waitForTimeout(400); };
+  const sync = () => p.evaluate(() => FTA.sync());
+  const setMember = (e, patch) => p.evaluate(([e, patch]) => { const d = JSON.parse(localStorage.getItem('fta-mock-db')); d.members[e] = Object.assign(d.members[e] || { email: e, created_at: new Date().toISOString() }, { active: true }, patch); localStorage.setItem('fta-mock-db', JSON.stringify(d)); }, [e, patch]);
+  const sees = (id) => p.evaluate(id => !!STUDENTS.find(s => s.id === id), id);
+  const listed = () => p.evaluate(() => { const a = new Set(); SCH.myGroups().forEach(g => g.stu.forEach(x => a.add(x))); return [...a].filter(x => STUDENTS.find(s => s.id === x)).sort(); });
+
+  console.log('0. Setup (Owner, two mentors, two students)');
+  await p.goto(URL0); await p.evaluate(() => { localStorage.clear(); sessionStorage.clear(); }); await p.goto(URL0);
+  await p.waitForSelector('#fg-email', { timeout: 30000 }); await p.fill('#fg-email', OWNER); await p.click('#fg-go'); await ready(p);
+  await p.evaluate(({ T1, T2 }) => {
+    PROGS.push({ id: 'PRG-01', name: 'IGCSE English', fee: 6000, type: 'Individual', status: 'Active', subject: 'English' }, { id: 'PRG-02', name: 'IGCSE Maths', fee: 7000, type: 'Individual', status: 'Active', subject: 'Maths' });
+    MENTORS.push({ id: 'MEN-01', name: 'Nusrat Jahan', gmail: T1, phone: '01712334455', subjects: 'English', status: 'Active', model: 'pct_fee', rate: 50, join: '2026-10-01', eff: '2026-10-01', notes: '' });
+    MENTORS.push({ id: 'MEN-02', name: 'Tanvir Ahmed', gmail: T2, phone: '01712334466', subjects: 'Maths', status: 'Active', model: 'pct_fee', rate: 40, join: '2026-10-01', eff: '2026-10-01', notes: '' });
+    STUDENTS.push({ id: 'STU-1001', name: 'Ayaan Rahman', guardian: 'Rahman', phone: '01711000001', cls: 'Grade 9', board: 'Cambridge', beh: 'good', joined: '2026-10-01', status: 'Active', notes: [] });
+    STUDENTS.push({ id: 'STU-1002', name: 'Rafi Hasan', guardian: 'Hasan', phone: '01711000002', cls: 'Grade 10', board: 'Cambridge', beh: 'good', joined: '2026-10-01', status: 'Active', notes: [] });
+    ENROL.push({ id: 'ENR-2001', stu: 'STU-1001', prog: 'PRG-01', mentor: 'MEN-01', type: 'Individual', fees: [{ from: '2026-10', fee: 6000 }], disc: 0, start: '2026-10-01', status: 'Active' });
+    ENROL.push({ id: 'ENR-2002', stu: 'STU-1002', prog: 'PRG-02', mentor: 'MEN-02', type: 'Individual', fees: [{ from: '2026-10', fee: 7000 }], disc: 0, start: '2026-10-01', status: 'Active' });
+    V9G.toGroups('STU-1001'); V9G.toGroups('STU-1002'); render();
+  }, { T1, T2 });
+  await sync();
+
+  console.log('1. Each mentor sees only their own student');
+  await as(T1); ok(await sees('STU-1001') && !(await sees('STU-1002')), 'Nusrat sees Ayaan only'); ok((await listed()).join() === 'STU-1001', 'Nusrat’s list = Ayaan');
+  await as(T2); ok(await sees('STU-1002') && !(await sees('STU-1001')), 'Tanvir sees Rafi only');
+
+  console.log('2. Office moves Ayaan’s subject from Nusrat to Tanvir (edit the enrolment)');
+  await as(OWNER);
+  await p.evaluate(() => { const e = ENROL.find(x => x.id === 'ENR-2001'); e.mentor = 'MEN-02'; V9G.toGroups('STU-1001'); render(); });
+  await sync();
+  await as(T1);
+  ok(!(await sees('STU-1001')), 'Nusrat no longer receives Ayaan’s record');
+  ok((await listed()).length === 0, 'Nusrat’s list is empty');
+  await as(T2);
+  ok(await sees('STU-1001') && await sees('STU-1002'), 'Tanvir sees both');
+
+  console.log('3. A mentor adds a student, the office approves, the mentor sees them without a reload');
+  await as(T2);
+  await p.evaluate(() => { go('tp-students'); SCH.newStuForm(); }); await p.waitForTimeout(400);
+  await p.fill('#ns-n', 'Mira Khan'); await p.fill('#ns-g', 'Khan'); await p.fill('#ns-p', '01911000003');
+  await p.evaluate(() => SCH.newStuSave()); await p.waitForTimeout(600); await sync();
+  const pid = await p.evaluate(() => (SCH.PEND.find(x => x.name === 'Mira Khan') || {}).id);
+  ok(!!pid, 'request sent to the office (' + pid + ')');
+  await as(OWNER);
+  ok(await p.evaluate(id => !!SCH.PEND.find(x => x.id === id), pid), 'office sees the request');
+  await p.evaluate(id => { const q = SCH.PEND.find(x => x.id === id); SCH.pendDo(id, true); }, pid); await p.waitForTimeout(300);
+  await p.evaluate(() => { const b = [...document.querySelectorAll('.btn')].find(x => /^Approve$/.test(x.textContent.trim())); b && b.click(); }); await p.waitForTimeout(600); await sync();
+  const mira = await p.evaluate(() => { const s = STUDENTS.find(x => x.name === 'Mira Khan'); return s && s.id; });
+  ok(!!mira, 'student record created on approval (' + mira + ')');
+  await as(T2);
+  ok(await p.evaluate(m => !!STUDENTS.find(s => s.id === m), mira), 'Tanvir sees Mira after approval');
+  ok((await listed()).includes(mira), 'Mira is in Tanvir’s list');
+  await as(T1); ok(!(await p.evaluate(m => !!STUDENTS.find(s => s.id === m), mira)), 'Nusrat does not see Mira');
+
+  console.log('4. Office enrols a student by hand, the mentor sees them');
+  await as(OWNER);
+  await p.evaluate(() => { STUDENTS.push({ id: 'STU-1010', name: 'Nila Roy', guardian: 'Roy', phone: '01711000010', cls: 'Grade 8', board: 'Cambridge', beh: 'good', joined: '2026-11-01', status: 'Active', notes: [] }); ENROL.push({ id: 'ENR-2010', stu: 'STU-1010', prog: 'PRG-01', mentor: 'MEN-01', type: 'Individual', fees: [{ from: '2026-11', fee: 6000 }], disc: 0, start: '2026-11-01', status: 'Active' }); V9G.toGroups('STU-1010'); render(); });
+  await sync(); await as(T1);
+  ok(await sees('STU-1010'), 'Nusrat sees Nila right after the enrolment');
+  ok((await listed()).join() === 'STU-1010', 'and she is in Nusrat’s list');
+  console.log('   debug', JSON.stringify(await p.evaluate(() => ({ g: SCH.GROUPS.map(g => g.id + ':' + g.mentor + ':' + g.prog + ':' + g.status + ':' + g.stu.join('+')), my: SCH.myGroups().map(g => g.id), me: SCH.mentor() })))); 
+  await as(T2); ok(!(await sees('STU-1010')), 'Tanvir does not see Nila');
+
+  console.log('5. Change mentor keeps a journey and moves the connection');
+  await as(OWNER);
+  await p.evaluate(() => { SCH.confirm = o => o.onOk('schedule clash'); V9T.change('ENR-2010', 'MEN-02'); });
+  await p.waitForTimeout(300); await sync();
+  const mh = await p.evaluate(() => { const e = ENROL.find(x => x.id === 'ENR-2010'); return { mentor: e.mentor, mh: e.mh, segs: V9T.segs(e).map(x => x.mentor + (x.cur ? '*' : '')), html: V9T.html('STU-1010') }; });
+  ok(mh.mentor === 'MEN-02' && mh.mh && mh.mh.length === 1 && mh.mh[0].from === 'MEN-01' && mh.mh[0].r === 'schedule clash', 'history entry saved (from, to, reason)');
+  ok(mh.segs.join() === 'MEN-01,MEN-02*', 'journey = Nusrat then Tanvir (current)');
+  ok(/Nusrat Jahan/.test(mh.html) && /Tanvir Ahmed/.test(mh.html), 'owner sees the whole journey');
+  await as(T1); ok(!(await sees('STU-1010')), 'old mentor no longer receives Nila');
+  await as(T2); ok(await sees('STU-1010'), 'new mentor receives Nila');
+  const th = await p.evaluate(() => V9T.html('STU-1010')); ok(!/Nusrat Jahan/.test(th), 'a mentor never sees the previous mentor in the journey');
+
+  console.log('6. Mentor profile tree: add a student, edit and cancel the waiting request');
+  await as(T1);
+  await p.evaluate(() => { go('tp-profile'); }); await p.waitForTimeout(1200);
+  const btn = await p.evaluate(() => !!document.querySelector('#pt-host [data-act="newstu"]'));
+  ok(btn, 'profile tree shows "Add new student"');
+  await p.evaluate(() => document.querySelector('#pt-host [data-act="newstu"]').click()); await p.waitForTimeout(400);
+  await p.fill('#ns-n', 'Zara Ali'); await p.fill('#ns-g', 'Ali'); await p.fill('#ns-p', '01911000077');
+  await p.evaluate(() => SCH.newStuSave()); await p.waitForTimeout(600);
+  const zid = await p.evaluate(() => (SCH.PEND.find(x => x.name === 'Zara Ali') || {}).id);
+  ok(!!zid, 'request created from the tree');
+  await p.evaluate(() => go('tp-profile')); await p.waitForTimeout(1000);
+  ok(await p.evaluate(() => !!document.querySelector('#pt-host [data-act="pedit"]')), 'waiting request is shown in the tree with Edit');
+  await p.evaluate(id => SCH.pendEdit(id), zid); await p.waitForTimeout(300);
+  await p.fill('#ns-n', 'Zara Ali Khan'); await p.evaluate(() => SCH.newStuSave()); await p.waitForTimeout(500);
+  const e1 = await p.evaluate(() => SCH.PEND.filter(x => /^Zara/.test(x.name)).map(x => x.name));
+  ok(e1.length === 1 && e1[0] === 'Zara Ali Khan', 'edit replaces the request (no duplicate): ' + e1.join());
+  await sync(); await as(OWNER); ok(await p.evaluate(() => !!SCH.PEND.find(x => x.name === 'Zara Ali Khan')), 'office sees the edited request');
+  await as(T1); await p.evaluate(() => { SCH.confirm = o => o.onOk(); const x = SCH.PEND.find(y => y.name === 'Zara Ali Khan'); SCH.pendCancel(x.id); }); await p.waitForTimeout(300); await sync();
+  ok(!(await p.evaluate(() => SCH.PEND.some(x => /^Zara/.test(x.name)))), 'cancel removes it'); await as(OWNER); ok(!(await p.evaluate(() => SCH.PEND.some(x => /^Zara/.test(x.name)))), 'office no longer sees it');
+
+  console.log('7. Phone numbers: any country, auto-clean, extra numbers');
+  const cl = await p.evaluate(() => ['01712-334455', ' 0171 2334 455 ', '+880 1712-334455', '8801712334455', '(+44) 7700 900123', '0044 7700 900 123', '+1 (415) 555-2671', '+971 50 123 4567', '12345', '+0123456789', 'abc'].map(x => { const r = V9P.clean(x); return r.ok ? r.num : 'ERR'; }));
+  ok(cl.join() === '01712-334455,01712-334455,01712-334455,01712-334455,+447700900123,+447700900123,+14155552671,+971501234567,ERR,ERR,ERR', 'clean(): ' + cl.join(' | '));
+  await as(T2);
+  await p.evaluate(() => { go('tp-students'); SCH.newStuForm(); }); await p.waitForTimeout(400);
+  await p.fill('#ns-n', 'Omar Faruk'); await p.fill('#ns-g', 'Faruk'); await p.fill('#ns-p', '+44 (7700) 900-456'); await p.click('#ns-g');
+  ok((await p.inputValue('#ns-p')) === '+447700900456', 'box cleans itself when you leave it');
+  await p.evaluate(() => V9P.addX('+1 415 555 2671')); await p.evaluate(() => V9P.addX('01819-123 456'));
+  await p.evaluate(() => SCH.newStuSave()); await p.waitForTimeout(600); await sync();
+  const om = await p.evaluate(() => SCH.PEND.find(x => x.name === 'Omar Faruk'));
+  ok(om && om.phone === '+447700900456' && om.phones.join() === '+14155552671,01819-123456', 'request keeps the main + extra numbers: ' + (om && om.phone + ' / ' + (om.phones || []).join()));
+  await as(OWNER); await p.evaluate(id => SCH.pendDo(id, true), om.id); await p.waitForTimeout(300);
+  await p.evaluate(() => { const b = [...document.querySelectorAll('.btn')].find(x => /^Approve$/.test(x.textContent.trim())); b && b.click(); }); await p.waitForTimeout(600); await sync();
+  const os = await p.evaluate(() => STUDENTS.find(x => x.name === 'Omar Faruk'));
+  ok(os && os.phone === '+447700900456' && (os.phones || []).length === 2, 'approved student has all numbers');
+  await as(T2); ok(await p.evaluate(() => { const s = STUDENTS.find(x => x.name === 'Omar Faruk'); return !!s && !s.phone && !s.phones; }), 'mentor does not receive the guardian numbers from the server');
+
+  await as(OWNER);
+  await p.evaluate(() => { go('students'); studentForm(); }); await p.waitForTimeout(500);
+  await p.fill('#nf-n', 'Lina Park'); await p.fill('#nf-p', ' +82 10-1234-5678 ');
+  await p.evaluate(() => V9H.phAdd('abc')); await p.evaluate(() => saveStudent()); await p.waitForTimeout(300);
+  ok(!(await p.evaluate(() => STUDENTS.some(x => x.name === 'Lina Park'))), 'office form refuses a bad extra number');
+  await p.evaluate(() => { V9H.F.phones = ['+971 50 123 4567', '(0171) 9-123456']; }); await p.evaluate(() => saveStudent()); await p.waitForTimeout(400);
+  const lp = await p.evaluate(() => STUDENTS.find(x => x.name === 'Lina Park'));
+  ok(lp && lp.phone === '+821012345678' && (lp.phones || []).join() === '+971501234567,01719-123456', 'office form saves cleaned numbers: ' + (lp && lp.phone + ' / ' + (lp.phones || []).join()));
+  console.log('8. Attendance log (Owner)');
+  await as(OWNER);
+  await p.evaluate(() => { const g = SCH.GROUPS.find(x => x.stu.includes('STU-1002')); SCH.ATT[g.id + '|' + TODAY] = { at: 'today, 9:05', by: 'Tanvir Ahmed', marks: { 'STU-1002': 'P' }, lesson: 'Quadratics factorising' }; SCH.OS.attView = 'log'; V9A.F.m = CUR; go('ac-att'); }); await p.waitForTimeout(600);
+  ok(await p.evaluate(() => !!document.querySelector('#va-out .va-row')), 'log shows entries');
+  ok(await p.evaluate(() => /Quadratics factorising/.test(document.getElementById('va-out').textContent)), 'lesson is shown');
+  await p.fill('#va-q', 'rafi'); await p.waitForTimeout(200);
+  ok(await p.evaluate(() => [...document.querySelectorAll('#va-out .va-stu b')].every(b => /Rafi/.test(b.textContent)) && document.querySelectorAll('#va-out .va-stu b').length > 0), 'search narrows to Rafi');
+  const k0 = await p.evaluate(() => V9A.stats(V9A.rows(true)).sess);
+  await p.evaluate(() => { const g = SCH.GROUPS.find(x => x.stu.includes('STU-1002')); V9A.edit(g.id + '|' + TODAY, 'STU-1002'); }); await p.waitForTimeout(200);
+  await p.selectOption('#va-ed-s', 'A'); await p.fill('#va-ed-n', 'sick'); await p.evaluate(() => V9A.save(document.querySelector('#va-ed-go') && Object.keys(SCH.ATT).find(k => k.endsWith('|' + TODAY) && SCH.ATT[k].marks['STU-1002']), 'STU-1002')); await p.waitForTimeout(300);
+  ok(await p.evaluate(() => { const k = Object.keys(SCH.ATT).find(k => k.endsWith('|' + TODAY) && SCH.ATT[k].marks['STU-1002']); return SCH.ATT[k].marks['STU-1002'] === 'A' && SCH.ATT[k].notes['STU-1002'] === 'sick' && !!SCH.ATT[k].edited; }), 'edit saves status, note and "edited" stamp');
+  await p.evaluate(() => { SCH.confirm = o => o.onOk('wrong class'); const k = Object.keys(SCH.ATT).find(k => k.endsWith('|' + TODAY) && SCH.ATT[k].marks['STU-1002']); V9A.del(k, 'STU-1002'); }); await p.waitForTimeout(200);
+  ok(!(await p.evaluate(() => Object.keys(SCH.ATT).some(k => k.endsWith('|' + TODAY) && SCH.ATT[k].marks && SCH.ATT[k].marks['STU-1002']))), 'delete removes the entry');
+  await p.evaluate(() => { const g = SCH.GROUPS.find(x => x.stu.includes('STU-1002')); SCH.ATT[g.id + '|' + TODAY] = { at: 'today, 9:05', by: 'T', marks: { 'STU-1002': 'P' }, lesson: 'x' }; V9A.F.q = ''; V9A.F.tab = 'men'; V9A.draw(); }); ok(await p.evaluate(() => /Teacher/.test(document.getElementById('va-out').textContent)), 'totals by teacher renders');
+  await as(T1); ok(await p.evaluate(() => !V9A.can()), 'a mentor cannot use the log editor');
+
+  console.log('9. Roles & Permissions: every cell, enforced by the server');
+  const JA = 'ja.office@gmail.com', AD = 'admin.office@gmail.com';
+  await as(OWNER); await setMember(JA, { role: 'Junior Admin', name: 'Junior' }); await setMember(AD, { role: 'Admin', name: 'Adm' });
+  await p.evaluate(() => { SCH.OS.role = 'Junior Admin'; go('ac-roles'); }); await p.waitForTimeout(500);
+  const cells = await p.evaluate(() => { const rows = [...document.querySelectorAll('#view .sc-mat tbody tr')]; const dash = rows.find(r => /^Dashboard/.test(r.textContent.trim())); return { dash: dash ? dash.querySelectorAll('.sc-chk').length : -1, dashes: document.querySelectorAll('#view .sc-mat tbody .sc-muted').length, sub: rows.some(r => /change a mentor/.test(r.textContent)) }; });
+  ok(cells.dash === 5, 'Dashboard row has all 5 boxes (' + cells.dash + ')'); ok(cells.sub, 'sub-feature row "change a mentor" is listed');
+  const apiPush = (c, id, data) => p.evaluate(([c, id, data]) => FTA.api({ action: 'push', changes: [{ c, id, data }] }).then(r => r.body.results[0]), [c, id, data]);
+  await as(JA);
+  const r1 = await apiPush('students', 'STU-1010', null); ok(r1.status === 'rejected', 'Junior Admin cannot delete a student by the standard rules (' + r1.status + ')');
+  await as(OWNER); await p.evaluate(() => { SCH.OS.role = 'Junior Admin'; SCH.permSet('Junior Admin', 'stu', 'd'); }); await sync();
+  ok(await p.evaluate(() => (SCH.PERM['Junior Admin'].stu || '').includes('d') && !!SCH.PERM._set['Junior Admin|stu|d']), 'Owner ticked Delete for Junior Admin (flagged as hand-made)');
+  await as(JA); const r2 = await apiPush('students', 'STU-1010', null); ok(r2.status === 'ok', 'after the Owner ticks it, the server allows the delete (' + r2.status + (r2.reason ? ' ' + r2.reason : '') + ')');
+  await as(OWNER); await p.evaluate(() => { SCH.permSet('Admin', 'stu', 'e'); }); await sync();
+  await as(AD); const r3 = await apiPush('students', 'STU-1002', { id: 'STU-1002', name: 'Rafi Hasan Edited', guardian: 'Hasan', phone: '01711000002', cls: 'Grade 10', board: 'Cambridge', beh: 'good', joined: '2026-10-01', status: 'Active', notes: [] });
+  ok(r3.status === 'rejected' && /Owner has not allowed/.test(r3.reason || ''), 'unticked Edit stops even an Admin (' + r3.status + ': ' + (r3.reason || '') + ')');
+  await as(OWNER); await p.evaluate(() => { SCH.PERM['Junior Admin'].perm = 'vaed'; }); await as(JA); const r4 = await apiPush('perm', 'Junior Admin', { stu: 'vaedp' }); ok(r4.status === 'rejected', 'nobody but the Owner can change permissions');
+  await as(OWNER); await p.evaluate(() => { SCH.permSet('Admin', 'stu', 'v'); }); await sync();
+  await as(AD); ok(!(await p.evaluate(() => STUDENTS.length > 0)), 'unticked View: the server sends the Admin no students');
+  await as(OWNER); await p.evaluate(() => { SCH.permSet('Admin', 'stu', 'v'); SCH.permSet('Admin', 'stu', 'e'); }); await sync(); await as(AD); ok(await p.evaluate(() => STUDENTS.length > 0), 'ticked again: students are back');
+
+  console.log('10. New mentor: button + any-country numbers');
+  await as(OWNER);
+  await p.evaluate(() => { for (let i = ENROL.length - 1; i >= 0; i--) if (!STUDENTS.find(x => x.id === ENROL[i].stu)) ENROL.splice(i, 1); closeSheet(); go('mentors'); }); await p.waitForTimeout(1500);
+  ok(await p.evaluate(() => !!document.getElementById('fx-newmen')), '"New mentor" button is on the Mentors page');
+  await p.evaluate(() => SCH.menForm()); await p.waitForTimeout(300);
+  await p.fill('#mf-n', 'Ibrahim Khalil'); await p.fill('#mf-e', 'ibrahim.k@gmail.com'); await p.fill('#mf-p', '+971 50-123 4567'); await p.click('#mf-n');
+  ok((await p.inputValue('#mf-p')) === '+971501234567', 'teacher number cleaned');
+  await p.evaluate(() => V9P.addM('01711 000 222')); await p.evaluate(() => SCH.menSave('')); await p.waitForTimeout(400);
+  const nm = await p.evaluate(() => MENTORS.find(x => x.name === 'Ibrahim Khalil'));
+  ok(nm && nm.phone === '+971501234567' && (nm.phones || []).join() === '01711-000222', 'mentor saved with main + extra number');
+
+  console.log('\n' + pass + ' passed, ' + fail + ' failed' + (errs.length ? ', ' + errs.length + ' page errors' : ''));
+  errs.slice(0, 8).forEach(e => console.log('  ! ' + e.slice(0, 200)));
+  await b.close(); server.close(); process.exit(fail || errs.length ? 1 : 0);
+})();

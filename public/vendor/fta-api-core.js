@@ -12,8 +12,11 @@
   const MAX_BATCH = 200;
   function ctxFor(store, cache) {
     const all = async c => { if (!cache[c]) cache[c] = (await store.allRecords(c)).filter(r => !r.deleted).map(r => r.data); return cache[c]; };
-    return { pre: async () => { await all('groups'); await all('enrol'); await all('ox'); }, get: (c, id) => (cache[c] || []).find(x => x && x.id === id) || null, all: c => cache[c] || [] };
+    const ctx = { dyn: null, pre: async () => { await all('groups'); await all('enrol'); await all('ox'); ctx.dyn = await loadDyn(store); }, get: (c, id) => (cache[c] || []).find(x => x && x.id === id) || null, all: c => cache[c] || [] };
+    return ctx;
   }
+  /* the Owner's Roles & Permissions table: { role: { part: 'vaed' }, _set: { 'Role|part|letter': 1 } } */
+  async function loadDyn(store) { try { const D = {}; (await store.allRecords('perm')).forEach(r => { if (!r.deleted && r.data && typeof r.data === 'object') D[r.id] = r.data; }); return D; } catch (e) { return null; } }
   async function me(store, email, env) {
     email = String(email || '').toLowerCase();
     let m = await store.getMember(email);
@@ -33,8 +36,9 @@
     if (!m) return { status: 403, body: { error: 'This Gmail is not on the academy list. Ask the Owner to add it.' } };
     if (a === 'pull') {
       const rows = body.since ? await store.recordsSince(body.since) : await store.allRecords();
+      const D = await loadDyn(store);
       const out = []; let max = body.since || '';
-      rows.forEach(r => { if (r.updated_at > max) max = r.updated_at; if (r.deleted) { if (body.since) out.push({ c: r.collection, id: r.id, deleted: true, at: r.updated_at }); return; } const d = P.read(m, r); if (d != null) out.push({ c: r.collection, id: r.id, data: d, at: r.updated_at }); else if (body.since) out.push({ c: r.collection, id: r.id, deleted: true, at: r.updated_at }); });
+      rows.forEach(r => { if (r.updated_at > max) max = r.updated_at; if (r.deleted) { if (body.since) out.push({ c: r.collection, id: r.id, deleted: true, at: r.updated_at }); return; } const d = P.read(m, r, D); if (d != null) out.push({ c: r.collection, id: r.id, data: d, at: r.updated_at }); else if (body.since) out.push({ c: r.collection, id: r.id, deleted: true, at: r.updated_at }); });
       const files = await signRefs(store, out);
       return { status: 200, body: { records: out, cursor: max, member: m, files } };
     }
@@ -49,20 +53,33 @@
           const old = await store.getRecord(c, id);
           /* 1. may this person make this change at all? */
           const w = P.write(m, c, id, data, old, ctx, now);
-          if (!w.ok) { res.push({ c, id, status: 'rejected', reason: w.reason, data: old && !old.deleted ? P.read(m, old) : null, at: old && old.updated_at }); continue; }
+          if (!w.ok) { res.push({ c, id, status: 'rejected', reason: w.reason, data: old && !old.deleted ? P.read(m, old, ctx.dyn) : null, at: old && old.updated_at }); continue; }
           /* 2. did someone else change it since this person last saw it? (never overwrite silently) */
           if (old && !old.deleted && ch.base !== undefined && ch.base !== old.updated_at && !w.ignore) {
-            if (!(ch.base === null && data && JSON.stringify(old.data) === JSON.stringify(data))) { const d = P.read(m, old); res.push({ c, id, status: 'conflict', data: d, at: old.updated_at, by: old.updated_by }); continue; }
+            if (!(ch.base === null && data && JSON.stringify(old.data) === JSON.stringify(data))) { const d = P.read(m, old, ctx.dyn); res.push({ c, id, status: 'conflict', data: d, at: old.updated_at, by: old.updated_by }); continue; }
           }
-          if (w.ignore) { res.push({ c, id, status: 'ignored', data: old && !old.deleted ? P.read(m, old) : null, at: old && old.updated_at }); continue; }
+          if (w.ignore) { res.push({ c, id, status: 'ignored', data: old && !old.deleted ? P.read(m, old, ctx.dyn) : null, at: old && old.updated_at }); continue; }
           const del = w.data == null, tg = del ? { mentor_ids: (old && old.mentor_ids) || [], student_ids: (old && old.student_ids) || [] } : P.tags(c, id, w.data, ctx);
           const row = await store.putRecord({ collection: c, id, data: del ? (old ? old.data : {}) : w.data, deleted: del, mentor_ids: tg.mentor_ids, student_ids: tg.student_ids, updated_by: m.email });
           if (cache[c]) { const i = cache[c].findIndex(x => x && x.id === id); if (del) { if (i > -1) cache[c].splice(i, 1); } else if (i > -1) cache[c][i] = w.data; else cache[c].push(w.data); }
           if (c === 'groups' || c === 'enrol') { [old && old.data, w.data].forEach(d => { if (!d) return; (d.stu ? [].concat(d.stu) : []).forEach(x => moved.stu.add(x)); }); if (c === 'groups') moved.gid.add(id); }
           await store.audit({ email: m.email, role: m.role, action: del ? 'delete' : old && !old.deleted ? 'update' : 'create', collection: c, record_id: id });
-          res.push({ c, id, status: 'ok', at: row.updated_at, data: w.merged ? P.read(m, row) : undefined });
+          res.push({ c, id, status: 'ok', at: row.updated_at, data: w.merged ? P.read(m, row, ctx.dyn) : undefined });
           if (N && N.watched(c) && !del) done.push({ c, id, prev: old && !old.deleted ? old.data : null, next: w.data, tg });
         } catch (e) { res.push({ c, id, status: 'error', reason: String(e && e.message || e).slice(0, 200) }); }
+      }
+      /* class lists follow enrolments (the server corrects them, so every device agrees) */
+      if (moved.stu.size || moved.gid.size || list.some(x => x.c === 'enrol')) {
+        try {
+          for (const fx of P.fixGroups(ctx.all('groups'), ctx.all('enrol'))) {
+            const g0 = await store.getRecord('groups', fx.id); if (!g0 || g0.deleted) continue;
+            const tg = P.tags('groups', fx.id, fx.data, ctx);
+            const row = await store.putRecord({ collection: 'groups', id: fx.id, data: fx.data, deleted: false, mentor_ids: tg.mentor_ids, student_ids: tg.student_ids, updated_by: m.email });
+            const i = cache.groups.findIndex(x => x && x.id === fx.id); if (i > -1) cache.groups[i] = fx.data;
+            [g0.data, fx.data].forEach(d => (d.stu || []).forEach(x => moved.stu.add(x))); moved.gid.add(fx.id);
+            await store.audit({ email: m.email, role: m.role, action: 'system-fix', collection: 'groups', record_id: fx.id });
+          }
+        } catch (e) { /* the lists are corrected again on the next change */ }
       }
       if (moved.stu.size || moved.gid.size) { try { await retag(store, ctx, moved); } catch (e) { /* tags are refreshed again on the next change */ } }
       /* notifications: queued for every person concerned, then sent at once (leftovers go out on the next scheduled run) */

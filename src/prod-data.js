@@ -276,6 +276,7 @@
 #fta-gate .fg-steps{text-align:left;margin:0 0 6px;padding-left:20px;color:#C9CFDF;font-size:13.5px;line-height:1.7}
 #fta-gate code{background:rgba(255,255,255,.08);padding:1px 6px;border-radius:6px;font-size:12.5px}
 #fta-gate input{width:100%;box-sizing:border-box;min-height:46px;border-radius:12px;border:1px solid rgba(255,255,255,.18);background:rgba(0,0,0,.25);color:#fff;padding:0 14px;font:500 15px Manrope,system-ui,sans-serif;margin-bottom:10px}
+#fta-gate .fb-h{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}#fta-gate .fb-wrap{display:flex;flex-direction:column;align-items:center;gap:10px;margin:2px auto 6px}
 #fta-gate .fg-spin{width:34px;height:34px;border-radius:50%;border:3px solid rgba(201,162,77,.25);border-top-color:#C9A24D;margin:8px auto 14px;animation:fgspin .9s linear infinite}
 #fta-gate .fg-tag{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.08em;color:#1A1405;background:#C9A24D;border-radius:6px;padding:2px 8px;margin-bottom:12px}
 @keyframes fgspin{to{transform:rotate(360deg)}}
@@ -292,7 +293,7 @@
 @media print{#fta-sync,#fta-gate{display:none!important}}
 @media (max-width:640px){#fta-sync{bottom:calc(74px + env(safe-area-inset-bottom,0px));right:10px}}`;
   function gate(html) {
-    const boot0 = $id('fta-boot'); if (boot0) boot0.remove();   /* the instant splash from the page itself */
+    const boot0 = $id('fta-boot'); if (boot0) { boot0.style.opacity = '0'; boot0.style.pointerEvents = 'none'; setTimeout(() => { if (boot0.parentNode) boot0.remove(); }, 650); }   /* the page's own splash fades out */
     let g = $id('fta-gate');
     if (!g) { const st = document.createElement('style'); st.id = 'fta-gate-css'; st.textContent = CSS; document.head.appendChild(st); g = document.createElement('div'); g.id = 'fta-gate'; g.setAttribute('role', 'dialog'); g.setAttribute('aria-modal', 'true'); g.setAttribute('aria-labelledby', 'fg-h'); document.body.appendChild(g); }
     document.documentElement.classList.add('fta-on');        /* the (opaque) gate now covers the app; nothing showed before it */
@@ -301,8 +302,14 @@
     const f = g.querySelector('button,input'); if (f) setTimeout(() => f.focus(), 30);
     return g;
   }
-  const ungate = () => { const b0 = $id('fta-boot'); if (b0) b0.remove(); const g = $id('fta-gate'); if (g) g.hidden = true; document.documentElement.classList.add('fta-on'); };
-  function loadingScreen(t) { gate(`<h1 id="fg-h">FTA Command Centre</h1><div class="fg-spin" role="status" aria-label="Loading"></div><p>${h(t || 'Opening your academy…')}</p>`); }
+  const ungate = () => {
+    const b0 = $id('fta-boot'), done = () => { const g = $id('fta-gate'); if (g) g.hidden = true; document.documentElement.classList.add('fta-on'); if (b0) setTimeout(() => { if (b0.parentNode) b0.remove(); }, 700); };
+    /* a first look at the logo, never a flash: the splash stays at least 0.8 s, then fades into the app */
+    let hold = 800; try { if (!sessionStorage.getItem("fta-intro") && !navigator.webdriver) { hold = 4300; sessionStorage.setItem("fta-intro", "1"); } } catch (e) {}
+    const wait = b0 ? Math.max(0, hold - (Date.now() - (window.__ftaT0 || Date.now()))) : 0;
+    if (wait > 0) setTimeout(done, wait); else done();
+  };
+  function loadingScreen(t) { gate(`<h1 id="fg-h" class="fb-h">FTA Command Centre</h1><div class="fb-wrap" role="status" aria-label="Loading"><div class="fb-logo"><b class="fb-halo"></b><svg class="fb-ring" viewBox="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="57"/></svg><img src="brand/emblem.png" alt="" width="96" height="96"><span class="fb-shine"></span></div><i class="fb-bar"></i></div><p>${h(t || 'Opening your academy…')}</p>`); }
   function setupScreen() {
     gate(`<h1 id="fg-h">Almost ready</h1><p>This copy of the Command Centre is not connected to its database yet. The site owner adds these in <b>Netlify → Site configuration → Environment variables</b>, then redeploys:</p>
       <ol class="fg-steps"><li><code>SUPABASE_URL</code></li><li><code>SUPABASE_ANON_KEY</code></li><li><code>SUPABASE_SERVICE_ROLE_KEY</code> (secret)</li><li><code>OWNER_EMAIL</code> (the Owner's Gmail)</li></ol>
@@ -570,7 +577,7 @@
   }
   FTA.pending = () => STARTED ? collectChanges().length + HOLD.size : 0;
   /* the local copy of the policy: changes this role may not make are not sent */
-  function localCtx() { const all = c => { const a = BYC[c]; const v = a && G(a.get); return Array.isArray(v) ? v : []; }; return { get: (c, id) => all(c).find(x => x && x.id === id) || null, all }; }
+  function localCtx() { const all = c => { const a = BYC[c]; const v = a && G(a.get); return Array.isArray(v) ? v : []; }; return { get: (c, id) => all(c).find(x => x && x.id === id) || null, all, dyn: G(() => SCH.PERM) || null }; }
   function precheck(ch) {
     const P = window.FTAPolicy; if (!P) return { ok: true };
     const old = SNAP[ch.c] && SNAP[ch.c].has(ch.id) ? { data: JSON.parse(SNAP[ch.c].get(ch.id)), deleted: false } : null;

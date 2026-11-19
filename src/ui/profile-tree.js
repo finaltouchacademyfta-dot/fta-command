@@ -242,6 +242,13 @@
     }
     return '<div class="pt-kid pt-vitem"><i class="pt-tick" aria-hidden="true"></i><article class="pt-card pt-ch' + (k.plan ? ' is-plan' : '') + (editing ? ' is-editing' : '') + '"><header><span class="pt-kn">' + h(k.title) + '</span>' + badge(k.status) + '</header>' + body + '</article></div>';
   }
+  /* a mentor adds a student from the tree too: same form, same office approval; waiting requests can be edited or cancelled here */
+  const newStuOn = inst => inst.mode === 'self' && isM(inst.pid) && role() === 'Mentor' && G(() => typeof SCH.newStuForm === 'function');
+  function newStuHtml(inst) {
+    if (!newStuOn(inst)) return '';
+    const wait = (G(() => SCH.pendMine()) || []).map(p => '<div class="pt-kid pt-vitem"><i class="pt-tick" aria-hidden="true"></i><article class="pt-card pt-ch is-plan"><header><span class="pt-kn">' + h(p.name) + '</span>' + badge('Waiting for approval') + '</header><dl class="pt-kv"><div><dt>Class</dt><dd>' + h(p.cls) + '</dd></div><div><dt>Guardian</dt><dd>' + h(p.guardian || '—') + '</dd></div></dl><div class="pt-kacts"><button type="button" class="pt-btn" data-act="pcancel" data-pid="' + h(p.id) + '">' + ico('trash') + 'Cancel</button><button type="button" class="pt-btn is-gold" data-act="pedit" data-pid="' + h(p.id) + '">' + ico('pen') + 'Edit</button></div></article></div>').join('');
+    return wait + '<div class="pt-kid pt-vitem"><i class="pt-tick" aria-hidden="true"></i><button type="button" class="pt-card pt-add" data-act="newstu">' + ico('plus') + '<span>Add new student</span></button></div>';
+  }
   function addHtml(inst) {
     const st = inst.st, id = 'pta-' + inst.uid;
     if (!st.adding) return '<div class="pt-kid pt-vitem"><i class="pt-tick" aria-hidden="true"></i><button type="button" class="pt-card pt-add" data-act="add">' + ico('plus') + '<span>Add new slot</span></button></div>';
@@ -268,7 +275,7 @@
   function branchHtml(inst, br) {
     const st = inst.st, closed = !!st.closed[br.b], fs = br.fields.filter(f => shown(f, inst.mode)), hid = 'pth-' + inst.uid + '-' + br.b;
     const count = br.kids ? inst.kids.length : br.b === 'spec' ? String(inst.r.specialties || '').split(',').filter(x => x.trim()).length || '' : '';
-    const kidList = br.kids ? inst.kids.map(k => kidHtml(inst, k)).join('') + (canAddSlot(inst) ? addHtml(inst) : '') + (!inst.kids.length && !canAddSlot(inst) ? '<div class="pt-kid pt-vitem"><i class="pt-tick" aria-hidden="true"></i><div class="pt-card pt-ch is-empty"><p class="pt-val is-empty">' + (isM(inst.pid) ? 'No students yet' : 'No programmes yet') + '</p></div></div>' : '') : '';
+    const kidList = br.kids ? inst.kids.map(k => kidHtml(inst, k)).join('') + (canAddSlot(inst) ? addHtml(inst) : '') + newStuHtml(inst) + (!inst.kids.length && !canAddSlot(inst) ? '<div class="pt-kid pt-vitem"><i class="pt-tick" aria-hidden="true"></i><div class="pt-card pt-ch is-empty"><p class="pt-val is-empty">' + (isM(inst.pid) ? 'No students yet' : 'No programmes yet') + '</p></div></div>' : '') : '';
     return '<div class="pt-col pt-vitem' + (closed ? ' is-closed' : '') + (br.kids ? ' has-kids' : '') + '" data-col="' + br.b + '"><i class="pt-tick" aria-hidden="true"></i>' +
       '<section class="pt-card pt-br' + (dirty(inst, br.b) ? ' is-dirty' : '') + '" data-br="' + br.b + '" aria-labelledby="' + hid + '">' +
       '<button type="button" class="pt-bh" id="' + hid + '" data-act="fold" data-b="' + br.b + '" aria-expanded="' + !closed + '"><span class="pt-bi">' + ico(br.icon) + '</span><span class="pt-bt">' + h(br.title) + '</span>' + (count !== '' ? '<em class="pt-bn">' + count + '</em>' : '') + ico('chev', 'pt-chev') + '</button>' +
@@ -479,6 +486,9 @@
       }
       else if (act === 'ktree') { if (inst.opts.modal) open(b.dataset.pid, { mode: inst.mode, back: inst.pid, opener: MODAL && MODAL.opener }); else open(b.dataset.pid, { mode: inst.mode, opener: b }); }
       else if (act === 'add') { st.adding = true; st.add = { medium: 'In person' }; draw(inst, false); const f = el.querySelector('[data-af="stu"]'); f && f.focus(); }
+      else if (act === 'newstu') { G(() => SCH.newStuForm()); }
+      else if (act === 'pedit') { G(() => SCH.pendEdit(b.dataset.pid)); }
+      else if (act === 'pcancel') { G(() => SCH.pendCancel(b.dataset.pid)); }
       else if (act === 'addcancel') { st.adding = false; draw(inst, false); }
       else if (act === 'addsave') {
         const a = st.add, r = inst.real, p = a.prog || (el.querySelector('[data-af="prog"]') || {}).value;

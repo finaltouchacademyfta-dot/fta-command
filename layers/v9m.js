@@ -84,6 +84,7 @@ V9M.mo.observe(document.body, { childList: true, subtree: true });
    Fixes: a mentor changed on an enrolment (or a default that was never picked) left the student in the old mentor's class. */
 SCH.reconcile = () => {
   try {
+    const who = (typeof ME === 'function' && ME() || {}).role || (ST && ST.role); if (who === 'Mentor' || who === 'Student') return;   /* the server keeps the lists right for them */
     const live = ENROL.filter(e => e.status !== 'Completed' && e.mentor), by = new Map(), all = new Map();
     ENROL.forEach(e => { const k = e.stu + '|' + e.prog; (all.get(k) || all.set(k, []).get(k)).push(e); });
     live.forEach(e => { const k = e.stu + '|' + e.prog + '|' + e.mentor; by.set(k, 1); });
@@ -113,7 +114,7 @@ SCH.reconcile = () => {
   const ns = SCH.newStuSave;
   SCH.newStuSave = function () {
     const pe = document.getElementById('ns-p');
-    if (pe) { let d = pe.value.replace(/\D/g, ''); if (/^8801\d{9}$/.test(d)) d = d.slice(2); else if (/^1\d{9}$/.test(d)) d = '0' + d; pe.value = d; }
+    if (pe && window.V9P) { const r = V9P.clean(pe.value); if (r.ok && r.num) pe.value = r.num; }
     const r = ns.apply(this, arguments);
     const bad = document.querySelector('#sheet .sc-err:not(:empty)');
     if (bad) { const f = bad.parentElement.querySelector('input,select'); if (f) { try { f.scrollIntoView({ block: 'center', behavior: 'smooth' }); f.focus({ preventScroll: true }); } catch (e) { } } toast('Please fix the highlighted field'); }
