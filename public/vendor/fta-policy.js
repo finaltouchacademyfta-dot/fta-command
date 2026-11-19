@@ -32,9 +32,26 @@
   /* the fields a teacher / student may change on their own profile (everything else stays as the office saved it) */
   const SELF = { mentors: ['phone', 'address', 'pay', 'specialties', 'qual', 'bio', 'availability', 'slotsPreferred', 'photo'], students: ['address', 'bio', 'photo'] };
   /* a mentor never receives a student's contact details, and a student never a mentor's: they talk only inside the academy's Messages */
-  const CONTACT = ['phone', 'gphone', 'gmail', 'email', 'address', 'whatsapp', 'wa', 'emergency', 'mobile', 'altPhone'];
+  const CONTACT = ['phone', 'gphone', 'gmail', 'email', 'address', 'whatsapp', 'wa', 'emergency', 'mobile', 'altPhone', 'phones'];
   /* messages: only these office roles may read or write them (Owner / Admin read every chat, to keep students safe) */
   const MSG_OFFICE = ['Owner', 'Admin'];
+  /* ---------- the Owner's Roles & Permissions table, enforced here ----------
+     The table (collection "perm": one record per role, plus "_set") lists what each role may do per part of the app.
+     A cell the Owner has switched by hand is flagged in "_set" ("Role|part|letter"); a flagged cell decides on its own:
+       ticked   -> an office role may do it even where the built-in rules would say no
+       unticked -> nobody in that role may do it, even where the built-in rules would say yes
+     Cells never touched keep the built-in rules, so nothing changes until the Owner decides. Owner-only data stays Owner-only. */
+  const MODMAP = {
+    students: 'stu', pend: 'stu', sport: 'stu', enrol: 'prog', progs: 'prog', batches: 'prog', invoices: 'fees', payments: 'pay', mentors: 'tea',
+    payroll: 'payroll', prpay: 'payroll', bonus: 'payroll', deduct: 'payroll', shares: 'payroll', mst: 'payroll', mstatus: 'payroll',
+    expenses: 'exp', expcats: 'exp', accounts: 'acc', others: 'acc', transfers: 'acc', recon: 'acc', groups: 'cls', classes: 'cls', topics: 'cls', subf: 'cls',
+    att: 'att', attx: 'att', hw: 'hw', exams: 'exam', marks: 'exam', ox: 'exam', qb: 'exam', oxatt: 'exam', rt: 'rout', rout: 'rout', notes: 'notes', bin: 'safety'
+  };
+  function dyn(R, c, act, D) {
+    if (!D || R === 'Owner') return null;
+    const mod = MODMAP[c]; if (!mod || !D._set || !D._set[R + '|' + mod + '|' + act]) return null;
+    return String((D[R] || {})[mod] || '').indexOf(act) > -1;
+  }
   const has = (a, x) => a.indexOf(x) > -1;
   const clone = o => o == null ? o : JSON.parse(JSON.stringify(o));
   const omit = (o, keys) => { if (!o || typeof o !== 'object') return o; const r = Object.assign({}, o); keys.forEach(k => delete r[k]); return r; };
@@ -98,10 +115,11 @@
   }
 
   /* ---------- reads ---------- */
-  function canSee(me, c) {
+  function canSee(me, c, D) {
     if (!me || !me.active) return false; const R = me.role;
     if (c === 'agentmem') return R === 'Owner';   /* the AI assistant's memory: Owner only */
     if (c === 'msg') return has(MSG_OFFICE, R) || R === 'Mentor' || R === 'Student';
+    { const o = dyn(R, c, 'v', D); if (o === false) return false; if (o === true && R !== 'Mentor' && R !== 'Student' && !has(OFFICE_ONLY, c) && c !== 'audit') return true; }
     if (R === 'Owner' || R === 'Admin' || R === 'Finance Manager' || R === 'Viewer') return c !== 'audit' || R === 'Owner' || R === 'Admin';
     if (R === 'Junior Admin') return !has(MONEY_SECRET, c) && c !== 'audit' && c !== 'staff' && c !== 'logins' && c !== 'users';
     if (R === 'Collection Staff') return has(['rcpt', 'rcset', 'students', 'enrol', 'progs', 'mentors', 'batches', 'invoices', 'payments', 'advapp', 'accounts', 'follow', 'notes', 'notices', 'circles', 'close', 'mst', 'mstatus', 'methods', 'expcats', 'log'], c) || has(SETTINGS, c);
@@ -109,8 +127,8 @@
     if (R === 'Student') return has(STUDENT_READ, c);
     return false;
   }
-  function read(me, rec) {
-    if (!canSee(me, rec.collection) || rec.deleted) return null;
+  function read(me, rec, D) {
+    if (!canSee(me, rec.collection, D) || rec.deleted) return null;
     const R = me.role;
     if (R === 'Mentor' || R === 'Student') return redact(me, rec.collection, rec.id, rec.data, rec);
     if (R === 'Collection Staff') { if (rec.collection === 'mentors') return pick(rec.data, ['id', 'name', 'subjects', 'status', 'phone']); if (rec.collection === 'accounts') return pick(rec.data, ['id', 'name', 'type']); if (rec.collection === 'batches') return omit(rec.data, ['mentorPay', 'direct', 'directNote']); }
@@ -143,12 +161,16 @@
     if (!del) { const bad = shape(c, data); if (bad) return NO(bad); }
     if (c === 'agentmem' && R !== 'Owner') return NO('Only the Owner can change this');
     if (has(APPEND, c)) { if (del || prev) return R === 'Owner' ? YES(data) : IGNORE; return YES(data); }
-    if (R === 'Viewer') return NO('Viewers cannot change anything');
+    if (R === 'Viewer' && dyn(R, c, del ? 'd' : prev ? 'e' : 'a', ctx && ctx.dyn) !== true) return NO('Viewers cannot change anything');
     if (has(RECEIPTS, c)) return writeReceipt(me, c, id, data, prev, now);
     if (c === 'msg') return writeMsg(me, id, data, prev, ctx, now);
     if (c === 'clslive') return writeLive(me, id, data, prev, ctx, now);
     if (R === 'Owner') return YES(data);
     if (has(OWNER_ONLY_WRITE, c)) return NO('Only the Owner can change this');
+    { const act = del ? 'd' : prev ? 'e' : 'a', o = dyn(R, c, act, ctx && ctx.dyn);
+      if (o === false) return NO('The Owner has not allowed your role to ' + (act === 'd' ? 'delete' : act === 'e' ? 'edit' : 'add') + ' this');
+      if (o === true && R !== 'Mentor' && R !== 'Student') return YES(data); }
+    if (R === 'Viewer') return NO('Viewers cannot change anything');
     if (R === 'Admin') return YES(data);
     if (R === 'Finance Manager') return has(MONEY, c) || has(PEOPLE, c) || c === 'notes' || c === 'bin' ? YES(data) : NO('Finance Managers cannot change this');
     if (R === 'Junior Admin') {
@@ -358,5 +380,30 @@
   }
   function canListMembers(me) { return !!me && me.active && ['Owner', 'Admin'].indexOf(me.role) > -1; }
 
-  return { MENTOR_WRITE, STUDENT_WRITE, RECEIPTS, SELF, ROLES, OFFICE, MONEY, PEOPLE, TEACH, COMMS, SETTINGS, tags, read, write, canSee, memberWrite, canListMembers, shape };
+  /* ---------- class lists follow enrolments ----------
+     A student belongs to a mentor's class only while an enrolment that is not Completed names that mentor.
+     Returns the classes whose student list must change: students with an enrolment for the subject but none with this class's mentor leave,
+     and students with an active enrolment join the open class of that subject and mentor. Manual class assignments (no enrolment) are never touched. */
+  function fixGroups(groups, enrol) {
+    const live = new Set(), any = new Map();
+    (enrol || []).forEach(e => { if (!e || !e.stu) return; const k = e.stu + '|' + e.prog; any.set(k, true); if (e.status !== 'Completed' && e.mentor) live.add(k + '|' + e.mentor); });
+    const out = [], by = new Map();
+    (groups || []).forEach(g => { if (g && g.prog && g.status !== 'Closed') { const k = g.prog + '|' + g.mentor; (by.get(k) || by.set(k, []).get(k)).push(g); } });
+    (groups || []).forEach(g => {
+      if (!g || !g.prog || !Array.isArray(g.stu)) return;
+      const keep = g.stu.filter(sid => !any.has(sid + '|' + g.prog) || live.has(sid + '|' + g.prog + '|' + g.mentor));
+      if (keep.length !== g.stu.length) out.push({ id: g.id, data: Object.assign({}, g, { stu: keep }) });
+    });
+    const patched = new Map(out.map(o => [o.id, o]));
+    (enrol || []).forEach(e => {
+      if (!e || !e.stu || e.status === 'Completed' || !e.mentor) return;
+      const list = by.get(e.prog + '|' + e.mentor); if (!list || !list.length) return;
+      const g = list.find(x => (x.batch || '') === (e.batch || '')) || list[0], cur = (patched.get(g.id) || { data: g }).data;
+      if ((cur.stu || []).indexOf(e.stu) > -1) return;
+      const nd = Object.assign({}, cur, { stu: (cur.stu || []).concat(e.stu) });
+      patched.set(g.id, { id: g.id, data: nd });
+    });
+    return Array.from(patched.values());
+  }
+  return { MENTOR_WRITE, STUDENT_WRITE, RECEIPTS, SELF, ROLES, OFFICE, MONEY, PEOPLE, TEACH, COMMS, SETTINGS, tags, read, write, canSee, memberWrite, canListMembers, shape, fixGroups };
 });

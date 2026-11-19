@@ -42,7 +42,9 @@ window.__ftaRun = function (code, v) {
   /* switching the theme from code must not leave the theme picker open (setSkin refreshes the picker) */
   function quiet(f) { const ov = document.getElementById('ov'), was = !!(ov && !ov.hidden); f(); if (!was && typeof closeSheet === 'function') { try { closeSheet(); } catch (e) { } } }
   /* first visit (nothing saved yet): FTA Premium (light), English. Anyone who picks another theme keeps their own choice. */
-  let first = false; try { first = !localStorage.getItem('fta-skin') && !localStorage.getItem(KEY); } catch (e) { }
+  /* FTA Premium is the opening theme on every device. Devices that opened an older version once are moved to it once
+     (marker fta-default-v3); after that, whatever theme a person picks is kept. */
+  let first = false; try { first = !localStorage.getItem('fta-skin') && !localStorage.getItem(KEY); if (!localStorage.getItem('fta-default-v3')) { first = true; localStorage.setItem('fta-default-v3', '1'); localStorage.removeItem('fta-skin'); localStorage.removeItem(KEY); } } catch (e) { }
   if (first) {
     try { localStorage.setItem('fta-demo-theme', 'light'); if (!localStorage.getItem('fta-lang')) localStorage.setItem('fta-lang', 'en'); } catch (e) { }
     if (typeof LANG !== 'undefined' && LANG !== 'en' && typeof setLang === 'function') setLang('en');
