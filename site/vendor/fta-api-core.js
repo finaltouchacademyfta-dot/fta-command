@@ -35,6 +35,9 @@
     if (a === 'me') return { status: 200, body: { member: m } };
     if (!m) return { status: 403, body: { error: 'This Gmail is not on the academy list. Ask the Owner to add it.' } };
     if (a === 'pull') {
+      if (!body.since) { /* a full load (sign-in / reload) also repairs class lists that fell out of line with the enrolments */
+        try { const cache = {}, ctx = ctxFor(store, cache); await ctx.pre(); const moved = { stu: new Set(), gid: new Set() }; if (await healGroups(store, ctx, m, moved)) await retag(store, ctx, moved); } catch (e) { /* never block a sign-in */ }
+      }
       const rows = body.since ? await store.recordsSince(body.since) : await store.allRecords();
       const D = await loadDyn(store);
       const out = []; let max = body.since || '';
@@ -69,18 +72,7 @@
         } catch (e) { res.push({ c, id, status: 'error', reason: String(e && e.message || e).slice(0, 200) }); }
       }
       /* class lists follow enrolments (the server corrects them, so every device agrees) */
-      if (moved.stu.size || moved.gid.size || list.some(x => x.c === 'enrol')) {
-        try {
-          for (const fx of P.fixGroups(ctx.all('groups'), ctx.all('enrol'))) {
-            const g0 = await store.getRecord('groups', fx.id); if (!g0 || g0.deleted) continue;
-            const tg = P.tags('groups', fx.id, fx.data, ctx);
-            const row = await store.putRecord({ collection: 'groups', id: fx.id, data: fx.data, deleted: false, mentor_ids: tg.mentor_ids, student_ids: tg.student_ids, updated_by: m.email });
-            const i = cache.groups.findIndex(x => x && x.id === fx.id); if (i > -1) cache.groups[i] = fx.data;
-            [g0.data, fx.data].forEach(d => (d.stu || []).forEach(x => moved.stu.add(x))); moved.gid.add(fx.id);
-            await store.audit({ email: m.email, role: m.role, action: 'system-fix', collection: 'groups', record_id: fx.id });
-          }
-        } catch (e) { /* the lists are corrected again on the next change */ }
-      }
+      await healGroups(store, ctx, m, moved);
       if (moved.stu.size || moved.gid.size) { try { await retag(store, ctx, moved); } catch (e) { /* tags are refreshed again on the next change */ } }
       /* notifications: queued for every person concerned, then sent at once (leftovers go out on the next scheduled run) */
       if (N && done.length && store.enqueue) { try { const q = await N.plan(store, m, done, cache); if (q.length) await N.drain(store, 3500); } catch (e) { /* a notification problem must never block a save */ } }
@@ -141,6 +133,23 @@
     return { status: 400, body: { error: 'Unknown action' } };
   }
   /* a class group or enrolment changed: refresh who may see the records that depend on it */
+  /* class lists follow enrolments: fix what is out of line (also creates a missing class), return how many were changed */
+  async function healGroups(store, ctx, m, moved) {
+    let n = 0;
+    try {
+      const names = {}; (await store.allRecords('progs')).forEach(r => { if (!r.deleted && r.data) names[r.id] = r.data.name; });
+      for (const fx of P.fixGroups(ctx.all('groups'), ctx.all('enrol'), names)) {
+        const g0 = await store.getRecord('groups', fx.id); if (g0 && g0.deleted) continue; if (!g0 && !fx.create) continue;
+        const tg = P.tags('groups', fx.id, fx.data, ctx);
+        await store.putRecord({ collection: 'groups', id: fx.id, data: fx.data, deleted: false, mentor_ids: tg.mentor_ids, student_ids: tg.student_ids, updated_by: m.email });
+        const cache = ctx.all('groups'), i = cache.findIndex(x => x && x.id === fx.id); if (i > -1) cache[i] = fx.data; else cache.push(fx.data);
+        [g0 && g0.data, fx.data].forEach(d => d && (d.stu || []).forEach(x => moved.stu.add(x))); moved.gid.add(fx.id);
+        await store.audit({ email: m.email, role: m.role, action: 'system-fix', collection: 'groups', record_id: fx.id });
+        n++;
+      }
+    } catch (e) { /* the lists are corrected again on the next change */ }
+    return n;
+  }
   async function retag(store, ctx, moved) {
     const same = (a, b) => JSON.stringify((a || []).slice().sort()) === JSON.stringify((b || []).slice().sort());
     const jobs = [['students', r => moved.stu.has(r.id)], ['sport', r => moved.stu.has(r.data && r.data.stu)], ['prr', r => moved.stu.has(String(r.id).split('|')[0])]];

@@ -45,6 +45,14 @@
   if (!Array.isArray(FTA.AGENTMEM)) FTA.AGENTMEM = [];
   /* Receipt Maker (src/ui/receipt-maker.js) and mentor slot requests (src/ui/profile-tree.js) */
   ['RCPT', 'RCSAL', 'RCSET', 'SLOTREQ', 'MSG', 'CLSLIVE'].forEach(k => { if (!Array.isArray(FTA[k])) FTA[k] = []; });
+  /* a saved permission record that was written before a part existed (e.g. "Add new students") must not hide that part:
+     parts missing from the record take the built-in default; a part the Owner switched off is saved as '' and stays off */
+  const PERM0 = G(() => JSON.parse(JSON.stringify(SCH.PERM))) || {};
+  function fillPerm() {
+    let changed = false;
+    G(() => { Object.keys(PERM0).forEach(r => { const cur = SCH.PERM[r]; if (!cur || typeof cur !== 'object') return; Object.keys(PERM0[r]).forEach(k => { if (cur[k] == null) { cur[k] = PERM0[r][k]; changed = true; } }); }); });
+    const a = REG.find(x => x.c === 'perm'); if (a && changed && SNAP.perm && SNAP.perm.size) SNAP.perm = encodeAll(a);   /* filling in defaults is not an edit to send to the server */
+  }
   const TABLE = [
     /* people */
     L('students', 'STUDENTS', () => STUDENTS), L('enrol', 'ENROL', () => ENROL), L('mentors', 'MENTORS', () => MENTORS), L('progs', 'PROGS', () => PROGS), L('batches', 'BATCHES', () => BATCHES),
@@ -68,7 +76,7 @@
     L('notices', 'V8.NOTICES', () => V8.NOTICES), L('circles', 'V8.CIRCLES', () => V8.CIRCLES, { config: true }), L('req', 'V8.REQ', () => V8.REQ),
     /* settings */
     O('org', 'ORG', () => ORG, fillObj(() => ORG), { config: true }),
-    M('perm', 'SCH.PERM', () => SCH.PERM, { config: true, after: () => Object.keys(ROLES).forEach(r => { if (SCH.PERM[r]) G(() => SCH.syncPages(r)); }) }),
+    M('perm', 'SCH.PERM', () => SCH.PERM, { config: true, after: () => { fillPerm(); Object.keys(ROLES).forEach(r => { if (SCH.PERM[r]) G(() => SCH.syncPages(r)); }); } }),
     O('docset', 'DOCSET', () => DOCSET, v => { DOCSET = v; }), O('msgs', 'MSGSET', () => MSGSET, v => { MSGSET = v; }), O('ui', 'UISET', () => UISET, v => { UISET = v; }, { after: () => G(() => applyUI()) }),
     O('boards', 'V9H.BOARDS', () => V9H.BOARDS, fillArr(() => V9H.BOARDS), { config: true }), O('boards8', 'V8.BOARDS', () => V8.BOARDS, fillArr(() => V8.BOARDS), { config: true }),
     O('levels', 'V8.LEVELS', () => V8.LEVELS, fillArr(() => V8.LEVELS), { config: true }), O('classlist', 'CLASSES', () => CLASSES, fillArr(() => CLASSES), { config: true }),

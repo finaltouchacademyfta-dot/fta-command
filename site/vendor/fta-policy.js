@@ -384,7 +384,7 @@
      A student belongs to a mentor's class only while an enrolment that is not Completed names that mentor.
      Returns the classes whose student list must change: students with an enrolment for the subject but none with this class's mentor leave,
      and students with an active enrolment join the open class of that subject and mentor. Manual class assignments (no enrolment) are never touched. */
-  function fixGroups(groups, enrol) {
+  function fixGroups(groups, enrol, names) {
     const live = new Set(), any = new Map();
     (enrol || []).forEach(e => { if (!e || !e.stu) return; const k = e.stu + '|' + e.prog; any.set(k, true); if (e.status !== 'Completed' && e.mentor) live.add(k + '|' + e.mentor); });
     const out = [], by = new Map();
@@ -403,6 +403,17 @@
       const nd = Object.assign({}, cur, { stu: (cur.stu || []).concat(e.stu) });
       patched.set(g.id, { id: g.id, data: nd });
     });
+    /* an active enrolment whose subject + mentor has no open class yet gets one (otherwise the mentor's "My students" stays empty) */
+    let top = 0; (groups || []).forEach(g => { const n = /^G(\d+)$/.exec(g && g.id || ''); if (n) top = Math.max(top, +n[1]); });
+    const made = new Map();
+    (enrol || []).forEach(e => {
+      if (!e || !e.stu || !e.prog || e.status === 'Completed' || !e.mentor) return;
+      if (by.get(e.prog + '|' + e.mentor)) return;
+      const k = e.prog + '|' + e.mentor + '|' + (e.batch || ''); let g = made.get(k);
+      if (!g) { g = { id: 'G' + (++top), data: { key: k, id: 'G' + top, prog: e.prog, mentor: e.mentor, batch: e.batch || '', name: (names && names[e.prog]) || e.prog, stu: [], per: 0, status: 'Active' }, create: true }; made.set(k, g); }
+      if (g.data.stu.indexOf(e.stu) < 0) g.data.stu.push(e.stu);
+    });
+    made.forEach(g => patched.set(g.id, g));
     return Array.from(patched.values());
   }
   return { MENTOR_WRITE, STUDENT_WRITE, RECEIPTS, SELF, ROLES, OFFICE, MONEY, PEOPLE, TEACH, COMMS, SETTINGS, tags, read, write, canSee, memberWrite, canListMembers, shape, fixGroups };
