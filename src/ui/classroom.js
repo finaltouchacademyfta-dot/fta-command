@@ -186,8 +186,9 @@
   function myRooms() {
     const m = me(), ids = new Set();
     myGroups().forEach(g => ids.add('g:' + g.id));
-    if (m.kind !== 'o') ids.add(dmId(m.pid, 'U:office'));
-    msgs().forEach(x => { const r = room(x.room); if (!r) return; if (canSeeAll() || mineIn(r) || (r.kind === 'group' && ids.has(r.id))) ids.add(x.room); });
+    const cons = m.kind === 'o' ? [] : contacts();
+    if (m.kind !== 'o') { ids.add(dmId(m.pid, 'U:office')); cons.forEach(p => ids.add(dmId(m.pid, p))); }   /* a private chat opens by itself for every connected mentor <-> student pair */
+    msgs().forEach(x => { const r = room(x.room); if (!r) return; if (canSeeAll() || (mineIn(r) && (r.kind !== 'dm' || cons.includes(other(r)) || other(r) === 'U:office')) || (r.kind === 'group' && ids.has(r.id))) ids.add(x.room); });
     return [...ids].map(room).filter(Boolean);
   }
   const lastAt = r => (roomMsgs(r.id).slice(-1)[0] || {}).at || '';

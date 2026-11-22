@@ -161,8 +161,8 @@
         break;
       }
       case 'sreq': {
-        if (!prev && A === 'Mentor') add('office', { office: DESK }, 'Subject change from ' + X.menName(d.by), X.stuName(d.sid), { tag: 'sr-' + id });
-        else if (prev && office && d.status !== p.status && d.status !== 'Pending') add('office', { men: [d.by] }, 'Subject change ' + String(d.status).toLowerCase(), X.stuName(d.sid), { tag: 'sr-' + id });
+        if (!prev && A === 'Mentor') add('office', { office: DESK }, (/^(sedit|sdel)$/.test(d.kind || '') ? 'Student change from ' : 'Subject change from ') + X.menName(d.by), X.stuName(d.sid), { tag: 'sr-' + id });
+        else if (prev && office && d.status !== p.status && d.status !== 'Pending') add('office', { men: [d.by] }, (/^(sedit|sdel)$/.test(d.kind || '') ? 'Student change ' : 'Subject change ') + String(d.status).toLowerCase(), X.stuName(d.sid), { tag: 'sr-' + id });
         break;
       }
       case 'leave': {

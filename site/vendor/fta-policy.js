@@ -320,6 +320,7 @@
     if (c === 'ox' || c === 'qb') { if (prev && !chk(prev)) return IGNORE; if (data && !chk(data) && c === 'ox') return IGNORE; return YES(data); }
     if (c === 'leave') { if ((prev && prev.mentor !== m) || (data && data.mentor !== m)) return NO('Not your leave report'); if (prev && prev.status && prev.status !== 'Pending' && data && data.status !== prev.status) return NO('The office already answered this report'); return YES(data); }
     if (c === 'events') { if ((prev && prev.mentor !== m) || (data && data.mentor !== m)) return NO('Not your event'); return YES(data); }
+    if (c === 'sreq' && data && /^(status|sedit|sdel)$/.test(data.kind || '') && !(ctx.all('groups') || []).some(G => G && G.mentor === m && G.status !== 'Closed' && (G.stu || []).indexOf(data.sid) > -1)) return NO('This student is not in your classes');
     if (c === 'pend' || c === 'sreq') { if ((prev && prev.by !== m) || (data && data.by !== m)) return NO('Not your request'); if (prev && prev.status && prev.status !== 'Pending' && !del) return NO('The office already answered this'); return YES(data); }
     if (c === 'sport') { if (prev && prev.status !== 'Pending') return NO('Only the office can change an open portal');
       if (prev && data && !data.gmail && prev.gmail) data = Object.assign({}, data, { gmail: prev.gmail });   /* the teacher never sees the Gmail again */ if (data && data.status !== 'Pending') data = Object.assign({}, data, { status: 'Pending' }); if (data && !chk(data)) return NO('Not your student'); return YES(data); }
