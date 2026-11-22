@@ -98,7 +98,7 @@ SCH.reconcile = () => {
     });
     live.forEach(e => {
       let g = SCH.GROUPS.find(x => x.prog === e.prog && x.mentor === e.mentor && (x.batch || '') === (e.batch || '') && x.status === 'Active') || SCH.GROUPS.find(x => x.prog === e.prog && x.mentor === e.mentor && x.status === 'Active');
-      if (!g) { g = { key: e.prog + '|' + e.mentor + '|' + (e.batch || ''), id: 'G' + (1 + SCH.GROUPS.length), prog: e.prog, mentor: e.mentor, batch: e.batch || '', name: progName(e.prog), stu: [], per: 0, status: 'Active' }; SCH.GROUPS.push(g); }
+      if (!g) { g = { key: e.prog + '|' + e.mentor + '|' + (e.batch || ''), id: 'G' + (1 + Math.max(0, ...SCH.GROUPS.map(x => +(/^G(\d+)$/.exec(x.id || '') || [0, 0])[1]))), prog: e.prog, mentor: e.mentor, batch: e.batch || '', name: progName(e.prog), stu: [], per: 0, status: 'Active' }; SCH.GROUPS.push(g); }
       if (!g.stu.includes(e.stu)) g.stu.push(e.stu);
     });
   } catch (x) { console.error('reconcile', x); }

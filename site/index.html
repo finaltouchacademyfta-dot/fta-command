@@ -13886,7 +13886,7 @@ SCH.reconcile = () => {
     });
     live.forEach(e => {
       let g = SCH.GROUPS.find(x => x.prog === e.prog && x.mentor === e.mentor && (x.batch || '') === (e.batch || '') && x.status === 'Active') || SCH.GROUPS.find(x => x.prog === e.prog && x.mentor === e.mentor && x.status === 'Active');
-      if (!g) { g = { key: e.prog + '|' + e.mentor + '|' + (e.batch || ''), id: 'G' + (1 + SCH.GROUPS.length), prog: e.prog, mentor: e.mentor, batch: e.batch || '', name: progName(e.prog), stu: [], per: 0, status: 'Active' }; SCH.GROUPS.push(g); }
+      if (!g) { g = { key: e.prog + '|' + e.mentor + '|' + (e.batch || ''), id: 'G' + (1 + Math.max(0, ...SCH.GROUPS.map(x => +(/^G(\d+)$/.exec(x.id || '') || [0, 0])[1]))), prog: e.prog, mentor: e.mentor, batch: e.batch || '', name: progName(e.prog), stu: [], per: 0, status: 'Active' }; SCH.GROUPS.push(g); }
       if (!g.stu.includes(e.stu)) g.stu.push(e.stu);
     });
   } catch (x) { console.error('reconcile', x); }
@@ -14956,12 +14956,12 @@ window.__ftaRun = function (code, v) {
   function quiet(f) { const ov = document.getElementById('ov'), was = !!(ov && !ov.hidden); f(); if (!was && typeof closeSheet === 'function') { try { closeSheet(); } catch (e) { } } }
   /* first visit (nothing saved yet): FTA Premium (light), English. Anyone who picks another theme keeps their own choice. */
   /* FTA Premium is the opening theme on every device. Devices that opened an older version once are moved to it once
-     (marker fta-default-v3); after that, whatever theme a person picks is kept. */
-  let first = false; try { first = !localStorage.getItem('fta-skin') && !localStorage.getItem(KEY); if (!localStorage.getItem('fta-default-v3')) { first = true; localStorage.setItem('fta-default-v3', '1'); localStorage.removeItem('fta-skin'); localStorage.removeItem(KEY); } } catch (e) { }
+     (marker fta-default-v4); after that, whatever theme a person picks is kept. */
+  let first = false; try { first = !localStorage.getItem('fta-skin') && !localStorage.getItem(KEY); if (!localStorage.getItem('fta-default-v4')) { first = true; localStorage.setItem('fta-default-v4', '1'); localStorage.removeItem('fta-skin'); localStorage.removeItem(KEY); localStorage.removeItem('fta-theme'); } } catch (e) { }
   if (first) {
     try { localStorage.setItem('fta-demo-theme', 'light'); if (!localStorage.getItem('fta-lang')) localStorage.setItem('fta-lang', 'en'); } catch (e) { }
     if (typeof LANG !== 'undefined' && LANG !== 'en' && typeof setLang === 'function') setLang('en');
-    quiet(() => { setTheme('light'); setSkin('premium'); });
+    quiet(() => { setTheme('light'); setSkin('premium'); if (typeof setThemeKey === 'function') setThemeKey('gold'); });   /* theme = FTA Premium, colour = FTA Gold */
   } else paint();
   /* the old FTA Premium skin key (saved by earlier versions) opens the new FTA Premium */
   if (skinKey() === 'premium') quiet(() => setSkin('premium'));
@@ -15018,6 +15018,14 @@ window.__ftaRun = function (code, v) {
   if (!Array.isArray(FTA.AGENTMEM)) FTA.AGENTMEM = [];
   /* Receipt Maker (src/ui/receipt-maker.js) and mentor slot requests (src/ui/profile-tree.js) */
   ['RCPT', 'RCSAL', 'RCSET', 'SLOTREQ', 'MSG', 'CLSLIVE'].forEach(k => { if (!Array.isArray(FTA[k])) FTA[k] = []; });
+  /* a saved permission record that was written before a part existed (e.g. "Add new students") must not hide that part:
+     parts missing from the record take the built-in default; a part the Owner switched off is saved as '' and stays off */
+  const PERM0 = G(() => JSON.parse(JSON.stringify(SCH.PERM))) || {};
+  function fillPerm() {
+    let changed = false;
+    G(() => { Object.keys(PERM0).forEach(r => { const cur = SCH.PERM[r]; if (!cur || typeof cur !== 'object') return; Object.keys(PERM0[r]).forEach(k => { if (cur[k] == null) { cur[k] = PERM0[r][k]; changed = true; } }); }); });
+    const a = REG.find(x => x.c === 'perm'); if (a && changed && SNAP.perm && SNAP.perm.size) SNAP.perm = encodeAll(a);   /* filling in defaults is not an edit to send to the server */
+  }
   const TABLE = [
     /* people */
     L('students', 'STUDENTS', () => STUDENTS), L('enrol', 'ENROL', () => ENROL), L('mentors', 'MENTORS', () => MENTORS), L('progs', 'PROGS', () => PROGS), L('batches', 'BATCHES', () => BATCHES),
@@ -15041,7 +15049,7 @@ window.__ftaRun = function (code, v) {
     L('notices', 'V8.NOTICES', () => V8.NOTICES), L('circles', 'V8.CIRCLES', () => V8.CIRCLES, { config: true }), L('req', 'V8.REQ', () => V8.REQ),
     /* settings */
     O('org', 'ORG', () => ORG, fillObj(() => ORG), { config: true }),
-    M('perm', 'SCH.PERM', () => SCH.PERM, { config: true, after: () => Object.keys(ROLES).forEach(r => { if (SCH.PERM[r]) G(() => SCH.syncPages(r)); }) }),
+    M('perm', 'SCH.PERM', () => SCH.PERM, { config: true, after: () => { fillPerm(); Object.keys(ROLES).forEach(r => { if (SCH.PERM[r]) G(() => SCH.syncPages(r)); }); } }),
     O('docset', 'DOCSET', () => DOCSET, v => { DOCSET = v; }), O('msgs', 'MSGSET', () => MSGSET, v => { MSGSET = v; }), O('ui', 'UISET', () => UISET, v => { UISET = v; }, { after: () => G(() => applyUI()) }),
     O('boards', 'V9H.BOARDS', () => V9H.BOARDS, fillArr(() => V9H.BOARDS), { config: true }), O('boards8', 'V8.BOARDS', () => V8.BOARDS, fillArr(() => V8.BOARDS), { config: true }),
     O('levels', 'V8.LEVELS', () => V8.LEVELS, fillArr(() => V8.LEVELS), { config: true }), O('classlist', 'CLASSES', () => CLASSES, fillArr(() => CLASSES), { config: true }),
