@@ -238,6 +238,7 @@
       body = '<dl class="pt-kv">' + rows.map(x => '<div><dt>' + x[0] + '</dt><dd>' + (x[0] === 'When' ? h(x[1]).split(' · ').join('<br>') : h(x[1])) + '</dd></div>').join('') + '</dl>' +
         (k.req && mode === 'office' ? '<div class="pt-kacts"><button type="button" class="pt-btn" data-act="rdel" data-kid="' + h(k.k) + '">' + ico('trash') + 'Decline</button><button type="button" class="pt-btn is-gold" data-act="rok" data-kid="' + h(k.k) + '">' + ico('check') + 'Approve</button></div>' : '') +
         (k.req && mode === 'self' ? '<div class="pt-kacts"><button type="button" class="pt-btn" data-act="rdel" data-kid="' + h(k.k) + '">' + ico('trash') + 'Cancel request</button></div>' : '') +
+        (mode === 'self' && m && !k.req && !k.plan && G(() => window.V9Q && V9Q.ok(k.pid)) ? '<div class="pt-kacts"><button type="button" class="pt-btn" data-act="chg" data-sid="' + h(k.pid) + '">' + ico('pen') + 'Request change' + (G(() => V9Q.mine(k.pid).length) ? ' · ' + G(() => V9Q.mine(k.pid).length) + ' waiting' : '') + '</button></div>' : '') +
         (mode === 'office' && !k.req ? '<div class="pt-kacts">' + (k.plan ? '<button type="button" class="pt-btn" data-act="kdel" data-kid="' + h(k.k) + '">' + ico('trash') + 'Remove</button>' : '<button type="button" class="pt-btn" data-act="kedit" data-kid="' + h(k.k) + '">' + ico('pen') + 'Edit</button>') + '<button type="button" class="pt-btn is-ghost" data-act="ktree" data-pid="' + h(k.pid) + '" aria-label="Open the profile tree of ' + h(m ? k.title : pname(k.mentor)) + '">' + ico('tree') + (m ? 'Tree' : 'Mentor') + '</button></div>' : '');
     }
     return '<div class="pt-kid pt-vitem"><i class="pt-tick" aria-hidden="true"></i><article class="pt-card pt-ch' + (k.plan ? ' is-plan' : '') + (editing ? ' is-editing' : '') + '"><header><span class="pt-kn">' + h(k.title) + '</span>' + badge(k.status) + '</header>' + body + '</article></div>';
@@ -487,6 +488,7 @@
       else if (act === 'ktree') { if (inst.opts.modal) open(b.dataset.pid, { mode: inst.mode, back: inst.pid, opener: MODAL && MODAL.opener }); else open(b.dataset.pid, { mode: inst.mode, opener: b }); }
       else if (act === 'add') { st.adding = true; st.add = { medium: 'In person' }; draw(inst, false); const f = el.querySelector('[data-af="stu"]'); f && f.focus(); }
       else if (act === 'newstu') { G(() => SCH.newStuForm()); }
+      else if (act === 'chg') { G(() => V9Q.open(b.dataset.sid)); }
       else if (act === 'pedit') { G(() => SCH.pendEdit(b.dataset.pid)); }
       else if (act === 'pcancel') { G(() => SCH.pendCancel(b.dataset.pid)); }
       else if (act === 'addcancel') { st.adding = false; draw(inst, false); }
