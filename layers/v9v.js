@@ -128,3 +128,11 @@ SCH.pendDo = (id, ok) => {
     SCH.log('New student approved', s.name + ' · ' + s.id + (subs.length ? ' · ' + subs.join(', ') : ''), 'ok'); PAGES[ST.page](); toast(s.name + ' approved as ' + s.id);
   } });
 };
+
+/* ===== the mentor's "My share" card: only what is owed to the mentor, never the percentage or the pay rule ===== */
+V8.myShare = function () {
+  const mid = SCH.mentor(), m = MENTORS.find(x => x.id === mid); if (!m) return '';
+  const R = V8.share(mid, [CUR]), tot = sum(R, r => r.t);
+  const card = SCH.card('My share · ' + mlab(CUR), 'What you earn from your students this month', R.length ? `<div class="sc-list">${R.map(r => `<div class="sc-li"><div class="grow"><b>${esc(stuOf(r.stu).name)}</b><small>${esc(progName(r.prog))}${r.batch ? ' · batch' : ''}</small></div><div class="v8-myp">${r.fixed ? '<small>—</small>' : `<b>${money(r.t)}</b><small>this month</small>`}</div></div>`).join('')}</div><div class="v8-mytot"><span>Your earning this month so far</span><b>${money(tot)}</b></div>` : SCH.empty('No approved invoices for your students this month yet.'));
+  const MZx = window.MZ; return card + (MZx && MZx.on && MZx.on() && ST.role === 'Mentor' && mid ? MZx.myPayCard(mid) : '');
+};
