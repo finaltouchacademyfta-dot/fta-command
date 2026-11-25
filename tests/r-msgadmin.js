@@ -52,7 +52,7 @@ const ready = p => p.waitForFunction(() => document.documentElement.classList.co
   console.log('3. mentor / student cannot delete');
   await as(T1); await open('tp-', ROOM); ok(await p.locator('[data-a="del"]').count() === 0, 'mentor has no delete button');
   console.log('4. theme default');
-  const th = await p.evaluate(() => ({ skin: localStorage.getItem('fta-skin'), v5: localStorage.getItem('fta-default-v5') }));
+  const th = await p.evaluate(() => ({ skin: localStorage.getItem('fta-skin'), v5: localStorage.getItem('fta-default-v6') }));
   ok(th.v5 === '1', 'default marker v5 set (' + JSON.stringify(th) + ')');
   ok(errs.length === 0, 'no page errors ' + errs.slice(0, 3).join(' | '));
   console.log(pass + ' passed, ' + fail + ' failed'); await b.close(); server.close(); process.exit(fail ? 1 : 0);

@@ -1,0 +1,32 @@
+/* Worker R · role labels + office send/delete in mentor-student chats */
+const { chromium } = require('playwright');
+const http = require('http'), fs = require('fs'), path = require('path');
+const R = require('./rlib.js');
+const ROOT = path.join(__dirname, '..', 'site-mock'), PORT = 8789, URL0 = 'http://localhost:' + PORT + '/';
+const TYPES = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.png': 'image/png', '.svg': 'image/svg+xml', '.webmanifest': 'application/manifest+json', '.ico': 'image/x-icon' };
+const server = http.createServer((q, s) => { let f = path.join(ROOT, decodeURIComponent(new URL(q.url, URL0).pathname)); if (f.endsWith('/')) f += 'index.html'; if (!f.startsWith(ROOT) || !fs.existsSync(f)) { s.writeHead(404); s.end(); return; } s.writeHead(200, { 'Content-Type': TYPES[path.extname(f)] || 'application/octet-stream', 'Cache-Control': 'no-cache' }); fs.createReadStream(f).pipe(s); });
+let pass = 0, fail = 0; const errs = [];
+const ok = (c, m) => { if (c) { pass++; console.log('  ✓ ' + m); } else { fail++; console.log('  ✗ ' + m); } };
+const OWNER = 'owner@gmail.com', T1 = 'nusrat.teacher@gmail.com', ST1 = 'zara.student@gmail.com';
+const ready = p => p.waitForFunction(() => document.documentElement.classList.contains('fta-on') && window.FTA && FTA.member, null, { timeout: 30000 });
+(async () => {
+  await new Promise(r => server.listen(PORT, r));
+  const b = await chromium.launch();
+  const p = await (await b.newContext({ viewport: { width: 1360, height: 900 } })).newPage(); await R.setup(p);
+  p.on('pageerror', e => errs.push(e.message)); p.on('dialog', d => d.accept());
+  const as = async email => { await p.evaluate(async () => { if (window.FTA && FTA.sync && FTA.member) await FTA.sync(); }); await p.evaluate(e => localStorage.setItem('fta-mock-session', e), email); await p.reload(); await ready(p); };
+  const sync = () => p.evaluate(() => FTA.sync());
+  const setMember = (e, patch) => p.evaluate(([e, patch]) => { const d = JSON.parse(localStorage.getItem('fta-mock-db')); d.members[e] = Object.assign(d.members[e] || { email: e, created_at: new Date().toISOString() }, patch); localStorage.setItem('fta-mock-db', JSON.stringify(d)); }, [e, patch]);
+  const state = () => p.evaluate(() => ({ th: document.documentElement.dataset.theme, pal: document.documentElement.dataset.palette, skin: localStorage.getItem('fta-skin'), key: localStorage.getItem('fta-theme') }));
+  const login = async () => { await p.waitForSelector('#fg-email', { timeout: 30000 }); await p.fill('#fg-email', OWNER); await p.click('#fg-go'); await ready(p); };
+  console.log('1. fresh device');
+  await p.goto(URL0); await p.evaluate(() => { localStorage.clear(); sessionStorage.clear(); }); await p.goto(URL0); await login();
+  let s = await state(); ok(s.th === 'dark' && s.pal === 'premium', 'fresh device opens in dark FTA Premium ' + JSON.stringify(s));
+  console.log('2. device with an old theme and the previous marker (light + other skin)');
+  await p.evaluate(() => { localStorage.setItem('fta-default-v5', '1'); localStorage.removeItem('fta-default-v6'); localStorage.setItem('fta-skin', 'lux'); localStorage.setItem('fta-theme', 'teal'); localStorage.setItem('fta-demo-theme', 'light'); });
+  await p.reload(); await ready(p); s = await state(); ok(s.th === 'dark' && s.pal === 'premium', 'moved to dark FTA Premium once ' + JSON.stringify(s));
+  console.log('3. a person picks another theme: it is kept');
+  await p.evaluate(() => { setSkin('m-light'); }); await p.waitForTimeout(300); await p.reload(); await ready(p);
+  s = await state(); ok(s.th === 'light' && s.pal !== 'premium', 'chosen theme is remembered after reload ' + JSON.stringify(s));
+  console.log(pass + ' passed, ' + fail + ' failed'); await b.close(); server.close(); process.exit(fail ? 1 : 0);
+})().catch(e => { console.error(e); process.exit(1); });
