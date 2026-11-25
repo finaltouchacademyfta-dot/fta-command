@@ -181,8 +181,9 @@
   }
   const other = r => { const p = me().pid; return r.members.find(x => x !== p) || r.a; };
   const mineIn = r => r.members.includes(me().pid);
-  const canWrite = r => { const m = me(); if (!r) return false; if (r.kind === 'group') return m.kind === 'o' ? canSeeAll() : mineIn(r); return mineIn(r); };
-  const title = r => r.kind === 'group' ? r.g.name : mineIn(r) ? pname(other(r)) : pname(r.a) + ' ↔ ' + pname(r.b);
+  const canWrite = r => { const m = me(); if (!r) return false; if (r.kind === 'group') return m.kind === 'o' ? canSeeAll() : mineIn(r); return mineIn(r) || canSeeAll(); };
+  const lab = p => pname(p) + (prole(p) ? ' — ' + prole(p) : '');
+  const title = r => r.kind === 'group' ? r.g.name : mineIn(r) ? lab(other(r)) : lab(r.a) + ' ↔ ' + lab(r.b);
   function myRooms() {
     const m = me(), ids = new Set();
     myGroups().forEach(g => ids.add('g:' + g.id));
@@ -242,12 +243,12 @@
       const keep = $('zc-in') ? $('zc-in').value : '';
       CH.shown = r.id; CH.sig = '';
       V.innerHTML = '<header class="zc-hd"><button type="button" class="zc-ib zc-back" data-a="back" aria-label="Back to chats">' + I('back') + '</button>' + (r.kind === 'group' ? gav(40) : av(mineIn(r) ? other(r) : r.a, 40)) +
-        '<div class="zc-ht"><b>' + h(title(r)) + '</b><small>' + h(r.kind === 'group' ? pname(r.g.mentor) + ' · ' + (r.g.stu || []).length + ' students' : mineIn(r) ? prole(other(r)) : 'Private chat · read only') + '</small></div>' +
+        '<div class="zc-ht"><b>' + h(title(r)) + '</b><small>' + h(r.kind === 'group' ? pname(r.g.mentor) + ' · ' + (r.g.stu || []).length + ' students' : mineIn(r) ? prole(other(r)) : 'Private chat · mentor and student · office can reply') + '</small></div>' +
         (r.kind === 'group' && G(() => PAGES[(me().kind === 't' ? 'tp' : me().kind === 's' ? 'sp' : 'cx') + '-live']) ? '<div class="zc-ha"><button type="button" class="zc-ib" data-a="live" title="Class status" aria-label="Class status">' + I('video') + '</button></div>' : '') + '</header>' +
         (me().kind !== 'o' ? '<div class="zc-monote">' + I('eye') + 'The academy office can read this chat to keep students safe. Do not share phone numbers.</div>' : '') +
         '<div class="zc-body" id="zc-body"><div class="zc-ml" id="zc-ml" role="log" aria-live="polite"></div></div>' +
         (write ? '<footer class="zc-comp" id="zc-comp"><div class="zc-cr"><div class="zc-inw"><textarea id="zc-in" rows="1" maxlength="2000" placeholder="Type a message" aria-label="Message"></textarea></div><button type="button" class="zc-send" id="zc-send" data-a="send" aria-label="Send">' + I('send') + '</button></div></footer>'
-          : '<footer class="zc-ro">' + I(canSeeAll() ? 'eye' : 'lock') + (canSeeAll() ? 'Read only · a private chat between a mentor and a student' : 'You can read but not write here') + '</footer>');
+          : '<footer class="zc-ro">' + I(canSeeAll() ? 'eye' : 'lock') + (canSeeAll() ? 'You can read but not write here' : 'You can read but not write here') + '</footer>');
       const inp = $('zc-in');
       if (inp) {
         inp.value = keep;

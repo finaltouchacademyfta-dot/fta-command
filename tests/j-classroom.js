@@ -146,9 +146,9 @@ const rec = (p, c, id) => p.evaluate(([c, id]) => { const r = FTA.mock.db().reco
   const os = await p.evaluate(async () => { FTA.MSG.push({ id: 'M-o2', room: 'dm:STU-1001|U:office', by: 'U:office', text: 'Your fee is received' }); await FTA.sync(); return !!FTA.mock.db().records['msg\u0001M-o2']; });
   ok(os, 'office writes to a student (saved)');
   await p.evaluate(() => go('cx-chat')); await p.waitForTimeout(500);
-  ok(await p.evaluate(() => /Nusrat Jahan ↔ Ayaan Rahman|Ayaan Rahman ↔ Nusrat Jahan/.test(document.getElementById('zc-side').innerText)), 'private mentor–student chat is listed for the Owner');
+  ok(await p.evaluate(() => /Nusrat Jahan — Mentor ↔ Ayaan Rahman — Student|Ayaan Rahman — Student ↔ Nusrat Jahan — Mentor/.test(document.getElementById('zc-side').innerText)), 'private mentor–student chat is listed for the Owner');
   await p.evaluate(() => { const b = [...document.querySelectorAll('#zc-side .zc-ri')].find(x => /↔/.test(x.innerText)); b && b.click(); }); await p.waitForTimeout(300);
-  ok(await p.evaluate(() => !document.getElementById('zc-in') && /Read only/.test(document.getElementById('zc-main').innerText)), 'Owner reads it read-only');
+  ok(await p.evaluate(() => !!document.getElementById('zc-in')), 'Owner can read and reply in it');
   await click();
   await p.evaluate(async () => { const i = FTA.MSG.findIndex(x => x.id === 'M-g'); FTA.MSG.splice(i, 1); await FTA.sync(); });
   ok(!(await rec(p, 'msg', 'M-g')), 'Owner can remove a message');

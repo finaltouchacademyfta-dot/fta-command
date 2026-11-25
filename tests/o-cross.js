@@ -103,7 +103,7 @@ const ready = p => p.waitForFunction(() => document.documentElement.classList.co
   await as(T1);
   await p.evaluate(() => { go('tp-students'); SCH.newStuForm(); }); await p.waitForTimeout(400);
   await p.fill('#ns-n', 'Mira Khan'); await p.fill('#ns-g', 'Khan'); await p.fill('#ns-p', '01911000003');
-  await p.evaluate(() => SCH.newStuSave()); await p.waitForTimeout(600); await sync();
+  await p.evaluate(() => { if (!V9V.S.length) { V9V.S = ['Mathematics']; V9V.chips(); } SCH.newStuSave(); }); await p.waitForTimeout(600); await sync();
   const pid = await p.evaluate(() => (SCH.PEND.find(x => x.name === 'Mira Khan') || {}).id);
   ok(!!pid, 'request sent (' + pid + ')');
   await as(OWNER);
