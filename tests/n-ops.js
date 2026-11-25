@@ -59,7 +59,7 @@ const ready = p => p.waitForFunction(() => document.documentElement.classList.co
   await as(T2);
   await p.evaluate(() => { go('tp-students'); SCH.newStuForm(); }); await p.waitForTimeout(400);
   await p.fill('#ns-n', 'Mira Khan'); await p.fill('#ns-g', 'Khan'); await p.fill('#ns-p', '01911000003');
-  await p.evaluate(() => SCH.newStuSave()); await p.waitForTimeout(600); await sync();
+  await p.evaluate(() => { if (!V9V.S.length) { V9V.S = ['Mathematics']; V9V.chips(); } SCH.newStuSave(); }); await p.waitForTimeout(600); await sync();
   const pid = await p.evaluate(() => (SCH.PEND.find(x => x.name === 'Mira Khan') || {}).id);
   ok(!!pid, 'request sent to the office (' + pid + ')');
   await as(OWNER);
@@ -101,13 +101,13 @@ const ready = p => p.waitForFunction(() => document.documentElement.classList.co
   ok(btn, 'profile tree shows "Add new student"');
   await p.evaluate(() => document.querySelector('#pt-host [data-act="newstu"]').click()); await p.waitForTimeout(400);
   await p.fill('#ns-n', 'Zara Ali'); await p.fill('#ns-g', 'Ali'); await p.fill('#ns-p', '01911000077');
-  await p.evaluate(() => SCH.newStuSave()); await p.waitForTimeout(600);
+  await p.evaluate(() => { if (!V9V.S.length) { V9V.S = ['Mathematics']; V9V.chips(); } SCH.newStuSave(); }); await p.waitForTimeout(600);
   const zid = await p.evaluate(() => (SCH.PEND.find(x => x.name === 'Zara Ali') || {}).id);
   ok(!!zid, 'request created from the tree');
   await p.evaluate(() => go('tp-profile')); await p.waitForTimeout(1000);
   ok(await p.evaluate(() => !!document.querySelector('#pt-host [data-act="pedit"]')), 'waiting request is shown in the tree with Edit');
   await p.evaluate(id => SCH.pendEdit(id), zid); await p.waitForTimeout(300);
-  await p.fill('#ns-n', 'Zara Ali Khan'); await p.evaluate(() => SCH.newStuSave()); await p.waitForTimeout(500);
+  await p.fill('#ns-n', 'Zara Ali Khan'); await p.evaluate(() => { if (!V9V.S.length) { V9V.S = ['Mathematics']; V9V.chips(); } SCH.newStuSave(); }); await p.waitForTimeout(500);
   const e1 = await p.evaluate(() => SCH.PEND.filter(x => /^Zara/.test(x.name)).map(x => x.name));
   ok(e1.length === 1 && e1[0] === 'Zara Ali Khan', 'edit replaces the request (no duplicate): ' + e1.join());
   await sync(); await as(OWNER); ok(await p.evaluate(() => !!SCH.PEND.find(x => x.name === 'Zara Ali Khan')), 'office sees the edited request');
@@ -122,7 +122,7 @@ const ready = p => p.waitForFunction(() => document.documentElement.classList.co
   await p.fill('#ns-n', 'Omar Faruk'); await p.fill('#ns-g', 'Faruk'); await p.fill('#ns-p', '+44 (7700) 900-456'); await p.click('#ns-g');
   ok((await p.inputValue('#ns-p')) === '+447700900456', 'box cleans itself when you leave it');
   await p.evaluate(() => V9P.addX('+1 415 555 2671')); await p.evaluate(() => V9P.addX('01819-123 456'));
-  await p.evaluate(() => SCH.newStuSave()); await p.waitForTimeout(600); await sync();
+  await p.evaluate(() => { if (!V9V.S.length) { V9V.S = ['Mathematics']; V9V.chips(); } SCH.newStuSave(); }); await p.waitForTimeout(600); await sync();
   const om = await p.evaluate(() => SCH.PEND.find(x => x.name === 'Omar Faruk'));
   ok(om && om.phone === '+447700900456' && om.phones.join() === '+14155552671,01819-123456', 'request keeps the main + extra numbers: ' + (om && om.phone + ' / ' + (om.phones || []).join()));
   await as(OWNER); await p.evaluate(id => SCH.pendDo(id, true), om.id); await p.waitForTimeout(300);

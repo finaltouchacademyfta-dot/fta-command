@@ -50,7 +50,7 @@ const ready = p => p.waitForFunction(() => document.documentElement.classList.co
 
   const rooms = () => p.evaluate(() => { try { return (window.ZC && ZC.rooms ? ZC.rooms() : []).length; } catch (e) { return -1; } });
   const chats = async () => { await p.evaluate(() => go('tp-chat') ); return 0; };
-  const names = async (page) => { await p.evaluate(pg => go(pg), page); await p.waitForTimeout(900); return p.evaluate(() => [...document.querySelectorAll('.zc-ri b')].map(x => x.textContent.replace(/private/i, '').trim())); };
+  const names = async (page) => { await p.evaluate(pg => go(pg), page); await p.waitForTimeout(900); return p.evaluate(() => [...document.querySelectorAll('.zc-ri b')].map(x => x.textContent.replace(/private/i, '').replace(/ — (Mentor|Student|Office)/g, '').trim())); };
   console.log('1. Mentor + student see each other automatically');
   await as(T1); const pgT = await p.evaluate(() => Object.keys(PAGES).filter(k => /chat|msg/.test(k)).join());
   console.log('   pages: ' + pgT);

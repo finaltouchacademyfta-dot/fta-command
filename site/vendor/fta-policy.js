@@ -243,6 +243,9 @@
       if (R === 'Student' && (G.stu || []).indexOf(mine) < 0) return NO('Not your class');
     } else if (room.indexOf('dm:') === 0) {
       const ab = room.slice(3).split('|'); if (ab.length !== 2 || ab[0] === ab[1] || ab.slice().sort().join('|') !== ab.join('|')) return NO('Bad chat');
+      /* the office may join any mentor <-> student private chat (answer, moderate) */
+      const pair = office && ab.length === 2 && /^MEN-/.test(ab[0]) !== /^MEN-/.test(ab[1]) && ab.every(x => /^(MEN|STU)-/.test(x));
+      if (!pair) {
       if (ab.indexOf(mine) < 0) return NO('Not your chat');
       const other = ab[0] === mine ? ab[1] : ab[0];
       if (other !== 'U:office') {
@@ -250,6 +253,7 @@
         if (R === 'Student' && !(/^MEN-/.test(other) && teaches(ctx, other, mine))) return NO('You can message only your own mentors and the office');
         /* the office answers anyone in its own chat ('U:office' is one side, checked above) */
         if (office && !/^(MEN|STU)-/.test(other)) return NO('Bad chat');
+      }
       }
     } else return NO('Bad chat');
     /* 'by' is the sender (from the sign-in); screens show the name from the academy's own list for that id */
